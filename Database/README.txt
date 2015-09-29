@@ -1,1 +1,4 @@
-Hello! Welcome to the database team, the most lonely team of all but the best team of all.
+Hello! Welcome to the database team.
+
+The database will actually be stored on Azure now.
+
