@@ -19,7 +19,6 @@ public class GameController : MonoBehaviour
 
     struct Square
     {
-        public int g;
         public int h;
         public int f;
         public int x;
@@ -53,9 +52,11 @@ public class GameController : MonoBehaviour
 
         for(int i = 0; i < (_mapWidth - 1); i++)
         {
-            //map[2, i].Walkable = false;
-            map[6, 1 + i].Walkable = false;
+            map[1, i].Walkable = false;
+            //map[3, 1 + i].Walkable = false;
         }
+		map[3, 15].Walkable = false;
+		map[3, 14].Walkable = false;
 
         _point = (Waypoint)Instantiate(wayPoint, map[(_mapHeight - 1), (_mapWidth - 1)].transform.position, transform.rotation);
         _point.transform.parent = transform;
@@ -111,23 +112,32 @@ public class GameController : MonoBehaviour
     /// <returns>List of Vectors that the Monsters will follow till they reach their destination</returns>
     LinkedList<Vector2> pathFinding(SpawnerAI spawner)
     {
+		int queueLimit = 100;
         // 2D Array List of possible paths monsters can take to reach their destination
         LinkedList<Vector2> paths = new LinkedList<Vector2>();
 
         // List of tile indexes used for calculating waypoints
         LinkedList<Square> usedSquares = new LinkedList<Square>();
         LinkedList<Square> openSquares = new LinkedList<Square>();
+<<<<<<< HEAD
         LinkedList<Square> leadingSquares = new LinkedList<Square>();
+=======
+		LinkedList<Square> leadingSquares = new LinkedList<Square> ();
+>>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
 
         Vector2 destSquare = FindTile(_point.gameObject);
         int fMin = 0, g = 0;
         leadingSquares.AddLast(createSquare(g, FindTile(spawner.gameObject), destSquare));
+<<<<<<< HEAD
         openSquares.AddLast(currentSquare);
+=======
+>>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
 
         int counter = 0;
-        int counterMax = _mapWidth * _mapHeight;
+        int counterMax = (_mapWidth * _mapHeight) * 2;
         do
         {
+<<<<<<< HEAD
 
             usedSquares.AddLast(currentSquare);
             openSquares.Remove(currentSquare);
@@ -148,49 +158,86 @@ public class GameController : MonoBehaviour
                     Square temp = createSquare(g, square, destSquare);
 
                     if (!usedSquares.Contains(temp) && !openSquares.Contains(temp))
+=======
+			if (counter > counterMax)
+				return paths;
+			else
+				counter++;
+
+			foreach(Square square in leadingSquares){
+				openSquares.Remove (square);
+				usedSquares.AddLast (square);
+
+				Debug.Log ("Square: g: " + g + " h: " + square.h + " f: " + square.f + " x: " + square.x + " y: " + square.y);
+
+	            if (square.h != 0)
+	            {
+	                // Check Adjacent Squares
+	                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)square.x, (int)square.y);
+
+	                foreach (Vector2 adjacentSquare in adjacentTiles)
+	                {
+						Square temp = createSquare(g, adjacentSquare, destSquare);
+
+						foreach(Square openSquare in openSquares)
+							if(distSquare(temp, openSquare) == 0)
+								continue;
+						foreach(Square usedSquare in usedSquares)
+							if(distSquare(temp, usedSquare) == 0)
+								continue;
+				
+>>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
                         openSquares.AddLast(temp);
+	                }
 
-                }
+	            }
+	            else
+	            {
+	                openSquares.Clear();
 
-                fMin = int.MaxValue;
-                foreach (Square square in openSquares)
-                {
-                    if (square.f < fMin)
-                    {
-                        currentSquare = square;
-                        fMin = square.f;
-                    }
-                }
+					Square tempSquare = square;
+					Square cmpSquare = square;
+	                do
+	                {
+						paths.AddFirst(map[tempSquare.y, tempSquare.x].transform.position);
+						usedSquares.Remove(tempSquare);
+	                    g--;
+	                    int smallestDist = int.MaxValue;
 
-            }
-            else
-            {
-                openSquares.Clear();
+	                    foreach(Square usedSquare in usedSquares)
+	                    {
+							if(distSquare(usedSquare, tempSquare) < smallestDist)
+	                        {
+								smallestDist = distSquare(usedSquare, tempSquare);
+								cmpSquare = usedSquare;
+	                        }
+	                    }
 
-                do
-                {
-                    paths.AddFirst(map[currentSquare.y, currentSquare.x].transform.position);
-                    usedSquares.Remove(currentSquare);
-                    g--;
-                    int smallestDist = int.MaxValue;
-                    Square tempSquare = currentSquare;
-                    foreach(Square square in usedSquares)
-                    {
-                        if(distSquare(square, currentSquare) < smallestDist)
-                        {
-                            smallestDist = distSquare(square, currentSquare);
-                            tempSquare = square;
-                        }
-                    }
+						tempSquare = cmpSquare;
+	                } while (g > 0);
 
-                    currentSquare = tempSquare;
-                } while (g > 0);
+					paths.AddFirst(map[tempSquare.y, tempSquare.x].transform.position);
+					usedSquares.Remove(tempSquare);
+	                Debug.Log("Counter: " + counter);
+	                return paths;
+	            }
+			}
 
-                paths.AddFirst(map[currentSquare.y, currentSquare.x].transform.position);
-                usedSquares.Remove(currentSquare);
-                Debug.Log("Counter: " + counter);
-                return paths;
-            }
+			leadingSquares.Clear();
+			fMin = int.MaxValue;
+
+			foreach (Square openSquare in openSquares)
+			{
+				if (openSquare.f < fMin)
+				{
+					leadingSquares.Clear ();
+					leadingSquares.AddLast (openSquare);
+					fMin = openSquare.f;
+				} else if (openSquare.f == fMin){
+					leadingSquares.AddLast (openSquare);
+				}
+			}
+			g++;
         } while (openSquares.Count > 0);
 
         return paths;
@@ -331,13 +378,18 @@ public class GameController : MonoBehaviour
 
         newSquare.x = (int)v.x;
         newSquare.y = (int)v.y;
-        newSquare.g = g;
         newSquare.h = getHeuristics(v, dv);
-        newSquare.f = newSquare.g + newSquare.h;
+        newSquare.f = g + newSquare.h;
 
         return newSquare;
     }
 
+	/// <summary>
+	/// Compares two squares
+	/// </summary>
+	/// <returns>The delta distance between the two squares</returns>
+	/// <param name="a">The alpha component.</param>
+	/// <param name="b">The blue component.</param>
     int distSquare(Square a, Square b)
     {
         int dx, dy;

@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour {
 
             float dist = Vector2.Distance(transform.position, first);
 
-            if (dist == 0)
+            if (dist <= 0.1)
                 movementPoints.RemoveFirst();
             else
                 transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
