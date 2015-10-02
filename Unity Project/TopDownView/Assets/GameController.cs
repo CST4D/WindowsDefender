@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour
             for (int j = 0; j < _mapWidth; j++)
             {
                 map[i, j] = (Tile)Instantiate(tile, new Vector2((0.5f * j), (0.5f * i)), transform.rotation);
-                map[i, j].Buildable = true;
+                map[i, j].Buildable = false;
                 map[i, j].Walkable = true;
                 map[i, j].transform.parent = transform.Find("Tilemap").transform;
             }
@@ -53,15 +53,38 @@ public class GameController : MonoBehaviour
         for(int i = 0; i < (_mapWidth - 1); i++)
         {
             map[1, i].Walkable = false;
-            //map[3, 1 + i].Walkable = false;
+            map[1, i].Buildable = true;
+            map[3, 1 + i].Walkable = false;
+            map[3, 1 + i].Buildable = true;
         }
-		map[3, 15].Walkable = false;
-		map[3, 14].Walkable = false;
+
+        for(int i = 4; i < (_mapHeight - 1); i++)
+        {
+            map[i, 1].Walkable = false;
+            map[i, 1].Buildable = true;
+            map[i + 1, 3].Walkable = false;
+            map[i + 1, 3].Buildable = true;
+            map[i, 5].Walkable = false;
+            map[i, 5].Buildable = true;
+            map[i + 1, 7].Walkable = false;
+            map[i + 1, 7].Buildable = true;
+            map[i, 9].Walkable = false;
+            map[i, 9].Buildable = true;
+            map[i + 1, 11].Walkable = false;
+            map[i + 1, 11].Buildable = true;
+            map[i, 13].Walkable = false;
+            map[i, 13].Buildable = true;
+        }
 
         _point = (Waypoint)Instantiate(wayPoint, map[(_mapHeight - 1), (_mapWidth - 1)].transform.position, transform.rotation);
         _point.transform.parent = transform;
 
         SpawnerAI enemySpawner = (SpawnerAI)Instantiate(spawner, map[0, 0].transform.position, transform.rotation);
+        enemySpawner.transform.parent = transform.Find("Spawners").transform;
+        spawners.Add(enemySpawner);
+        enemySpawner.wayPoints = pathFinding(enemySpawner);
+
+        enemySpawner = (SpawnerAI)Instantiate(spawner, map[11, 0].transform.position, transform.rotation);
         enemySpawner.transform.parent = transform.Find("Spawners").transform;
         spawners.Add(enemySpawner);
         enemySpawner.wayPoints = pathFinding(enemySpawner);
@@ -119,50 +142,25 @@ public class GameController : MonoBehaviour
         // List of tile indexes used for calculating waypoints
         LinkedList<Square> usedSquares = new LinkedList<Square>();
         LinkedList<Square> openSquares = new LinkedList<Square>();
-<<<<<<< HEAD
+
         LinkedList<Square> leadingSquares = new LinkedList<Square>();
-=======
-		LinkedList<Square> leadingSquares = new LinkedList<Square> ();
->>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
 
         Vector2 destSquare = FindTile(_point.gameObject);
         int fMin = 0, g = 0;
-        leadingSquares.AddLast(createSquare(g, FindTile(spawner.gameObject), destSquare));
-<<<<<<< HEAD
-        openSquares.AddLast(currentSquare);
-=======
->>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
+        Square spawn = createSquare(g, FindTile(spawner.gameObject), destSquare);
+        leadingSquares.AddLast(spawn);
 
         int counter = 0;
         int counterMax = (_mapWidth * _mapHeight) * 2;
         do
         {
-<<<<<<< HEAD
-
-            usedSquares.AddLast(currentSquare);
-            openSquares.Remove(currentSquare);
-
             if (counter > counterMax)
+            {
+                Debug.Log("Algorithm ran for too long, counts: " + counter);
                 return paths;
+            }
             else
                 counter++;
-
-            if (currentSquare.h != 0)
-            {
-                // Check Adjacent Squares
-                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)currentSquare.x, (int)currentSquare.y, usedSquares, openSquares);
-
-                g = currentSquare.g + 1;
-                foreach (Vector2 square in adjacentTiles)
-                {
-                    Square temp = createSquare(g, square, destSquare);
-
-                    if (!usedSquares.Contains(temp) && !openSquares.Contains(temp))
-=======
-			if (counter > counterMax)
-				return paths;
-			else
-				counter++;
 
 			foreach(Square square in leadingSquares){
 				openSquares.Remove (square);
@@ -173,7 +171,7 @@ public class GameController : MonoBehaviour
 	            if (square.h != 0)
 	            {
 	                // Check Adjacent Squares
-	                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)square.x, (int)square.y);
+	                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)square.x, (int)square.y, usedSquares, openSquares);
 
 	                foreach (Vector2 adjacentSquare in adjacentTiles)
 	                {
@@ -186,7 +184,6 @@ public class GameController : MonoBehaviour
 							if(distSquare(temp, usedSquare) == 0)
 								continue;
 				
->>>>>>> 6bdf18c4f569afd8b87ddff82d65d0228313d5d0
                         openSquares.AddLast(temp);
 	                }
 
@@ -214,11 +211,11 @@ public class GameController : MonoBehaviour
 	                    }
 
 						tempSquare = cmpSquare;
-	                } while (g > 0);
+	                } while (distSquare(tempSquare, spawn) != 0);
 
-					paths.AddFirst(map[tempSquare.y, tempSquare.x].transform.position);
+					paths.AddFirst(map[spawn.y, spawn.x].transform.position);
 					usedSquares.Remove(tempSquare);
-	                Debug.Log("Counter: " + counter);
+	                Debug.Log("Counter Finished: " + counter);
 	                return paths;
 	            }
 			}
@@ -238,8 +235,9 @@ public class GameController : MonoBehaviour
 				}
 			}
 			g++;
-        } while (openSquares.Count > 0);
+        } while (leadingSquares.Count > 0);
 
+        Debug.Log("Somehow reached end of function: " + counter);
         return paths;
     }
 
@@ -261,7 +259,7 @@ public class GameController : MonoBehaviour
                 continue;
 
             // Check Left-side
-            if ((x - 1 > 0))
+            if ((x - 1 >= 0))
             {
                 // top-left & bottom-left corners
                 if (i == (y - 1) || i == (y + 1))

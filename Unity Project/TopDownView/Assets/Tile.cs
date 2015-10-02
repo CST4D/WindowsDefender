@@ -30,22 +30,22 @@ public class Tile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(_buildable && _currentSprite != SpriteBuildable)
+        if(_walkable && _currentSprite != SpriteBuildable)
         {
             _currentSprite = SpriteBuildable;
             GetComponent<SpriteRenderer>().sprite = _currentSprite;
-        } else if (!_buildable && _currentSprite != SpriteUnbuildable)
+        } else if (!_walkable && _currentSprite != SpriteUnbuildable)
         {
             _currentSprite = SpriteUnbuildable;
             GetComponent<SpriteRenderer>().sprite = _currentSprite;
         }
 
-        if (_walkable && _colorState != UnityEngine.Color.green)
+        if (_buildable && _colorState != UnityEngine.Color.green)
         {
             _colorState = UnityEngine.Color.green;
             GetComponent<SpriteRenderer>().color = _colorState;
         }
-        else if (!_walkable && _colorState != UnityEngine.Color.red)
+        else if (!_buildable && _colorState != UnityEngine.Color.red)
         {
             _colorState = UnityEngine.Color.red;
             GetComponent<SpriteRenderer>().color = _colorState;

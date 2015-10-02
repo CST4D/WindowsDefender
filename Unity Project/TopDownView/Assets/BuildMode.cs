@@ -20,7 +20,6 @@ public class BuildMode : MonoBehaviour {
             Vector3 mousePos = Input.mousePosition;
             mousePos.z -= Camera.main.transform.position.z;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
-            building.transform.position = Vector2.MoveTowards(building.transform.position, mousePos, 10.0f * Time.deltaTime);
 
             Tile[] tiles = FindObjectsOfType<Tile>();
             Tile closestTile = null;
@@ -28,7 +27,7 @@ public class BuildMode : MonoBehaviour {
 
             foreach(Tile tile in tiles)
             {
-                float dist = Vector2.Distance(tile.transform.position, building.transform.position);
+                float dist = Vector2.Distance(tile.transform.position, mousePos);
 
                 if( dist < closestDist)
                 {
@@ -42,6 +41,7 @@ public class BuildMode : MonoBehaviour {
                 if (closestTile.Buildable)
                 {
                     building.GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
+                    building.transform.position = closestTile.transform.position;
                     if (Input.GetMouseButtonDown(0))
                     {
                         building.operating = true;
