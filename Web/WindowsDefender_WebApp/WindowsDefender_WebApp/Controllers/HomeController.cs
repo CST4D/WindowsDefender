@@ -16,6 +16,16 @@ namespace WindowsDefender_WebApp.Controllers {
             return View();
         }
 
+        public ActionResult Download()
+        {
+            return View();
+        }
+
+        public ActionResult Media()
+        {
+            return View();
+        }
+
         public ActionResult Contact() {
             ViewBag.Message = "Your contact page.";
 

@@ -29,13 +29,27 @@
             </div>
         </div>
     </div>
+    @*@{
+        var controller = ViewContext.RouteData.Values["controller"];
+        var action = ViewContext.RouteData.Values["action"];
+        if ((string)controller == "Home" && (string)action == "Index")
+        {
+
+        }
+    }*@
+
+    @if (IsSectionDefined("Hero"))
+    {
+        @RenderSection("Hero");
+    }
+
     <div class="container body-content">
-        @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
-        </footer>
+        @RenderBody()   
     </div>
+
+    <footer>
+        &copy; @DateTime.Now.Year - My ASP.NET Application
+    </footer>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
