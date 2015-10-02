@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.Collections;
 
 public class EnemyAI : MonoBehaviour {
 
-    public Waypoint next;
+    public LinkedList<Vector2> movementPoints;
+
+    public float movementSpeed;
     public int health;
 	// Use this for initialization
 	void Start () {
@@ -11,19 +14,16 @@ public class EnemyAI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (this.next != null)
+        if (movementPoints != null && movementPoints.Count > 0)
         {
-            float distance = Vector2.Distance(transform.position, this.next.transform.position);
+            Vector2 first = movementPoints.First.Value;
 
-            if (distance > 0)
-            {
-                transform.position = Vector2.MoveTowards(transform.position, this.next.transform.position, 1 * Time.deltaTime);
-            }
+            float dist = Vector2.Distance(transform.position, first);
+
+            if (dist == 0)
+                movementPoints.RemoveFirst();
             else
-            {
-                if (next.next != null)
-                    next = next.next;
-            }
+                transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
         }
 	}
 

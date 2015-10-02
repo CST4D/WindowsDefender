@@ -15,7 +15,7 @@ public class TowerAI : Building {
 	
 	// Update is called once per frame
 	void Update () {
-        if (enabled)
+        if (operating)
         {
 
             GameObject[] targets = GameObject.FindGameObjectsWithTag("MONSTER");

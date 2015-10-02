@@ -22,11 +22,41 @@ public class BuildMode : MonoBehaviour {
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
             building.transform.position = Vector2.MoveTowards(building.transform.position, mousePos, 10.0f * Time.deltaTime);
 
-            if (Input.GetMouseButtonDown(0))
+            Tile[] tiles = FindObjectsOfType<Tile>();
+            Tile closestTile = null;
+            float closestDist = 1.0f;
+
+            foreach(Tile tile in tiles)
             {
-                building.enabled = true;
-                buildMode = false;
-                building = null;
+                float dist = Vector2.Distance(tile.transform.position, building.transform.position);
+
+                if( dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestTile = tile;
+                }
+            }
+
+            if(closestTile != null)
+            {
+                if (closestTile.Buildable)
+                {
+                    building.GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
+                    if (Input.GetMouseButtonDown(0))
+                    {
+                        building.operating = true;
+                        buildMode = false;
+                        building.transform.position = closestTile.transform.position;
+                        closestTile.Buildable = false;
+                        closestTile.Walkable = false;
+                        building.transform.parent = transform.Find("Towers").transform;
+                        building = null;
+                    }
+                }
+                else
+                {
+                    building.GetComponent<SpriteRenderer>().color = UnityEngine.Color.red;
+                }
             }
         }
 	}
@@ -40,7 +70,7 @@ public class BuildMode : MonoBehaviour {
             mousePos.z -= Camera.main.transform.position.z;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
             building = (Building) Instantiate(tower, mousePos, transform.rotation);
-            building.enabled = false;
+            building.operating = false;
         }
     }
 }

@@ -13,13 +13,13 @@ public class CameraAI : MonoBehaviour {
         Vector3 direction = transform.position;
 
         if (Input.GetKey(KeyCode.W))
-            direction.y += 1;
+            direction.y += 2;
         if (Input.GetKey(KeyCode.A))
-            direction.x -= 1;
+            direction.x -= 2;
         if (Input.GetKey(KeyCode.S))
-            direction.y -= 1;
+            direction.y -= 2;
         if (Input.GetKey(KeyCode.D))
-            direction.x += 1;
+            direction.x += 2;
 
         transform.position = Vector3.MoveTowards(transform.position, direction, 1.0f * Time.deltaTime);
     }
