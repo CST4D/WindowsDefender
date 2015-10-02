@@ -117,10 +117,11 @@ public class GameController : MonoBehaviour
         // List of tile indexes used for calculating waypoints
         LinkedList<Square> usedSquares = new LinkedList<Square>();
         LinkedList<Square> openSquares = new LinkedList<Square>();
+        LinkedList<Square> leadingSquares = new LinkedList<Square>();
 
         Vector2 destSquare = FindTile(_point.gameObject);
         int fMin = 0, g = 0;
-        Square currentSquare = createSquare(g, FindTile(spawner.gameObject), destSquare);
+        leadingSquares.AddLast(createSquare(g, FindTile(spawner.gameObject), destSquare));
         openSquares.AddLast(currentSquare);
 
         int counter = 0;
@@ -139,7 +140,7 @@ public class GameController : MonoBehaviour
             if (currentSquare.h != 0)
             {
                 // Check Adjacent Squares
-                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)currentSquare.x, (int)currentSquare.y);
+                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)currentSquare.x, (int)currentSquare.y, usedSquares, openSquares);
 
                 g = currentSquare.g + 1;
                 foreach (Vector2 square in adjacentTiles)
@@ -203,7 +204,7 @@ public class GameController : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    LinkedList<Vector2> AdjacentTiles(int x, int y)
+    LinkedList<Vector2> AdjacentTiles(int x, int y, LinkedList<Square> usedSquares, LinkedList<Square> openSquares)
     {
         LinkedList<Vector2> adjacentTiles = new LinkedList<Vector2>();
 
@@ -257,6 +258,22 @@ public class GameController : MonoBehaviour
                 }
             }
         }
+
+        LinkedList<Vector2> removeTiles = new LinkedList<Vector2>();
+
+        foreach (Vector2 adjacentTile in adjacentTiles)
+        {
+            foreach (Square usedSquare in usedSquares)
+                if ((int)adjacentTile.x == usedSquare.x && (int)adjacentTile.y == usedSquare.y)
+                    removeTiles.AddLast(adjacentTile);
+
+            foreach (Square openSquare in openSquares)
+                if ((int)adjacentTile.x == openSquare.x && (int)adjacentTile.y == openSquare.y)
+                    removeTiles.AddLast(adjacentTile);
+        }
+
+        foreach (Vector2 removeTile in removeTiles)
+            adjacentTiles.Remove(removeTile);
 
         return adjacentTiles;
     }
