@@ -45,11 +45,22 @@
     }
 
     <div class="container body-content">
-        @RenderBody()   
+        @RenderBody()
     </div>
+    
 
     <footer>
-        &copy; @DateTime.Now.Year - My ASP.NET Application
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3">
+                    &copy; @DateTime.Now.Year - Tech Pro Set 4D
+                </div>
+                <div class="col-xs-9" style="text-align: right">
+                    <small>This is an academic project. Use of names and/or media falls under the fair use guidelines.</>
+                </div>
+            </div>
+
+        </div>
     </footer>
 
     @Scripts.Render("~/bundles/jquery")

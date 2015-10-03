@@ -63,9 +63,9 @@ namespace WindowsDefender_WebApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap call_to_action1 {
+        internal static System.Drawing.Bitmap bgtexture {
             get {
-                object obj = ResourceManager.GetObject("call_to_action1", resourceCulture);
+                object obj = ResourceManager.GetObject("bgtexture", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace WindowsDefender_WebApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap call_to_action2 {
+        internal static System.Drawing.Bitmap call_to_action1 {
             get {
-                object obj = ResourceManager.GetObject("call_to_action2", resourceCulture);
+                object obj = ResourceManager.GetObject("call_to_action1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

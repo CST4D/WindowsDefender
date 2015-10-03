@@ -197,6 +197,10 @@
     <None Include="Resources\call_to_action1.jpg" />
     <None Include="Resources\call_to_action2.jpg" />
     <None Include="Resources\hero.JPG" />
+    <None Include="Resources\bg.jpg" />
+    <None Include="Resources\call_to_action1.png" />
+    <None Include="Resources\bg2.png" />
+    <None Include="Resources\bgtexture.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
