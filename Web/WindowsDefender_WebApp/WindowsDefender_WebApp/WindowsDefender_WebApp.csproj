@@ -196,6 +196,7 @@
     <None Include="Resources\call_to_action1.png" />
     <None Include="Resources\bgtexture.png" />
     <None Include="Resources\icon.png" />
+    <None Include="Resources\searching.gif" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
