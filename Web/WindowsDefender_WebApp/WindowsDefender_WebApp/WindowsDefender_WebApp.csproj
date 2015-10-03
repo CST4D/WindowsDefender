@@ -170,6 +170,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\MatchmakingController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -191,16 +192,10 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
-    <None Include="Resources\images.jpg" />
-    <None Include="Resources\Portchester_Castle_D_shaped_towers.JPG" />
-    <None Include="Resources\tower_defense_mystic_kingdom.jpg" />
-    <None Include="Resources\call_to_action1.jpg" />
-    <None Include="Resources\call_to_action2.jpg" />
     <None Include="Resources\hero.JPG" />
-    <None Include="Resources\bg.jpg" />
     <None Include="Resources\call_to_action1.png" />
-    <None Include="Resources\bg2.png" />
     <None Include="Resources\bgtexture.png" />
+    <None Include="Resources\icon.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
@@ -251,7 +246,8 @@
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Download.cshtml" />
     <Content Include="Views\Home\Media.cshtml" />
-    <Content Include="Views\Account\Lobby.cshtml" />
+    <Content Include="Views\Matchmaking\Lobby.cshtml" />
+    <Content Include="Views\Matchmaking\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

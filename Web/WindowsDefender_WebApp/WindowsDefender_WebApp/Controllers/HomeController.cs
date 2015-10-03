@@ -6,9 +6,10 @@ using System.Web.Mvc;
 
 namespace WindowsDefender_WebApp.Controllers {
     public class HomeController : Controller {
+
         public ActionResult Index() {
             if (User.Identity.IsAuthenticated)
-                return RedirectToAction("Lobby", "Account");
+                return RedirectToAction("Index", "Matchmaking");
             return View();
         }
 
