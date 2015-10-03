@@ -28,12 +28,6 @@ namespace WindowsDefender_WebApp.Controllers
             SignInManager = signInManager;
         }
 
-        [Authorize]
-        public ActionResult Lobby()
-        {
-            return View();
-        }
-
         public ApplicationSignInManager SignInManager
         {
             get

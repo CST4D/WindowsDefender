@@ -2,7 +2,6 @@
   height: 100%;
 }
 
-
 body {
     padding-top: 50px;
     background: url(../Resources/bgtexture.png);
@@ -31,6 +30,7 @@ textarea {
 .navbar {
     background: #158CBA;
     box-shadow: 0 2px 2px -2px gray;
+    line-height: 50px;
 }
 
 .navbar-brand {
@@ -39,6 +39,11 @@ textarea {
 
 .navbar li a:link {
     color: white;
+}
+
+.navbar-icon {
+    height: 30px;
+    width: 30px;
 }
 
 .hero {
@@ -91,4 +96,15 @@ footer {
     height: 40px;
     width: 100%;
     line-height: 40px;
+}
+
+/* LOBBY ------------------------------------------------------------------------ */
+.chat {
+    max-width: none;
+    margin-bottom: 10px;
+    min-height: 300px;
+}
+.chatmessage {
+    max-width: none;
+    height: 37px;
 }
