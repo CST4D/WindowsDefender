@@ -108,3 +108,34 @@ footer {
     max-width: none;
     height: 37px;
 }
+
+
+/* DOWNLOAD ------------------------------------------------------------------------ */
+.requirementtitle {
+    font-weight: bold;
+}
+.downloadhero {
+    height: 300px;
+    background: black;
+    padding: 25px;
+    margin: 0;
+    background: url(../Resources/hero.JPG);
+    background-size: 100% 100%;
+    box-shadow: 0 4px 2px -2px gray;
+}
+.fixed-panel {
+    min-height: 305px;
+    max-height: 305px;
+}
+.signup-text {
+    color:#ae2509;
+}
+.signup-text:hover {
+    color: #ae2509;
+}
+
+/* MARGINS ------------------------------------------------------------------------ */
+/* top, bottom, left, right + amount */
+.top50 {
+    margin-top: 50px;
+}
