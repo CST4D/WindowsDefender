@@ -3,6 +3,12 @@
 [Oo]bj/
 [Bb]uild/
  
+# Networking
+"Testing Networking/Library/"
+"Testing Networking/Builds/"
+*.log
+*.db
+ 
 # UBB backups
 UBB/
 unitybinarybackup.exe
