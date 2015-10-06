@@ -40,7 +40,7 @@ public class NetworkManager : MonoBehaviour {
 
 
     // Update is called once per frame
-    /*void Update()
+   /* void Update()
     {
 
         if(!networkView.isMine)
@@ -297,7 +297,15 @@ public class NetworkManager : MonoBehaviour {
 
         if(hostData != null)
         {
-            for(int i = 0; i < hostData.Length; i++)
+
+
+
+            if (GUI.Button(new Rect(Screen.width / 2 + 300f, 65f, 100f, 30f), "connect to Nadia's Computer"))
+            {
+                Network.Connect("142.232.18.95", 25002);
+            }
+
+            for (int i = 0; i < hostData.Length; i++)
             {
                 if(GUI.Button(new Rect(Screen.width/2, 65f+ (30f * i), 300f, 30f), hostData[i].gameName))
                 {
