@@ -4,6 +4,7 @@ using System.Collections;
 public class BuildMode : MonoBehaviour {
 
     private bool buildMode;
+    
 
     Building building;
 
@@ -17,6 +18,7 @@ public class BuildMode : MonoBehaviour {
 
         if (buildMode && building != null)
         {
+            
             Vector3 mousePos = Input.mousePosition;
             mousePos.z -= Camera.main.transform.position.z;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
@@ -38,6 +40,7 @@ public class BuildMode : MonoBehaviour {
 
             if(closestTile != null)
             {
+                
                 if (closestTile.Buildable)
                 {
                     building.GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
@@ -46,6 +49,7 @@ public class BuildMode : MonoBehaviour {
                     {
                         building.operating = true;
                         buildMode = false;
+                        
                         building.transform.position = closestTile.transform.position;
                         closestTile.Buildable = false;
                         closestTile.Walkable = false;
@@ -66,10 +70,12 @@ public class BuildMode : MonoBehaviour {
         if (!buildMode)
         {
             buildMode = true;
+            
             Vector3 mousePos = Input.mousePosition;
             mousePos.z -= Camera.main.transform.position.z;
             mousePos = Camera.main.ScreenToWorldPoint(mousePos);
             building = (Building) Instantiate(tower, mousePos, transform.rotation);
+           
             building.operating = false;
         }
     }
