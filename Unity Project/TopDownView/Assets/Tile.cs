@@ -10,6 +10,7 @@ public class Tile : MonoBehaviour {
     private bool _buildable;
     private bool _walkable;
     private UnityEngine.Color _colorState;
+    public Sprite mapSprite = null;
 
     public bool Buildable
     {
@@ -30,7 +31,12 @@ public class Tile : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if(_walkable && _currentSprite != SpriteBuildable)
+        if (mapSprite != null)
+        {
+            _currentSprite = mapSprite;
+            GetComponent<SpriteRenderer>().sprite = _currentSprite;
+        }
+        else if(_walkable && _currentSprite != SpriteBuildable)
         {
             _currentSprite = SpriteBuildable;
             GetComponent<SpriteRenderer>().sprite = _currentSprite;
