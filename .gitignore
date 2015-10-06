@@ -20,6 +20,7 @@ Assets/UnityVS.meta
 *.userprefs
 *.pidb
 *.booproj
+*.log
  
 # Unity3D Generated File On Crash Reports
 sysinfo.txt
