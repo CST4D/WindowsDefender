@@ -186,20 +186,46 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Theme\material-fullpalette.css" />
+    <Content Include="Content\Theme\material-fullpalette.min.css" />
+    <Content Include="Content\Theme\material.css" />
+    <Content Include="Content\Theme\material.min.css" />
+    <Content Include="Content\Theme\ripples.css" />
+    <Content Include="Content\Theme\ripples.min.css" />
+    <Content Include="Content\Theme\roboto.css" />
+    <Content Include="Content\Theme\roboto.min.css" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="fonts\Material-Design-Icons.svg" />
     <Content Include="Global.asax" />
-    <Content Include="Content\Site.css" />
+    <Content Include="Content\site.css" />
+    <Content Include="Content\Theme\material-fullpalette.css.map" />
+    <Content Include="Content\Theme\material-fullpalette.min.css.map" />
+    <Content Include="Content\Theme\material.css.map" />
+    <Content Include="Content\Theme\material.min.css.map" />
+    <Content Include="Content\Theme\ripples.css.map" />
+    <Content Include="Content\Theme\ripples.min.css.map" />
+    <Content Include="Content\Theme\roboto.css.map" />
+    <Content Include="Content\Theme\roboto.min.css.map" />
+    <Content Include="fonts\Material-Design-Icons.eot" />
+    <Content Include="fonts\Material-Design-Icons.ttf" />
+    <Content Include="fonts\Material-Design-Icons.woff" />
+    <Content Include="fonts\RobotoDraftBold.woff" />
+    <Content Include="fonts\RobotoDraftBold.woff2" />
+    <Content Include="fonts\RobotoDraftItalic.woff" />
+    <Content Include="fonts\RobotoDraftItalic.woff2" />
+    <Content Include="fonts\RobotoDraftMedium.woff" />
+    <Content Include="fonts\RobotoDraftMedium.woff2" />
+    <Content Include="fonts\RobotoDraftRegular.woff" />
+    <Content Include="fonts\RobotoDraftRegular.woff2" />
     <None Include="Resources\hero.JPG" />
     <None Include="Resources\call_to_action1.png" />
     <None Include="Resources\bgtexture.png" />
     <None Include="Resources\icon.png" />
     <None Include="Resources\searching.gif" />
-    <Content Include="Scripts\bootstrap.js" />
-    <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <None Include="Scripts\jquery.validate-vsdoc.js" />
@@ -207,9 +233,13 @@
     <Content Include="Scripts\jquery.validate.min.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\material.js" />
+    <Content Include="Scripts\material.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
     <Content Include="Scripts\respond.js" />
     <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\ripples.js" />
+    <Content Include="Scripts\ripples.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -249,6 +279,8 @@
     <Content Include="Views\Home\Media.cshtml" />
     <Content Include="Views\Matchmaking\Lobby.cshtml" />
     <Content Include="Views\Matchmaking\Index.cshtml" />
+    <Content Include="Scripts\material.min.js.map" />
+    <Content Include="Scripts\ripples.min.js.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
