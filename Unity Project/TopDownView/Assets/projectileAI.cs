@@ -5,6 +5,8 @@ public class projectileAI : MonoBehaviour {
     public GameObject target;
 
     public int damage;
+    public int drainDamage;
+    public float drainSpd;
 	// Use this for initialization
 	void Start () {
 	}
