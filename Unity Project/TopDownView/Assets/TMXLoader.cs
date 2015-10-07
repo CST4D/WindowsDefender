@@ -80,11 +80,11 @@ public class TMXLoader {
                 {
                     for (int x = 0; x < mapWidth; x++)
                     {
-                        if (Convert.ToInt32(linesplit[(y * mapHeight) + x]) > 0)
+                        if (Convert.ToInt32(linesplit[(y * mapWidth) + x]) > 0)
                         {
                             tiles[mapHeight - y - 1, x].Buildable = buildable;
                             tiles[mapHeight - y - 1, x].Walkable = walkable;
-                            tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapHeight) + x])];
+                            tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
                         }
                     }
                 }
@@ -99,16 +99,24 @@ public class TMXLoader {
                     {
                         int x = Convert.ToInt32(obj.Attributes["x"].InnerText) / 32;
                         int y = mapHeight - (Convert.ToInt32(obj.Attributes["y"].InnerText) / 32) - 1;
+                        
+                        if (obj.Attributes["type"].InnerText.ToLower() == "waypoint")
+                        {
+                            Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[y, x].transform.position, context.transform.rotation);
+                            point.transform.parent = context.transform;
+                            context.setWayPoint(point);
+                        }
+                    }
+                    foreach (XmlNode obj in i2.ChildNodes)
+                    {
+                        int x = Convert.ToInt32(obj.Attributes["x"].InnerText) / 32;
+                        int y = mapHeight - (Convert.ToInt32(obj.Attributes["y"].InnerText) / 32) - 1;
                         if (obj.Attributes["type"].InnerText.ToLower() == "spawner")
                         {
                             SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[y, x].transform.position, context.transform.rotation);
                             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
                             context.addSpawnerToSpawnerList(enemySpawner);
-                            Debug.Log(x + " " + y);
-                        }
-                        if (obj.Attributes["type"].InnerText.ToLower() == "waypoint")
-                        {
-                            context.addWaypoint(new Vector2(y*32, x*32));
+                            
                         }
                     }
                 }

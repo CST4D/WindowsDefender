@@ -16,7 +16,6 @@ public class GameController : MonoBehaviour
     private Waypoint _point;
     private Tile[,] map;
     private int _mapWidth, _mapHeight;
-    private LinkedList<Vector2> waypoints;
 
     struct Square
     {
@@ -31,7 +30,6 @@ public class GameController : MonoBehaviour
     {
         enemies = new ArrayList();
         spawners = new ArrayList();
-        waypoints = new LinkedList<Vector2>();
         timer = 0;
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
@@ -58,10 +56,6 @@ public class GameController : MonoBehaviour
         tmxl.load();
     }
 
-    public void addWaypoint(Vector2 way)
-    {
-        waypoints.AddLast(way);
-    }
 
     // Update is called once per frame
     void Update()
@@ -103,8 +97,15 @@ public class GameController : MonoBehaviour
     
     public void addSpawnerToSpawnerList(SpawnerAI spai)
     {
+
         spawners.Add(spai);
         spai.wayPoints = pathFinding(spai);
+        
+    }
+
+    public void setWayPoint(Waypoint way)
+    {
+        _point = way;
     }
 
     /// <summary>
@@ -386,7 +387,7 @@ public class GameController : MonoBehaviour
     {
         LinkedList<Vector2> copyWaypoints = new LinkedList<Vector2>();
 
-        foreach(Vector2 v in waypoints)
+        foreach(Vector2 v in spawner.wayPoints)
         {
             copyWaypoints.AddLast(v);
         }
