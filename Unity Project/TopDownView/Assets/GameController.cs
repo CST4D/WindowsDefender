@@ -32,10 +32,12 @@ public class GameController : MonoBehaviour
         spawners = new ArrayList();
         timer = 0;
 
-        // Placeholder Generation Code
-        int tilesize = 50;
-        _mapWidth = 800 / tilesize;
-        _mapHeight = 600 / tilesize;
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
+        tmxl.loadMeta();
+
+        int tilesize = 32;
+        _mapWidth = tmxl.mapWidth;
+        _mapHeight = tmxl.mapHeight;
 
         map = new Tile[_mapHeight, _mapWidth];
 
@@ -43,52 +45,17 @@ public class GameController : MonoBehaviour
         {
             for (int j = 0; j < _mapWidth; j++)
             {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.5f * j), (0.5f * i)), transform.rotation);
+                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.32f * j), (0.32f * i)), transform.rotation);
                 map[i, j].Buildable = false;
                 map[i, j].Walkable = true;
                 map[i, j].transform.parent = transform.Find("Tilemap").transform;
             }
         }
 
-        for(int i = 0; i < (_mapWidth - 1); i++)
-        {
-            map[1, i].Walkable = false;
-            map[1, i].Buildable = true;
-            map[3, 1 + i].Walkable = false;
-            map[3, 1 + i].Buildable = true;
-        }
-
-        for(int i = 4; i < (_mapHeight - 1); i++)
-        {
-            map[i, 1].Walkable = false;
-            map[i, 1].Buildable = true;
-            map[i + 1, 3].Walkable = false;
-            map[i + 1, 3].Buildable = true;
-            map[i, 5].Walkable = false;
-            map[i, 5].Buildable = true;
-            map[i + 1, 7].Walkable = false;
-            map[i + 1, 7].Buildable = true;
-            map[i, 9].Walkable = false;
-            map[i, 9].Buildable = true;
-            map[i + 1, 11].Walkable = false;
-            map[i + 1, 11].Buildable = true;
-            map[i, 13].Walkable = false;
-            map[i, 13].Buildable = true;
-        }
-
-        _point = (Waypoint)Instantiate(wayPoint, map[(_mapHeight - 1), (_mapWidth - 1)].transform.position, transform.rotation);
-        _point.transform.parent = transform;
-
-        SpawnerAI enemySpawner = (SpawnerAI)Instantiate(spawner, map[0, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
-
-        enemySpawner = (SpawnerAI)Instantiate(spawner, map[11, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
+        tmxl.tiles = map;
+        tmxl.load();
     }
+
 
     // Update is called once per frame
     void Update()
@@ -126,6 +93,19 @@ public class GameController : MonoBehaviour
                 enemies.Remove(temp);
             }
         }
+    }
+    
+    public void addSpawnerToSpawnerList(SpawnerAI spai)
+    {
+
+        spawners.Add(spai);
+        spai.wayPoints = pathFinding(spai);
+        
+    }
+
+    public void setWayPoint(Waypoint way)
+    {
+        _point = way;
     }
 
     /// <summary>
