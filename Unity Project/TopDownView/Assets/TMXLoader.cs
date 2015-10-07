@@ -9,13 +9,13 @@ public class TMXLoader {
     public int mapWidth, mapHeight;
     public Sprite[] sprites;
     public Tile[,] tiles;
-    private MonoBehaviour context;
+    private GameController context;
     private XmlDocument doc;
 
     private XmlNodeList mapList;
     private XmlNode mapNode;
 
-    public TMXLoader(TextAsset tAsset, MonoBehaviour context)
+    public TMXLoader(TextAsset tAsset, GameController context)
     {
         this.tAsset = tAsset;
         this.context = context;
@@ -43,21 +43,22 @@ public class TMXLoader {
             XmlNode i2 = mapList[i];
             if (i2.Name == "tileset")
             {
-                Texture2D tileset = Resources.Load<Texture2D>(i2["image"].Attributes["source"].InnerText);
-                Rect rec = new Rect(0, 0, 32, 32);
+                Texture2D tileset = Resources.Load<Texture2D>(i2["image"].Attributes["source"].InnerText.Substring(0, i2["image"].Attributes["source"].InnerText.LastIndexOf('.')));
                 int imgWidth = Convert.ToInt32(i2["image"].Attributes["width"].InnerText);
                 int firstgid = Convert.ToInt32(i2.Attributes["firstgid"].InnerText);
-                
+
                 int tilecount = Convert.ToInt32(i2.Attributes["tilecount"].InnerText);
                 int afterlastgid = firstgid + tilecount;
                 spriteArraySize += tilecount;
 
+                Vector2 pivot = new Vector2(0.5f, 0.5f);
 
                 Array.Resize<Sprite>(ref sprites, spriteArraySize);
-                for (int y = 0; firstgid < afterlastgid; y++) 
+                for (int y = 0; firstgid < afterlastgid; y++)
                 {
-                    for (int x = 0; (firstgid < afterlastgid) && (x*32 < imgWidth); x++) {
-                        Sprite.Create(tileset, rec, new Vector2(x, y), 1);
+                    for (int x = 0; (firstgid < afterlastgid) && (x * 32 < imgWidth); x++)
+                    {
+                        sprites[firstgid] = Sprite.Create(tileset, new Rect(x * 32, y * 32, 32, 32), pivot);
                         firstgid++;
                     }
                 }
@@ -76,19 +77,42 @@ public class TMXLoader {
                 }
                 string[] linesplit = i2["data"].InnerText.Split(',');
                 for (int y = 0; y < mapHeight; y++)
-                { 
+                {
                     for (int x = 0; x < mapWidth; x++)
                     {
                         if (Convert.ToInt32(linesplit[(y * mapHeight) + x]) > 0)
                         {
-                            tiles[y, x].Buildable = walkable;
-                            tiles[y, x].Walkable = buildable;
-                            tiles[y, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapHeight) + x])];
+                            tiles[mapHeight - y - 1, x].Buildable = buildable;
+                            tiles[mapHeight - y - 1, x].Walkable = walkable;
+                            tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapHeight) + x])];
                         }
                     }
                 }
-                    
-                
+
+
+            }
+            if (i2.Name == "objectgroup")
+            {
+                if (i2.Attributes["name"].InnerText.ToLower() == "entities")
+                {
+                    foreach (XmlNode obj in i2.ChildNodes)
+                    {
+                        int x = Convert.ToInt32(obj.Attributes["x"].InnerText) / 32;
+                        int y = mapHeight - (Convert.ToInt32(obj.Attributes["y"].InnerText) / 32) - 1;
+                        if (obj.Attributes["type"].InnerText.ToLower() == "spawner")
+                        {
+                            SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[y, x].transform.position, context.transform.rotation);
+                            enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
+                            context.addSpawnerToSpawnerList(enemySpawner);
+                            Debug.Log(x + " " + y);
+                        }
+                        if (obj.Attributes["type"].InnerText.ToLower() == "waypoint")
+                        {
+                            context.addWaypoint(new Vector2(y*32, x*32));
+                        }
+                    }
+                }
+
             }
         }
     }

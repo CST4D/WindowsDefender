@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     private Waypoint _point;
     private Tile[,] map;
     private int _mapWidth, _mapHeight;
+    private LinkedList<Vector2> waypoints;
 
     struct Square
     {
@@ -30,6 +31,7 @@ public class GameController : MonoBehaviour
     {
         enemies = new ArrayList();
         spawners = new ArrayList();
+        waypoints = new LinkedList<Vector2>();
         timer = 0;
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
@@ -45,27 +47,20 @@ public class GameController : MonoBehaviour
         {
             for (int j = 0; j < _mapWidth; j++)
             {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.5f * j), (0.5f * i)), transform.rotation);
+                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.32f * j), (0.32f * i)), transform.rotation);
                 map[i, j].Buildable = false;
                 map[i, j].Walkable = true;
                 map[i, j].transform.parent = transform.Find("Tilemap").transform;
             }
         }
 
+        tmxl.tiles = map;
         tmxl.load();
+    }
 
-        _point = (Waypoint)Instantiate(wayPoint, map[(_mapHeight - 1), (_mapWidth - 1)].transform.position, transform.rotation);
-        _point.transform.parent = transform;
-
-        SpawnerAI enemySpawner = (SpawnerAI)Instantiate(spawner, map[0, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
-
-        enemySpawner = (SpawnerAI)Instantiate(spawner, map[11, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
+    public void addWaypoint(Vector2 way)
+    {
+        waypoints.AddLast(way);
     }
 
     // Update is called once per frame
@@ -104,6 +99,12 @@ public class GameController : MonoBehaviour
                 enemies.Remove(temp);
             }
         }
+    }
+    
+    public void addSpawnerToSpawnerList(SpawnerAI spai)
+    {
+        spawners.Add(spai);
+        spai.wayPoints = pathFinding(spai);
     }
 
     /// <summary>
@@ -385,7 +386,7 @@ public class GameController : MonoBehaviour
     {
         LinkedList<Vector2> copyWaypoints = new LinkedList<Vector2>();
 
-        foreach(Vector2 v in spawner.wayPoints)
+        foreach(Vector2 v in waypoints)
         {
             copyWaypoints.AddLast(v);
         }

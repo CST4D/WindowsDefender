@@ -35,6 +35,7 @@ public class Tile : MonoBehaviour {
         {
             _currentSprite = mapSprite;
             GetComponent<SpriteRenderer>().sprite = _currentSprite;
+            GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
         }
         else if(_walkable && _currentSprite != SpriteBuildable)
         {
