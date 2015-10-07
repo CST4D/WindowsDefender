@@ -6,8 +6,12 @@ public class EnemyAI : MonoBehaviour {
 
     public LinkedList<Vector2> movementPoints;
 
-    public float movementSpeed;
     public int health;
+    public float movementSpeed;
+    public bool isVisible;
+    public bool isGround;
+    public int armour;
+    public double resistance;
 	// Use this for initialization
 	void Start () {
 	}
@@ -33,8 +37,15 @@ public class EnemyAI : MonoBehaviour {
         {
             projectileAI projectile = obj.gameObject.GetComponent<projectileAI>();
 
-            health -= projectile.damage;
-            Destroy(obj.gameObject);
+            if (projectile.target == this.gameObject)
+            {
+                int damage;
+
+                if((damage = projectile.damage - armour) > 0)
+                    health -= damage;
+
+                Destroy(obj.gameObject);
+            }
         }
     }
 }
