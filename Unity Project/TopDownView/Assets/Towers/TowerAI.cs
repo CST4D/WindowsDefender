@@ -43,6 +43,7 @@ public class TowerAI : Building {
                 if (target != null)
                 {
                     projectile = (projectileAI)projectileAI.Instantiate(projectileSource, transform.position, transform.rotation);
+                    projectile.transform.parent = transform.parent.parent.Find("Projectiles");
                     projectile.damage = 50;
 
                     projectile.target = target;
