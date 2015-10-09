@@ -21,6 +21,7 @@ public class GameController : MonoBehaviour
 
     struct Square
     {
+        public int g;
         public int h;
         public int f;
         public int x;
@@ -39,7 +40,7 @@ public class GameController : MonoBehaviour
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
         tmxl.loadMeta();
 
-        int tilesize = 32;
+        float tilesize = 0.32f;
         _mapWidth = tmxl.mapWidth;
         _mapHeight = tmxl.mapHeight;
 
@@ -49,7 +50,7 @@ public class GameController : MonoBehaviour
         {
             for (int j = 0; j < _mapWidth; j++)
             {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.32f * j), (0.32f * i)), transform.rotation);
+                map[i, j] = (Tile)Instantiate(tile, new Vector2((tilesize * j), (tilesize * i)), transform.rotation);
                 map[i, j].Buildable = false;
                 map[i, j].Walkable = true;
                 map[i, j].transform.parent = transform.Find("Tilemap").transform;
@@ -58,7 +59,6 @@ public class GameController : MonoBehaviour
 
         tmxl.tiles = map;
         tmxl.load();
-        //LoadLevel();
     }
 
 
@@ -143,7 +143,8 @@ public class GameController : MonoBehaviour
         leadingSquares.AddLast(spawn);
 
         int counter = 0;
-        int counterMax = (_mapWidth * _mapHeight) * 2;
+        int counterMax = (_mapWidth * _mapHeight);
+        counterMax = counterMax * counterMax;
         do
         {
             if (counter > counterMax)
@@ -158,16 +159,16 @@ public class GameController : MonoBehaviour
 				openSquares.Remove (square);
 				usedSquares.AddLast (square);
 
-				//Debug.Log ("Square: g: " + g + " h: " + square.h + " f: " + square.f + " x: " + square.x + " y: " + square.y);
-
+                //Debug.Log ("Square: g: " + g + " h: " + square.h + " f: " + square.f + " x: " + square.x + " y: " + square.y);
+                g = square.g;
 	            if (square.h != 0)
 	            {
 	                // Check Adjacent Squares
-	                LinkedList<Vector2> adjacentTiles = AdjacentTiles((int)square.x, (int)square.y, usedSquares, openSquares, flying);
+	                LinkedList<Vector2> adjacentTiles = AdjacentTiles(square.x, square.y, square.g + 1, usedSquares, openSquares, flying);
 
 	                foreach (Vector2 adjacentSquare in adjacentTiles)
 	                {
-						Square temp = createSquare(g, adjacentSquare, destSquare);
+						Square temp = createSquare(g +1, adjacentSquare, destSquare);
 
 						foreach(Square openSquare in openSquares)
 							if(distSquare(temp, openSquare) == 0)
@@ -180,7 +181,7 @@ public class GameController : MonoBehaviour
 	                }
 
 	            }
-	            else
+	            else // Found the goal
 	            {
 	                openSquares.Clear();
 
@@ -195,15 +196,18 @@ public class GameController : MonoBehaviour
 
 	                    foreach(Square usedSquare in usedSquares)
 	                    {
-							if(distSquare(usedSquare, tempSquare) < smallestDist)
-	                        {
-								smallestDist = distSquare(usedSquare, tempSquare);
-								cmpSquare = usedSquare;
-	                        }
+                            if (usedSquare.g == g)
+                            {
+                                if (distSquare(usedSquare, tempSquare) < smallestDist)
+                                {
+                                    smallestDist = distSquare(usedSquare, tempSquare);
+                                    cmpSquare = usedSquare;
+                                }
+                            }
 	                    }
 
 						tempSquare = cmpSquare;
-	                } while (distSquare(tempSquare, spawn) != 0);
+	                } while (g > 0);
 
 					paths.AddFirst(map[spawn.y, spawn.x].transform.position);
 					usedSquares.Remove(tempSquare);
@@ -241,7 +245,7 @@ public class GameController : MonoBehaviour
     /// <param name="x"></param>
     /// <param name="y"></param>
     /// <returns></returns>
-    LinkedList<Vector2> AdjacentTiles(int x, int y, LinkedList<Square> usedSquares, LinkedList<Square> openSquares, bool flying)
+    LinkedList<Vector2> AdjacentTiles(int x, int y, int g, LinkedList<Square> usedSquares, LinkedList<Square> openSquares, bool flying)
     {
         LinkedList<Vector2> adjacentTiles = new LinkedList<Vector2>();
 
@@ -297,20 +301,36 @@ public class GameController : MonoBehaviour
         }
 
         LinkedList<Vector2> removeTiles = new LinkedList<Vector2>();
+        LinkedList<Square> removeUsedSquares = new LinkedList<Square>();
+        LinkedList<Square> removeOpenSquares = new LinkedList<Square>();
 
         foreach (Vector2 adjacentTile in adjacentTiles)
         {
             foreach (Square usedSquare in usedSquares)
                 if ((int)adjacentTile.x == usedSquare.x && (int)adjacentTile.y == usedSquare.y)
-                    removeTiles.AddLast(adjacentTile);
+                {
+                    if (g > usedSquare.g)
+                        removeTiles.AddLast(adjacentTile);
+                    else
+                        removeUsedSquares.AddLast(usedSquare);
+                }
 
             foreach (Square openSquare in openSquares)
                 if ((int)adjacentTile.x == openSquare.x && (int)adjacentTile.y == openSquare.y)
-                    removeTiles.AddLast(adjacentTile);
+                {
+                    if (g > openSquare.g)
+                        removeTiles.AddLast(adjacentTile);
+                    else
+                        removeOpenSquares.AddLast(openSquare);
+                }
         }
 
         foreach (Vector2 removeTile in removeTiles)
             adjacentTiles.Remove(removeTile);
+        foreach (Square removeSquare in removeUsedSquares)
+            usedSquares.Remove(removeSquare);
+        foreach (Square removeSquare in removeOpenSquares)
+            openSquares.Remove(removeSquare);
 
         return adjacentTiles;
     }
@@ -370,6 +390,7 @@ public class GameController : MonoBehaviour
         newSquare.y = (int)v.y;
         newSquare.h = getHeuristics(v, dv);
         newSquare.f = g + newSquare.h;
+        newSquare.g = g;
 
         return newSquare;
     }
@@ -407,68 +428,5 @@ public class GameController : MonoBehaviour
                 copyWaypoints.AddLast(v);
 
         return copyWaypoints;
-    }
-
-    void LoadLevel()
-    {
-
-        // Placeholder Generation Code
-        int tilesize = 50;
-        _mapWidth = 800 / tilesize;
-        _mapHeight = 600 / tilesize;
-
-        map = new Tile[_mapHeight, _mapWidth];
-
-        for (int i = 0; i < _mapHeight; i++)
-        {
-            for (int j = 0; j < _mapWidth; j++)
-            {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((0.5f * j), (0.5f * i)), transform.rotation);
-                map[i, j].Buildable = false;
-                map[i, j].Walkable = true;
-                map[i, j].transform.parent = transform.Find("Tilemap").transform;
-            }
-        }
-
-        for (int i = 0; i < (_mapWidth - 1); i++)
-        {
-            map[1, i].Walkable = false;
-            map[1, i].Buildable = true;
-            map[3, 1 + i].Walkable = false;
-            map[3, 1 + i].Buildable = true;
-        }
-
-        for (int i = 4; i < (_mapHeight - 1); i++)
-        {
-            map[i, 1].Walkable = false;
-            map[i, 1].Buildable = true;
-            map[i + 1, 3].Walkable = false;
-            map[i + 1, 3].Buildable = true;
-            map[i, 5].Walkable = false;
-            map[i, 5].Buildable = true;
-            map[i + 1, 7].Walkable = false;
-            map[i + 1, 7].Buildable = true;
-            map[i, 9].Walkable = false;
-            map[i, 9].Buildable = true;
-            map[i + 1, 11].Walkable = false;
-            map[i + 1, 11].Buildable = true;
-            map[i, 13].Walkable = false;
-            map[i, 13].Buildable = true;
-        }
-
-        _point = (Waypoint)Instantiate(wayPoint, map[(_mapHeight - 1), (_mapWidth - 1)].transform.position, transform.rotation);
-        _point.transform.parent = transform;
-
-        SpawnerAI enemySpawner = (SpawnerAI)Instantiate(spawner, map[0, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
-        enemySpawner.flyPoints = pathFinding(enemySpawner, true);
-
-        enemySpawner = (SpawnerAI)Instantiate(spawner, map[11, 0].transform.position, transform.rotation);
-        enemySpawner.transform.parent = transform.Find("Spawners").transform;
-        spawners.Add(enemySpawner);
-        enemySpawner.wayPoints = pathFinding(enemySpawner);
-        enemySpawner.flyPoints = pathFinding(enemySpawner, true);
     }
 }
