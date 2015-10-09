@@ -73,5 +73,9 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    @if (IsSectionDefined("js"))
+    {
+        @RenderSection("js");
+    }
 </body>
 </html>

@@ -1,8 +1,37 @@
-﻿@{
+﻿@using Microsoft.AspNet.Identity
+@{
     ViewBag.Title = "Game Lobby";
 }
 
 <h2>@ViewBag.Title</h2>
+
+
+@section js {
+<script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script>
+    
+    $(function () {
+        var chat = $.connection.chatHub;
+
+        chat.client.broadcastMessage = function (name, message) {
+            var encodedName = $('<div />').text(name).html();
+            var encodedMessage = $('<div />').text(message).html();
+            $("#chat").append('<div>' + "Name: " + encodedName + ", " + "Message: " + encodedMessage + '</div>');
+
+        }
+
+        $.connection.hub.start().done(function () {
+            $('#sendmessage').click(function () {
+                chat.server.send('@User.Identity.GetUserName()', $('#message').val());
+
+                $('#message').html('').focus();
+            });
+        });
+    });
+ 
+</script>
+}
 
 <div class="row">
 
@@ -13,11 +42,11 @@
 
                 <div class="row">
                     <div class="col-xs-12">
-                        <textarea class="form-control custom-control chat" rows="3" style="resize:none">You have joined game #234.</textarea>
+                        <div id="chat" class="chat"></div>
                         <div class="input-group">
-                            <input type="text" class="form-control chatmessage" placeholder="Search for...">
+                            <input id="message" type="text" class="form-control chatmessage" placeholder="Search for...">
                             <span class="input-group-btn">
-                                <button class="btn btn-default" type="button">Send</button>
+                                <button id="sendmessage" class="btn btn-default" type="button">Send</button>
                             </span>
                         </div>
                     </div>
