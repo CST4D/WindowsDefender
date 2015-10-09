@@ -9,7 +9,12 @@ public class EnemyAI : MonoBehaviour {
     public float movementSpeed;
     public int drainDamage;
     public float drainSpd;
-    public int health;
+
+    public int health;    
+    public bool isVisible;
+    public bool isGround;
+    public int armour;
+    public double resistance;
 	// Use this for initialization
 	void Start () {
 	}
@@ -40,11 +45,21 @@ public class EnemyAI : MonoBehaviour {
         if (obj.gameObject.tag == "PROJECTILE")
         {
             projectileAI projectile = obj.gameObject.GetComponent<projectileAI>();
-            drainDamage = projectile.drainDamage;
-            drainSpd = projectile.drainSpd;
-            if (drainSpd != 0) InvokeRepeating("DrainHealth", 3, drainSpd);
-            health -= projectile.damage;
-            Destroy(obj.gameObject);
+
+            if (projectile.target == this.gameObject)
+            {
+                int damage;
+
+                if((damage = projectile.damage - armour) > 0)
+                    health -= damage;
+
+                drainDamage = projectile.drainDamage;
+                drainSpd += projectile.drainSpd;
+                if (drainSpd != 0) InvokeRepeating("DrainHealth", 3, drainSpd);
+
+                Destroy(obj.gameObject);
+            }
+
         }
     }
 }
