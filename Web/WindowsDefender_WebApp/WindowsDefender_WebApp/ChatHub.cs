@@ -7,70 +7,252 @@ using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Collections;
+using System.Web.Script.Serialization;
 
 namespace WindowsDefender_WebApp
 {
     public class ChatHub : Hub
     {
-        private static ConcurrentDictionary<string, Group> groups = new ConcurrentDictionary<string, Group>();
+        private static ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
+        private static ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
 
-        public void Send(string name, string message)
+        /// <summary>
+        /// New user has connected.
+        /// </summary>
+        /// <returns></returns>
+        public override Task OnConnected()
         {
-            // TODO manually connect to users
-            Clients.All.broadcastMessage(name, message);
+            CreateUser();
+            FindMatch();
+            return base.OnConnected();
         }
-        
-        public override Task OnConnected() {
-            Debug.WriteLine("OnConnected");
-            /*
-            object tempObject;
-            Context.Request.Environment.TryGetValue("server.RemoteIpAddress", out tempObject);
-            */
 
-            bool found = false;
-
-            foreach (KeyValuePair<string, Group> g in groups)
+        /// <summary>
+        /// Creates a new user in the _users dictionary.
+        /// </summary>
+        private void CreateUser()
+        {
+            User user = new User()
             {
-                Group group = g.Value;
+                ConnectionId = Context.ConnectionId,
+                Name = Context.User.Identity.Name
+            };
+            _users.TryAdd(Context.ConnectionId, user);
+        }
 
-                if(group.Add(Context.ConnectionId))
+        /// <summary>
+        /// Finds a match for the user.
+        /// </summary>
+        private void FindMatch()
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null) return;
+
+            bool matchFound = false;
+            foreach (KeyValuePair<string, Match> g in _matches)
+            {
+                Match match = g.Value;
+                if (matchFound = match.AddUser(user))
                 {
-                    found = true;
+                    // Assign match to user
+                    user.MatchId = match.Id;
+
+                    // Notify users
+                    SendMessageToMatch(user.MatchId, "* " + user.Name + " has joined the game.");
+                    SendMessageToUser(user.ConnectionId, "You have joined a game.");
+
+                    // Update match's user list
+                    UpdateUserList(match);
+
                     break;
                 }
             }
 
-            Debug.WriteLine("found: " + found);
-
-            if (!found)
+            if (!matchFound)
             {
-                Group newGroup = new Group();
-                newGroup.Add(Context.ConnectionId);
-                groups.TryAdd(groups.Count.ToString(), newGroup);
-                Debug.WriteLine("group created");
+                Match newMatch = CreateMatch();
+                newMatch.AddUser(user);
+                user.MatchId = newMatch.Id;
 
+                // Update match's user list
+                UpdateUserList(newMatch);
             }
-
-            Debug.WriteLine("connection id: " + Context.ConnectionId);
-
-            return base.OnConnected();
         }
 
-        private class Group
+        /// <summary>
+        /// Creates a new match.
+        /// </summary>
+        /// <returns></returns>
+        private Match CreateMatch()
         {
-            public ArrayList ids = new ArrayList();
-            public string hostId = null;
+            Match match = new Match();
+            _matches.TryAdd(match.Id, match);
+            return match;
+        }
 
-            public bool Add (string id)
+        /// <summary>
+        /// Sends a message to everyone in a match,
+        /// including the user who sent it.
+        /// </summary>
+        /// <param name="message"></param>
+        public void Send(string message)
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+
+            SendMessageToMatch(user.MatchId, message);
+            SendMessageToUser(Context.ConnectionId, message);
+        }
+        
+        /// <summary>
+        /// Sends to everyone in a match except the current user.
+        /// </summary>
+        /// <param name="message"></param>
+        private void SendMessageToMatch(string matchId, string message)
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+
+            if (user != null)
             {
-                if (ids.Count >= 4) { return false; }
-
-                ids.Add(id);
-
-                if (hostId == null) { hostId = id; }
-
-                return true;
+                Match match = null;
+                _matches.TryGetValue(matchId, out match);
+                if (match != null)
+                {
+                    foreach (User matchUser in match.Users)
+                    {
+                        if (matchUser.ConnectionId != Context.ConnectionId)
+                        {
+                            Clients.Client(matchUser.ConnectionId).send(message);
+                        }
+                    }
+                }
             }
         }
+
+        /// <summary>
+        /// Sends a message to a single user.
+        /// </summary>
+        /// <param name="connectionId"></param>
+        /// <param name="message"></param>
+        public void SendMessageToUser(string connectionId, string message)
+        {
+            if (connectionId != null)
+            {
+                Clients.Client(connectionId).send(message);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Sends a chat message to everyone in user's match with format: 'Name: message'
+        /// </summary>
+        /// <param name="message"></param>
+        public void SendChatMessage(string message)
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return;
+            Send(user.Name + ": " + message);
+        }
+
+        /// <summary>
+        /// Sends the current userlist to everyone in a match.
+        /// </summary>
+        /// <param name="match"></param>
+        public void UpdateUserList(Match match)
+        {
+            // Convert userlist to JSON
+            string[] userlist = new string[match.Users.Count];
+            for (int i = 0; i < match.Users.Count; i++)
+                userlist[i] = ((User)match.Users[i]).Name;
+            JavaScriptSerializer js = new JavaScriptSerializer();
+            string json = js.Serialize(userlist);
+
+            // Send JSON to each user in the match
+            foreach (User user in match.Users)
+                Clients.Client(user.ConnectionId).updateUserList(json);
+        }
+
+        /// <summary>
+        /// When the user presses the Ready button.
+        /// </summary>
+        public void Ready(bool status)
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return;
+
+            if (status)
+            {
+                Send(user.Name + " is ready.");
+            }
+            else
+            {
+                Send(user.Name + " is no longer ready.");
+            }
+        }
+
+        /// <summary>
+        /// User has disconnected.
+        /// </summary>
+        /// <param name="stopCalled"></param>
+        /// <returns></returns>
+        public override Task OnDisconnected(bool stopCalled)
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return base.OnDisconnected(stopCalled);
+
+            // Remove user from match
+            if (user.MatchId != null)
+            {
+                // Notify users
+                SendMessageToMatch(user.MatchId, "* " + user.Name + " has left the game.");
+
+                Match match = null;
+                _matches.TryGetValue(user.MatchId, out match);
+                if (match != null)
+                    match.RemoveUser(user);
+               
+                // Update match's user list
+                UpdateUserList(match);
+
+                // If match is now empty, close the match entirely
+                if (match.Users.Count == 0) {
+                    Match dummy = null;
+                    _matches.TryRemove(match.Id, out dummy);
+                }
+            }
+
+            // Remove user
+            User userdummy = null;
+            _users.TryRemove(user.ConnectionId, out userdummy);
+
+            return base.OnDisconnected(stopCalled);
+        }
+
+        /// <summary>
+        /// User has reconnected.
+        /// </summary>
+        /// <returns></returns>
+        public override Task OnReconnected()
+        {
+            // TODO
+            return base.OnReconnected();
+        }
+
     }
 }
+
+
+
+
+/*
+         object tempObject;
+         Context.Request.Environment.TryGetValue("server.RemoteIpAddress", out tempObject);
+         */

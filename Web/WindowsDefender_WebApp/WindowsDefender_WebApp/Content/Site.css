@@ -108,7 +108,9 @@ footer {
     max-width: none;
     height: 37px;
 }
-
+.username {
+    font-weight: bold;
+}
 
 /* DOWNLOAD ------------------------------------------------------------------------ */
 .requirementtitle {
