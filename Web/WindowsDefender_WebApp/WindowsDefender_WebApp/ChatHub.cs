@@ -100,9 +100,11 @@ namespace WindowsDefender_WebApp
         {
             User user = null;
             _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return;
 
             SendMessageToMatch(user.MatchId, message);
-            SendMessageToUser(Context.ConnectionId, message);
+            SendMessageToUser(user.ConnectionId, message);
         }
         
         /// <summary>
@@ -139,14 +141,11 @@ namespace WindowsDefender_WebApp
         public void SendMessageToUser(string connectionId, string message)
         {
             if (connectionId != null)
-            {
                 Clients.Client(connectionId).send(message);
-                return;
-            }
         }
 
         /// <summary>
-        /// Sends a chat message to everyone in user's match with format: 'Name: message'
+        /// Sends a chat message to everyone in the user's match with format: 'Name: message'
         /// </summary>
         /// <param name="message"></param>
         public void SendChatMessage(string message)
@@ -179,21 +178,17 @@ namespace WindowsDefender_WebApp
         /// <summary>
         /// When the user presses the Ready button.
         /// </summary>
-        public void Ready(bool status)
+        public void Ready(bool isReady)
         {
             User user = null;
             _users.TryGetValue(Context.ConnectionId, out user);
             if (user == null)
                 return;
 
-            if (status)
-            {
+            if (isReady)
                 Send(user.Name + " is ready.");
-            }
             else
-            {
                 Send(user.Name + " is no longer ready.");
-            }
         }
 
         /// <summary>
