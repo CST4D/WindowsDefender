@@ -16,6 +16,10 @@ namespace WindowsDefender_WebApp
         private static ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
         private static ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
 
+        string msg_icon = "<span class=\"glyphicon glyphicon-info-sign server-message-icon\"></span> ";
+        string rdy_icon = "<span class=\"glyphicon glyphicon-ok lobby-ready-icon\"></span> ";
+        string not_rdy_icon = "<span class=\"glyphicon glyphicon-remove lobby-notready-icon\"></span> ";
+
         /// <summary>
         /// New user has connected.
         /// </summary>
@@ -32,11 +36,13 @@ namespace WindowsDefender_WebApp
         /// </summary>
         private void CreateUser()
         {
+            // Create
             User user = new User()
             {
                 ConnectionId = Context.ConnectionId,
                 Name = Context.User.Identity.Name
             };
+            // Add to collection
             _users.TryAdd(Context.ConnectionId, user);
         }
 
@@ -49,45 +55,46 @@ namespace WindowsDefender_WebApp
             _users.TryGetValue(Context.ConnectionId, out user);
             if (user == null) return;
 
+            Match match = null;
             bool matchFound = false;
-            foreach (KeyValuePair<string, Match> g in _matches)
+            foreach (KeyValuePair<string, Match> existingMatch in _matches)
             {
-                Match match = g.Value;
-                if (matchFound = match.AddUser(user))
+                match = existingMatch.Value;
+
+                // If a match has been found
+                if (match.AddUser(user))
                 {
-                    // Assign match to user
                     user.MatchId = match.Id;
-
-                    // Notify users
-                    SendMessageToMatch(user.MatchId, "* " + user.Name + " has joined the game.");
-                    SendMessageToUser(user.ConnectionId, "You have joined a game.");
-
-                    // Update match's user list
-                    UpdateUserList(match);
-
+                    matchFound = true;
                     break;
                 }
             }
 
             if (!matchFound)
             {
-                Match newMatch = CreateMatch();
-                newMatch.AddUser(user);
-                user.MatchId = newMatch.Id;
-
-                // Update match's user list
-                UpdateUserList(newMatch);
+                match = CreateMatch();
+                match.AddUser(user);
+                user.MatchId = match.Id;
             }
+
+            // Notify users
+            SendToMatchExcept(user.MatchId, "<b>" + msg_icon + user.Name + " has joined the game.</b>");
+            SendToUser(user.ConnectionId, "<b>" + msg_icon + "You have joined a game.</b>");
+
+            // Update match user list
+            UpdateMatchUserLists(match);
         }
 
         /// <summary>
-        /// Creates a new match.
+        /// Creates an new empty match.
         /// </summary>
         /// <returns></returns>
         private Match CreateMatch()
         {
+            // Create an empty match
             Match match = new Match();
             _matches.TryAdd(match.Id, match);
+
             return match;
         }
 
@@ -96,40 +103,42 @@ namespace WindowsDefender_WebApp
         /// including the user who sent it.
         /// </summary>
         /// <param name="message"></param>
-        public void Send(string message)
+        public void SendToMatch(string message)
         {
+            // Get user
             User user = null;
             _users.TryGetValue(Context.ConnectionId, out user);
             if (user == null)
                 return;
 
-            SendMessageToMatch(user.MatchId, message);
-            SendMessageToUser(user.ConnectionId, message);
+            // Send to everyone in the match
+            SendToMatchExcept(user.MatchId, message);
+            SendToUser(user.ConnectionId, message);
         }
         
         /// <summary>
         /// Sends to everyone in a match except the current user.
         /// </summary>
         /// <param name="message"></param>
-        private void SendMessageToMatch(string matchId, string message)
+        private void SendToMatchExcept(string matchId, string message)
         {
+            // Get user
             User user = null;
             _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return;
+            
+            // Get match
+            Match match = null;
+            _matches.TryGetValue(matchId, out match);
+            if (match == null)
+                return;
 
-            if (user != null)
+            // Send to each user
+            foreach (User matchUser in match.Users)
             {
-                Match match = null;
-                _matches.TryGetValue(matchId, out match);
-                if (match != null)
-                {
-                    foreach (User matchUser in match.Users)
-                    {
-                        if (matchUser.ConnectionId != Context.ConnectionId)
-                        {
-                            Clients.Client(matchUser.ConnectionId).send(message);
-                        }
-                    }
-                }
+                if (matchUser.ConnectionId != Context.ConnectionId)
+                    SendToUser(matchUser.ConnectionId, message);
             }
         }
 
@@ -138,10 +147,9 @@ namespace WindowsDefender_WebApp
         /// </summary>
         /// <param name="connectionId"></param>
         /// <param name="message"></param>
-        public void SendMessageToUser(string connectionId, string message)
+        public void SendToUser(string connectionId, string message)
         {
-            if (connectionId != null)
-                Clients.Client(connectionId).send(message);
+            Clients.Client(connectionId).send(message);
         }
 
         /// <summary>
@@ -154,14 +162,14 @@ namespace WindowsDefender_WebApp
             _users.TryGetValue(Context.ConnectionId, out user);
             if (user == null)
                 return;
-            Send(user.Name + ": " + message);
+            SendToMatch(user.Name + ": " + message);
         }
 
         /// <summary>
         /// Sends the current userlist to everyone in a match.
         /// </summary>
         /// <param name="match"></param>
-        public void UpdateUserList(Match match)
+        public void UpdateMatchUserLists(Match match)
         {
             // Convert userlist to JSON
             string[] userlist = new string[match.Users.Count];
@@ -180,15 +188,17 @@ namespace WindowsDefender_WebApp
         /// </summary>
         public void Ready(bool isReady)
         {
+            // Get user
             User user = null;
             _users.TryGetValue(Context.ConnectionId, out user);
             if (user == null)
                 return;
 
+            // Send message
             if (isReady)
-                Send(user.Name + " is ready.");
+                SendToMatch("<b>" + rdy_icon + user.Name + " is ready.</b>");
             else
-                Send(user.Name + " is no longer ready.");
+                SendToMatch("<b>" + not_rdy_icon + user.Name + " is no longer ready.</b>");
         }
 
         /// <summary>
@@ -199,29 +209,44 @@ namespace WindowsDefender_WebApp
         public override Task OnDisconnected(bool stopCalled)
         {
             User user = null;
-            _users.TryGetValue(Context.ConnectionId, out user);
-            if (user == null)
-                return base.OnDisconnected(stopCalled);
+            Match match = null;
 
-            // Remove user from match
-            if (user.MatchId != null)
+            try
             {
-                // Notify users
-                SendMessageToMatch(user.MatchId, "* " + user.Name + " has left the game.");
+                // Get user
+                _users.TryGetValue(Context.ConnectionId, out user);
 
-                Match match = null;
+                // Make sure user exists
+                if (user == null)
+                    throw new ArgumentNullException("user", "User does not exist in _users collection.");
+
+                // Make sure user is part of a match
+                if (user.MatchId == null)
+                    throw new ArgumentNullException("user.MatchId", "User does not have a match id.");
+
+                // Get match
                 _matches.TryGetValue(user.MatchId, out match);
-                if (match != null)
-                    match.RemoveUser(user);
-               
+                if (match == null)
+                    throw new ArgumentNullException("user.MatchId", "Match does not exist in _matches collection.");
+
+                // Notify users
+                SendToMatchExcept(user.MatchId, "<b>" + msg_icon + user.Name + " has left the game.</b>");
+
+                // Remove user from match
+                match.RemoveUser(user);
+
                 // Update match's user list
-                UpdateUserList(match);
+                UpdateMatchUserLists(match);
 
                 // If match is now empty, close the match entirely
-                if (match.Users.Count == 0) {
+                if (match.Users.Count == 0)
+                {
                     Match dummy = null;
                     _matches.TryRemove(match.Id, out dummy);
                 }
+            }
+            catch (ArgumentNullException e) {
+                Debug.WriteLine(e.ParamName + ": " + e.Message);
             }
 
             // Remove user
@@ -240,7 +265,6 @@ namespace WindowsDefender_WebApp
             // TODO
             return base.OnReconnected();
         }
-
     }
 }
 
