@@ -1,5 +1,6 @@
 ﻿@import url(https://fonts.googleapis.com/css?family=Expletus+Sans:400,500,700);
 
+/* icon */
 *:not(span) {
     font-family: 'Expletus Sans', cursive !important;
     color: #f6f7ff !important;
@@ -14,12 +15,19 @@ body {
     padding-top: 50px;
     /*background: url(../Resources/bgtexture.png);*/
     background: #181818 !important;
+    height: 100%;
+}
+
+#wrapper {
+    min-height: 100%;
+    position: relative;
 }
 
 /* Set padding to keep content from hitting the edges */
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
+    padding-bottom: 40px;
 }
 
 /* Override the default bootstrap behavior where horizontal description lists 
@@ -87,7 +95,7 @@ textarea {
     text-shadow: 0 2px 1px #342330;
 }
 
-.hero-login .panel-body {
+.panel {
     background: #342330;
 }
 
@@ -143,6 +151,8 @@ footer {
     height: 40px;
     width: 100%;
     line-height: 40px;
+    position: absolute;
+    bottom: 0;
 }
 
 /* LOBBY ------------------------------------------------------------------------ */
