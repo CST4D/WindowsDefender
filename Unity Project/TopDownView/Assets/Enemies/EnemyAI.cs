@@ -61,7 +61,7 @@ public class EnemyAI : MonoBehaviour {
         timer -= drainSpd;
     }
 
-    void OnTriggerEnter2D(Collider2D obj)
+    public virtual void OnTriggerEnter2D(Collider2D obj)
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {
@@ -75,8 +75,8 @@ public class EnemyAI : MonoBehaviour {
                     health -= damage;
 
                 drainDamage = projectile.drainDamage;
-                drainSpd += projectile.drainSpd;
-                drainDuration += projectile.drainDuration;
+                drainSpd = projectile.drainSpd;
+                drainDuration = projectile.drainDuration;
 
                 Destroy(obj.gameObject);
             }
