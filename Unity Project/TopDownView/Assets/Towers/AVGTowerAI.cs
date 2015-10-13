@@ -14,6 +14,7 @@ public class AVGTowerAI : TowerAI {
         drainDamage = 20;
         drainSpd = 0.8f;
         drainDuration = 2.0f;
+        aSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame

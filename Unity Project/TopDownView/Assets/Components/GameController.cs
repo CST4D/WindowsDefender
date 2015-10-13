@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
-
     public Waypoint wayPoint;
     public EnemyAI enemy;
     public Tile tile;
@@ -84,7 +83,7 @@ public class GameController : MonoBehaviour
         for (int i = 0; i < enemies.Count; i++)
         {
             EnemyAI temp = (EnemyAI)enemies[i];
-            if (temp.health < 0)
+            if (temp.health <= 0)
             {
                 Destroy(temp.gameObject);
                 enemies.Remove(temp);

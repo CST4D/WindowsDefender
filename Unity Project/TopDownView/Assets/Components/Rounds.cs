@@ -15,23 +15,29 @@ public class Rounds : MonoBehaviour {
 	// Use this for initialization
 	void Start () {        
         _currentWave = new ArrayList();
-
-        int i = 0;
     }
 	
 	// Update is called once per frame
 	void Update () {
 	}
 
+    /// <summary>
+    /// Placeholder Wave Spawner for test purposes
+    /// </summary>
     public void parseWave()
     {
         if (enemies.Length >= 2)
         {
             _currentWave.Add(enemies[0]);
             _currentWave.Add(enemies[1]);
-            _currentWave.Add(enemies[2]);
+            _currentWave.Add(enemies[3]);
             _currentWave.Add(enemies[1]);
             _currentWave.Add(enemies[0]);
+            _currentWave.Add(enemies[2]);
+            _currentWave.Add(enemies[2]);
+            _currentWave.Add(enemies[3]);
+            _currentWave.Add(enemies[3]);
+            _currentWave.Add(enemies[3]);
         }
 
         notParsed = false;

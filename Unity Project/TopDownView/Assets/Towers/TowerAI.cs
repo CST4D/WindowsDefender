@@ -4,7 +4,7 @@ using System.Collections;
 public class TowerAI : Building {
 
     public projectileAI projectileSource;
-    public AudioClip shootSound;
+    //public AudioClip shootSound;
 
     protected float timer;
     protected float attackSpd;
@@ -22,7 +22,7 @@ public class TowerAI : Building {
         attackSpd = 0.5f;
         attackRange = 1.0f;
         attacksGround = true;
-        attacksAir = true;
+        attacksAir = false;
         towerDamage = 50;
         drainDamage = 0;
         drainSpd = 0;
@@ -73,7 +73,7 @@ public class TowerAI : Building {
         temp.drainSpd = drainSpd;
         temp.drainDuration = drainDuration;
         temp.target = target;
-        aSource.PlayOneShot(shootSound, 0.9f);
+        aSource.PlayOneShot(aSource.clip, 0.9f);
     }
 
     /// <summary>
