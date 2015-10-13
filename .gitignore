@@ -4,8 +4,8 @@
 [Bb]uild/
  
 # Networking
-"Testing Networking/Library/"
-"Testing Networking/Builds/"
+Library/
+Builds/
 *.log
 *.db
  
