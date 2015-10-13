@@ -18,6 +18,8 @@ public class MessageWindow : ScriptableObject
 
     bool useCustomStyle = true;
 
+
+    // message item class is one message for the message wiindow
     public abstract class MessageItem
     {
         public GUIStyle style;
