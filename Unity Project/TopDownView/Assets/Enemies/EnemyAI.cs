@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour {
     public int drainDamage;
     public float drainSpd;
     public float drainDuration;
+    public AudioClip hitSound;
 
     public int health;    
     public bool isVisible;
@@ -18,8 +19,10 @@ public class EnemyAI : MonoBehaviour {
     public double resistance;
 
     float timer;
+    private AudioSource aSource;
     // Use this for initialization
     void Start () {
+        aSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -73,6 +76,8 @@ public class EnemyAI : MonoBehaviour {
 
                 if((damage = projectile.damage - armour) > 0)
                     health -= damage;
+
+                aSource.PlayOneShot(hitSound, 0.9f);
 
                 drainDamage = projectile.drainDamage;
                 drainSpd += projectile.drainSpd;

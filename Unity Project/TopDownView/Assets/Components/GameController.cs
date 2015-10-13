@@ -39,25 +39,9 @@ public class GameController : MonoBehaviour
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
         tmxl.loadMeta();
-
-        float tilesize = 0.32f;
         _mapWidth = tmxl.mapWidth;
-        _mapHeight = tmxl.mapHeight;
-
-        map = new Tile[_mapHeight, _mapWidth];
-
-        for (int i = 0; i < _mapHeight; i++)
-        {
-            for (int j = 0; j < _mapWidth; j++)
-            {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((tilesize * j), (tilesize * i)), transform.rotation);
-                map[i, j].Buildable = false;
-                map[i, j].Walkable = true;
-                map[i, j].transform.parent = transform.Find("Tilemap").transform;
-            }
-        }
-
-        tmxl.tiles = map;
+        _mapHeight = tmxl.mapHeight;    
+        map = tmxl.tiles;
         tmxl.load();
     }
 
