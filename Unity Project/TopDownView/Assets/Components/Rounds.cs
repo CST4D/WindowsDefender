@@ -42,7 +42,9 @@ public class Rounds : MonoBehaviour {
             _currentWave.Add(enemies[3]);
             _currentWave.Add(enemies[1]);
             _currentWave.Add(enemies[0]);
-
+            _currentWave.Add(enemies[4]);
+            _currentWave.Add(enemies[4]);
+            _currentWave.Add(enemies[4]);
         }
 
         notParsed = false;

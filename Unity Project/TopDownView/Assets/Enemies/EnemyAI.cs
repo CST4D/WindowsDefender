@@ -15,6 +15,8 @@ public class EnemyAI : MonoBehaviour {
     public int health;    
     public bool isVisible;
     public bool isGround;
+    public bool duplicates;
+    public bool hasDuplicated;
     public int armour;
     public double resistance;
 

@@ -85,8 +85,24 @@ public class GameController : MonoBehaviour
             EnemyAI temp = (EnemyAI)enemies[i];
             if (temp.health <= 0)
             {
-                Destroy(temp.gameObject);
-                enemies.Remove(temp);
+                if (temp.duplicates && !(temp.hasDuplicated))
+                {
+                    temp.health = 150;
+                    Vector3 vecTemp = new Vector3(temp.transform.position.x - 0.2f, temp.transform.position.y, temp.transform.position.z);
+                    EnemyAI temp2;
+                    temp2 = (EnemyAI)GameObject.Instantiate(temp, vecTemp, transform.rotation);
+                    temp2.transform.parent = transform.Find("Enemies").transform;
+                    temp2.movementPoints = temp.movementPoints;
+
+                    temp.hasDuplicated = true;
+                    temp2.hasDuplicated = true;
+                    enemies.Add(temp2);
+                }
+                else
+                {
+                    Destroy(temp.gameObject);
+                    enemies.Remove(temp);
+                }
             }
         }
     }
