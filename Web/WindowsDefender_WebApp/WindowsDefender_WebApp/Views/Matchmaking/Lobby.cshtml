@@ -25,7 +25,7 @@
         /* Receive message */
         ws.client.send = function (message) {
             $("#chat").append('<div>' + message + '</div>');
-        }
+        };
 
         /* Receive user list */
         ws.client.updateUserList = function (json) {
@@ -33,6 +33,31 @@
             $('#userlist').html('');
             for (var i = 0; i < userlist.length; i++)
                 $("#userlist").append('<div>' + userlist[i] + '</div>');
+        };
+
+        /* Receive number of users that are ready */
+        ws.client.updateReadyCount = function (count) {
+            // TODO
+            console.log("USERS READY: " + count);
+        };
+
+        var launchTimer = null;
+        var hostIP = null;
+
+        ws.client.launchGame = function (hostip) {
+            hostIP = hostip;
+            launchTimer = setTimeout(launch, 5000);
+            $('#myModal').modal('show');
+        };
+
+        ws.client.cancelGame = function () {
+            clearTimeout(launchTimer);
+            $('#myModal').modal('hide');
+        };
+
+        function launch() {
+            // TODO: Open url: 'windefendgame:hostIP-username
+            console.log("Launching game with ip: " + hostIP);
         }
 
         /* Register UI event handlers */
@@ -63,6 +88,25 @@
         }
     </script>
 }
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" style="text-align: center">
+                <h1>Launching game...</h1>
+                <img src="~/Resources/searching.gif" />
+                <br />
+                If game fails to load. We need to make it so the user can go install the urischeme and still come back to join somehow.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancel()">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <div class="row">
 
