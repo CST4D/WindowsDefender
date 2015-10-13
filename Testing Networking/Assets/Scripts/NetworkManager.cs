@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
+// creates a new network manager class
 [RequireComponent (typeof (NetworkView))] // because we will use rpc calls
 public class NetworkManager : MonoBehaviour {
 
