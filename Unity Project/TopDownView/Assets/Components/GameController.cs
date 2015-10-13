@@ -92,6 +92,20 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public LinkedList<EnemyAI> getEnemyWithinRange(Transform atransform, float range)
+    {
+        LinkedList<EnemyAI> enemyList = new LinkedList<EnemyAI>();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            EnemyAI temp = (EnemyAI)enemies[i];
+            if ((temp.transform.position - atransform.position).magnitude <= range && temp.transform != atransform)
+            {
+                enemyList.AddLast(temp);
+            }
+        }
+        return enemyList;
+    }
+
     public void addSpawnerToSpawnerList(SpawnerAI spai)
     {
 

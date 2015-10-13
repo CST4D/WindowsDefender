@@ -83,9 +83,15 @@ public class EnemyAI : MonoBehaviour {
                 drainSpd += projectile.drainSpd;
                 drainDuration += projectile.drainDuration;
 
+                OnDeath();
                 Destroy(obj.gameObject);
             }
 
         }
+    }
+
+    protected virtual void OnDeath()
+    {
+
     }
 }
