@@ -22,7 +22,7 @@ public class TowerAI : Building {
         attackSpd = 0.5f;
         attackRange = 1.0f;
         attacksGround = true;
-        attacksAir = true;
+        attacksAir = false;
         towerDamage = 50;
         drainDamage = 0;
         drainSpd = 0;
