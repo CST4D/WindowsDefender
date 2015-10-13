@@ -7,6 +7,7 @@ public class projectileAI : MonoBehaviour {
     public int damage;
     public int drainDamage;
     public float drainSpd;
+    public float drainDuration;
 	// Use this for initialization
 	void Start () {
 	}
