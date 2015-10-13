@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// messagewindow is a class that handles all the chat
 public class MessageWindow : ScriptableObject
 {
 
