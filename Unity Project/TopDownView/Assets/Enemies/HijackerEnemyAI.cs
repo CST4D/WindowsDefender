@@ -1,0 +1,16 @@
+﻿using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
+
+public class HijackerEnemyAI : EnemyAI {
+    public float hijackRange = 3;
+    protected override void OnDeath()
+    {
+        GameController gc = GameObject.Find("GameController").GetComponent<GameController>();
+        LinkedList<EnemyAI> aiguys = gc.getEnemyWithinRange(transform, hijackRange);
+        foreach (EnemyAI aiguy in aiguys)
+        {
+            aiguy.movementSpeed *= 2;
+        }
+    }
+}
