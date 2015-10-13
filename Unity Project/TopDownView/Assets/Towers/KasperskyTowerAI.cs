@@ -17,8 +17,8 @@ namespace AssemblyCSharp
 	{
 		public KasperskyTowerAI ()
 		{
-			towerDamage = 30;
-			attackSpd = 0.5f;
+			towerDamage = 10;
+			attackSpd = 1.5f;
 			attacksGround = true;
 			attacksAir = false;
 			revealsInvisible = true;
