@@ -40,6 +40,7 @@ public class MessageWindow : ScriptableObject
         }
     }
 
+    // a message string item which is one of the types of messages you can send with message window
     public class StringMessageItem : MessageItem
     {
         string text;
@@ -57,6 +58,7 @@ public class MessageWindow : ScriptableObject
         }
     }
 
+    // new class for location on the message item
     public class LocationMessageItem : MessageItem
     {
 
@@ -71,11 +73,13 @@ public class MessageWindow : ScriptableObject
             this.OnClickedAction += callbackOnClicked;
         }
 
+        // gets the location of the message
         public Vector3 GetLocation()
         {
             return location;
         }
 
+        // draws the message on the message window
         public override void Draw(float yPosition, float width, ref float height)
         {
             GUIContent textContent = new GUIContent(text);
@@ -94,6 +98,7 @@ public class MessageWindow : ScriptableObject
         
     }
 
+    // message window set up helper. Need this in order to initialize the message window.
     public void createParameters(Vector2 size, GUISkin skin)
     {
         this.size = size;
@@ -109,6 +114,7 @@ public class MessageWindow : ScriptableObject
 
     }
 
+    // creates a new message window
     public MessageWindow(Vector2 size, GUISkin skin)
     {
         this.size = size;
@@ -124,6 +130,7 @@ public class MessageWindow : ScriptableObject
 
     }
 
+    // adds a message to the message window
     public MessageItem AddMessage(MessageItem item)
     {
         this.messages.Add(item);
@@ -140,11 +147,13 @@ public class MessageWindow : ScriptableObject
         return item;
     }
 
+    // adds a new string message to the message window
     public void AddMessage(float secondsToDisplay, string text)
     {
         AddMessage(new StringMessageItem(secondsToDisplay, text));
     }
 
+    // begins count down timers for dead messages
     public void CountDownTimers()
     {
         List<MessageItem> deadMessages = new List<MessageItem>();
@@ -162,6 +171,7 @@ public class MessageWindow : ScriptableObject
         }
     }
 
+    // draws the message window according to the specs
     public void Draw(Vector2 position)
     {
         //Group our element to itself
