@@ -11,7 +11,6 @@ public class NetworkManager : MonoBehaviour {
     float refreshRequestLength = 3.0f;
     HostData[] hostData;
 
-    //public string textToEdit = "Fix Meeeeeee!!!!!";
     MessageWindow messageWindow;
     public string chatInput = "";
     float messageDisplayTime = 60;
@@ -32,8 +31,9 @@ public class NetworkManager : MonoBehaviour {
     void Start()
     {
 
-
+        // we cannot create a message window this way: therefore using .CreateInstance method
         //new MessageWindow(chatOutputSize, chatterSkin);
+
         messageWindow = (MessageWindow)ScriptableObject.CreateInstance("MessageWindow");
         messageWindow.createParameters(chatOutputSize, chatterSkin);
     }
@@ -57,6 +57,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }*/
 
+    // Sets the name of the person connecting or hosting the game
     void SetName(string newName)
     {
         //Only after setting a name will the player be joined to the chat
@@ -73,6 +74,8 @@ public class NetworkManager : MonoBehaviour {
             b.RPC("Server_SendCurrentUsers", RPCMode.Server, Network.player);
         }
     }
+
+    // Sends a message to everyone when one player has updated the message log
     void ProcessInput()
     {
         if (chatInput.Length > 0)
@@ -83,11 +86,13 @@ public class NetworkManager : MonoBehaviour {
         chatInput = "";
     }
 
+    // When someone has connected it will set their network connected state to true
     void OnConnectedToServer()
     {
         connected = true;
     }
 
+    // when someone has disconnected from the server it will set their network connected state to false
     void OnDisconnectedFromServer(NetworkDisconnection info)
     {
         if (Network.isServer)
@@ -99,12 +104,15 @@ public class NetworkManager : MonoBehaviour {
             SystemMessage("Successfully diconnected from server.", Network.player);
     }
 
+
+    // when someone has disconnected fromt he server it will set their network connected state to false
     void OnPlayerDisconnected(NetworkPlayer player)
     {
         RemoveUser(player);
     }
 
 
+    // when a message is sent, should send to current users
     [RPC]
     void Server_SendCurrentUsers(NetworkPlayer recipient)
     {
@@ -119,6 +127,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    // when someone joins the game, this method is called
     [RPC]
     void JoinUser(string name, NetworkPlayer player)
     {
@@ -138,7 +147,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-
+    // when someone is removed, this method is called
     [RPC]
     void RemoveUser(NetworkPlayer player)
     {
@@ -155,6 +164,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    // handling sending system messages to players
     [RPC]
     void SystemMessage(string message, NetworkPlayer player)
     {
@@ -172,6 +182,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    // this method is called when someone sends a message
     [RPC]
     void LogMessage(string message, NetworkPlayer player)
     {
@@ -195,19 +206,21 @@ public class NetworkManager : MonoBehaviour {
 
 
     //--------------------------------------------------------
-
+    // starts the server
     private void StartServer()
     {
         Network.InitializeServer(4, 25002, false);
         MasterServer.RegisterHost(registeredGameName, "Rosanna Tower Testing", "Testing Networking");
     }
 
+    // when the server is initialized/connected and ready to start game
     void OnServerInitialized()
     {
         Debug.Log("Server has been initialized!");
         connected = true;//from new
     }
 
+    // this method is fired when a new server hosts a game
     void OnMasterServerEvent(MasterServerEvent masterServerEvent)
     {
         if(masterServerEvent == MasterServerEvent.RegistrationSucceeded)
@@ -215,6 +228,7 @@ public class NetworkManager : MonoBehaviour {
 
     }
 
+    // refreshes the list of active hosts (the servers connected)
     public IEnumerator RefreshHostList()
     {
         Debug.Log("Refreshing...");
@@ -236,6 +250,7 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    // this method is called when frame is generated
     public void OnGUI()
     {
 

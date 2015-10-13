@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+// messagewindow is a class that handles all the chat
 public class MessageWindow : ScriptableObject
 {
 
@@ -17,6 +18,8 @@ public class MessageWindow : ScriptableObject
 
     bool useCustomStyle = true;
 
+
+    // message item class is one message for the message wiindow
     public abstract class MessageItem
     {
         public GUIStyle style;
