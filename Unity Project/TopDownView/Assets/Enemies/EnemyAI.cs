@@ -49,7 +49,7 @@ public class EnemyAI : MonoBehaviour {
 
         timer += Time.deltaTime;
 
-        if (timer > drainSpd && drainDuration > 0)
+        while (timer > drainSpd && drainDuration > 0)
             DrainHealth();
     }
 
@@ -59,6 +59,12 @@ public class EnemyAI : MonoBehaviour {
         health -= drainDamage;
         drainDuration -= drainSpd;
         timer -= drainSpd;
+
+        if(drainDuration < 0)
+        {
+            drainDuration = 0;
+            drainDamage = 0;
+        }
     }
 
     void OnTriggerEnter2D(Collider2D obj)
@@ -74,9 +80,12 @@ public class EnemyAI : MonoBehaviour {
                 if((damage = projectile.damage - armour) > 0)
                     health -= damage;
 
-                drainDamage = projectile.drainDamage;
-                drainSpd += projectile.drainSpd;
-                drainDuration += projectile.drainDuration;
+                if (drainDuration <= 0)
+                {
+                    drainDamage = projectile.drainDamage;
+                    drainSpd = projectile.drainSpd;
+                    drainDuration += projectile.drainDuration;
+                }
 
                 Destroy(obj.gameObject);
             }
