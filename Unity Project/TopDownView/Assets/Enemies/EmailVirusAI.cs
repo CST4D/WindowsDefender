@@ -7,6 +7,7 @@ public class EmailVirusAI : EnemyAI {
 	// Use this for initialization
 	void Start () {
         hitCount = 0;
+        health = 9999;
 	}
 	
 	// Update is called once per frame
