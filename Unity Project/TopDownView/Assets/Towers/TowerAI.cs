@@ -5,8 +5,9 @@ using System.Reflection;
 public class TowerAI : Building {
 
     public projectileAI projectileSource;
-	
+
 	public bool revealsInvisible;
+    //public AudioClip shootSound;
 
     protected float timer;
     protected float attackSpd;
@@ -17,6 +18,7 @@ public class TowerAI : Building {
     protected int drainDamage;
     protected float drainSpd;
     protected float drainDuration;
+    protected AudioSource aSource;
 
     // Use this for initialization
     public TowerAI () {
@@ -29,6 +31,7 @@ public class TowerAI : Building {
         drainDamage = 0;
         drainSpd = 0;
         drainDuration = 0;
+        aSource = GetComponent<AudioSource>();
     }
 	
 	void Update () {
@@ -74,6 +77,7 @@ public class TowerAI : Building {
         temp.drainSpd = drainSpd;
         temp.drainDuration = drainDuration;
         temp.target = target;
+        aSource.PlayOneShot(aSource.clip, 0.9f);
     }
 
     /// <summary>

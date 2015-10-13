@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour {
     public int drainDamage;
     public float drainSpd;
     public float drainDuration;
+    public AudioClip hitSound;
 
     public int health;    
     public bool isVisible;
@@ -22,12 +23,14 @@ public class EnemyAI : MonoBehaviour {
 	private float revealDist;
 
 	float timer;
+	private AudioSource aSource;
+
     // Use this for initialization
 	void Start () {
 		renderer = this.GetComponent<SpriteRenderer>();
 		revealingTower = null;
 		revealDist = 0;
-
+        aSource = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -57,7 +60,7 @@ public class EnemyAI : MonoBehaviour {
 
         timer += Time.deltaTime;
 
-        if (timer > drainSpd && drainDuration > 0)
+        while (timer > drainSpd && drainDuration > 0)
             DrainHealth();
 
 		checkIfRevealed ();
@@ -98,12 +101,17 @@ public class EnemyAI : MonoBehaviour {
 	//Method to drain enemy's health
     void DrainHealth()
     {
-        health -= drainDamage;
-        drainDuration -= drainSpd;
-        timer -= drainSpd;
-    }
-	
-    void OnTriggerEnter2D(Collider2D obj)
+		health -= drainDamage;
+		drainDuration -= drainSpd;
+		timer -= drainSpd;
+
+		if (drainDuration < 0) {
+			drainDuration = 0;
+			drainDamage = 0;
+		}
+	}
+
+    public virtual void OnTriggerEnter2D(Collider2D obj)
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {
@@ -116,9 +124,14 @@ public class EnemyAI : MonoBehaviour {
                 if((damage = projectile.damage - armour) > 0)
                     health -= damage;
 
-                drainDamage = projectile.drainDamage;
-                drainSpd += projectile.drainSpd;
-                drainDuration += projectile.drainDuration;
+                aSource.PlayOneShot(hitSound, 0.9f);
+
+                if (drainDuration <= 0)
+                {
+                    drainDamage = projectile.drainDamage;
+                    drainSpd = projectile.drainSpd;
+                    drainDuration += projectile.drainDuration;
+                }
 
                 Destroy(obj.gameObject);
             }

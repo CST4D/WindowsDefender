@@ -32,9 +32,23 @@ public class TMXLoader {
         int tileheight = Convert.ToInt32(((XmlElement)mapNode).Attributes["tileheight"].InnerText);
         mapWidth = Convert.ToInt32(((XmlElement)mapNode).Attributes["width"].InnerText);
         mapHeight = Convert.ToInt32(((XmlElement)mapNode).Attributes["height"].InnerText);
+        float tilesize = 0.32f;
+        tiles = new Tile[mapHeight, mapWidth];
+        for (int i = 0; i < mapHeight; i++)
+        {
+            for (int j = 0; j < mapWidth; j++)
+            {
+                tiles[i, j] = (Tile)UnityEngine.Object.Instantiate(context.tile, new Vector2((tilesize * j), (tilesize * i)), context.transform.rotation);
+                tiles[i, j].Buildable = false;
+                tiles[i, j].Walkable = true;
+                tiles[i, j].transform.parent = context.transform.Find("Tilemap").transform;
+            }
+        }
     }
     public void load()
     {
+        
+        
         sprites = new Sprite[1];
         int spriteArraySize = 1;
 
