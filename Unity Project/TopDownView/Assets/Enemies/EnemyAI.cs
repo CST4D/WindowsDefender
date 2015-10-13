@@ -61,7 +61,7 @@ public class EnemyAI : MonoBehaviour {
         timer -= drainSpd;
     }
 
-    void OnTriggerEnter2D(Collider2D obj)
+    public virtual void OnTriggerEnter2D(Collider2D obj)
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {
