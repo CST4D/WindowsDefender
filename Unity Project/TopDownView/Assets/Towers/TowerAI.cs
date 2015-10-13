@@ -1,26 +1,30 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Reflection;
 
 public class TowerAI : Building {
 
     public projectileAI projectileSource;
+	
+	public bool revealsInvisible;
 
     protected float timer;
     protected float attackSpd;
     protected bool attacksGround;
     protected bool attacksAir;
-    protected float attackRange;
+    public float attackRange;
     protected int towerDamage;
     protected int drainDamage;
     protected float drainSpd;
     protected float drainDuration;
 
     // Use this for initialization
-    void Start () {
+    public TowerAI () {
         attackSpd = 0.5f;
         attackRange = 1.0f;
         attacksGround = true;
-        attacksAir = true;
+		attacksAir = true;
+		revealsInvisible = false;
         towerDamage = 50;
         drainDamage = 0;
         drainSpd = 0;
@@ -88,7 +92,7 @@ public class TowerAI : Building {
         {
             EnemyAI enemy = obj.GetComponent<EnemyAI>();
 
-            if (!((attacksGround && enemy.isGround) || (attacksAir && !enemy.isGround)))
+            if (!((attacksGround && enemy.isGround) || (attacksAir && !enemy.isGround)) || !enemy.isVisible)
                 continue;
 
             float targetDist = Vector2.Distance(transform.position, obj.transform.position);
@@ -103,5 +107,19 @@ public class TowerAI : Building {
         return target;
     }
 
+	/// <summary>
+	/// Upgrades a property of the tower.
+	/// </summary>
+	/// <param name="propertyName">Name of property of tower.</param>
+	/// <param name="newVal">New value of property.</param>
+	public void upgradeTower(string propertyName, object newVal)
+	{ 
+		FieldInfo info = this.GetType().GetField(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
+
+		if (info != null)
+			info.SetValue (this, newVal);
+		else
+			Debug.Log("Field does not exist.");
+	}
     // End of Function
 }

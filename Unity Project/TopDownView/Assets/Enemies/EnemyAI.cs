@@ -16,10 +16,18 @@ public class EnemyAI : MonoBehaviour {
     public bool isGround;
     public int armour;
     public double resistance;
+	
+	private SpriteRenderer renderer;
+	private TowerAI revealingTower;
+	private float revealDist;
 
-    float timer;
+	float timer;
     // Use this for initialization
-    void Start () {
+	void Start () {
+		renderer = this.GetComponent<SpriteRenderer>();
+		revealingTower = null;
+		revealDist = 0;
+
 	}
 	
 	// Update is called once per frame
@@ -51,16 +59,50 @@ public class EnemyAI : MonoBehaviour {
 
         if (timer > drainSpd && drainDuration > 0)
             DrainHealth();
+
+		checkIfRevealed ();
+
+		if (!isVisible) 
+			renderer.enabled = false;
+		else
+			renderer.enabled = true;
     }
 
-    //Method to drain enemy's health
+	/// <summary>
+	/// Check if this enemy is revealed, if this enemy is invisible
+	/// </summary>
+	private void checkIfRevealed()
+	{
+		if (revealingTower == null) {
+			GameObject[] towers = GameObject.FindGameObjectsWithTag ("TOWER");
+
+			foreach (GameObject obj in towers) {
+				revealDist = Vector2.Distance (transform.position, obj.transform.position);
+				revealingTower = obj.GetComponent<TowerAI> ();
+				
+				if (revealDist < revealingTower.attackRange && revealingTower.revealsInvisible) {
+					isVisible = true;
+					break;
+				}
+				revealingTower = null;
+			}
+		} else {
+			revealDist = Vector2.Distance (transform.position, revealingTower.gameObject.transform.position);
+			if (revealDist > revealingTower.attackRange) {
+				revealingTower = null;
+				isVisible = false;
+			}
+		}
+	}
+
+	//Method to drain enemy's health
     void DrainHealth()
     {
         health -= drainDamage;
         drainDuration -= drainSpd;
         timer -= drainSpd;
     }
-
+	
     void OnTriggerEnter2D(Collider2D obj)
     {
         if (obj.gameObject.tag == "PROJECTILE")
