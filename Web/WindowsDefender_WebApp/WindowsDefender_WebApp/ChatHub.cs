@@ -37,7 +37,7 @@ namespace WindowsDefender_WebApp
         private void CreateUser()
         {
             // Create
-            User user = new User()
+            User user = new User(this.Context)
             {
                 ConnectionId = Context.ConnectionId,
                 Name = Context.User.Identity.Name
@@ -70,6 +70,7 @@ namespace WindowsDefender_WebApp
                 }
             }
 
+            // If no match was found, create a new one
             if (!matchFound)
             {
                 match = CreateMatch();
@@ -184,6 +185,20 @@ namespace WindowsDefender_WebApp
         }
 
         /// <summary>
+        /// Sends the current readylist to everyone in a match.
+        /// </summary>
+        /// <param name="match"></param>
+        public void UpdateReadyCount(Match match)
+        {
+            int readyCount = 0;
+            foreach (User user in match.Users)
+                if (user.Ready)
+                    readyCount++;
+            foreach (User user in match.Users)
+                Clients.Client(user.ConnectionId).updateReadyCount(readyCount);
+        }
+
+        /// <summary>
         /// When the user presses the Ready button.
         /// </summary>
         public void Ready(bool isReady)
@@ -194,12 +209,53 @@ namespace WindowsDefender_WebApp
             if (user == null)
                 return;
 
+            user.Ready = isReady;
+
             // Send message
             if (isReady)
                 SendToMatch("<b>" + rdy_icon + user.Name + " is ready.</b>");
             else
                 SendToMatch("<b>" + not_rdy_icon + user.Name + " is no longer ready.</b>");
+
+            Match match = null;
+            _matches.TryGetValue(user.MatchId, out match);
+
+            // Send ready count to each user (0-4). Just so the user sees '0/4 players are ready'.
+            UpdateReadyCount(match);
+
+            // Launch match if everyone is ready
+            if (match.Users.Count == 4) {
+                if (isReady)
+                {
+                    bool allReady = true;
+                    foreach (User u in match.Users)
+                    {
+                        if (!u.Ready)
+                            allReady = false;
+                    }
+
+                    if (allReady)
+                    {
+                        SendToMatch("<b>" + rdy_icon + "The match is about to begin...</b>");
+
+                        // Send launch game command with host ip address
+                        User host = null;
+                        _users.TryGetValue(match.HostId, out host);
+                        Clients.Client(user.ConnectionId).launchGame(host.IpAddress);
+                    }
+                }
+                else
+                {
+                    foreach (User u in match.Users)
+                    {
+                        Clients.Client(user.ConnectionId).cancelGame();
+                        SendToMatch("<b>" + rdy_icon + "Launch cancelled. Waiting for more players...</b>");
+                    }
+                }
+            }
         }
+
+
 
         /// <summary>
         /// User has disconnected.
@@ -251,7 +307,8 @@ namespace WindowsDefender_WebApp
 
             // Remove user
             User userdummy = null;
-            _users.TryRemove(user.ConnectionId, out userdummy);
+            if (user != null)
+                _users.TryRemove(user.ConnectionId, out userdummy);
 
             return base.OnDisconnected(stopCalled);
         }
@@ -267,11 +324,3 @@ namespace WindowsDefender_WebApp
         }
     }
 }
-
-
-
-
-/*
-         object tempObject;
-         Context.Request.Environment.TryGetValue("server.RemoteIpAddress", out tempObject);
-         */
