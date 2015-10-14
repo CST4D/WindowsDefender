@@ -2,35 +2,70 @@
 using System.Collections.Generic;
 using System.Collections;
 
-public class EnemyAI : MonoBehaviour {
-
+public class EnemyAI : MonoBehaviour
+{
     public LinkedList<Vector2> movementPoints;
 
+    public AudioClip hitSound;
+
+    public int maxHealth;
+    public int health;
+    public int armour;
     public float movementSpeed;
+    public double resistance;
+
     public int drainDamage;
     public float drainSpd;
     public float drainDuration;
-    public AudioClip hitSound;
 
-    public int health;    
     public bool isVisible;
     public bool isGround;
+
+    public int numDuplicates;
     public bool duplicates;
     public bool hasDuplicated;
-    public int armour;
-    public double resistance;
 
-    float timer;
+    private float timer;
+   
+    private TowerAI revealingTower;
+    private float revealDist;
+
     private AudioSource aSource;
+
+    public EnemyAI()
+    {
+        health = 50;
+        armour = 0;
+        movementSpeed = 1.5f;
+        resistance = 0;
+        timer = 0;
+
+        drainDamage = 0;
+        drainSpd = 0;
+        drainDuration = 0;
+
+        isVisible = true;
+        isGround = true;
+
+        numDuplicates = 0;
+        duplicates = false;
+        hasDuplicated = false;
+
+    }
+
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         aSource = GetComponent<AudioSource>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        enemyAI();
-	}
+        revealingTower = null;
+        revealDist = 0;
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        ExecuteEnemyAI();
+    }
 
     /// <summary>
     /// The enemies do the following steps:
@@ -38,7 +73,7 @@ public class EnemyAI : MonoBehaviour {
     /// 2. If there is then move to that location
     /// 3. Apply any drain damage
     /// </summary>
-    protected void enemyAI()
+    protected void ExecuteEnemyAI()
     {
         if (movementPoints != null && movementPoints.Count > 0)
         {
@@ -56,6 +91,52 @@ public class EnemyAI : MonoBehaviour {
 
         while (timer > drainSpd && drainDuration > 0)
             DrainHealth();
+
+        checkIfRevealed();
+
+        if (!isVisible)
+            GetComponent<SpriteRenderer>().enabled = false;
+        else
+            GetComponent<SpriteRenderer>().enabled = true;
+    }
+
+    /// <summary>
+    /// Check if this enemy is revealed, if this enemy is invisible
+    /// </summary>
+    private void checkIfRevealed()
+    {
+        if (revealingTower == null)
+        {
+            GameObject[] towers = GameObject.FindGameObjectsWithTag("TOWER");
+
+            if (towers.Length > 0)
+            {
+                foreach (GameObject obj in towers)
+                {
+                    revealDist = Vector2.Distance(transform.position, obj.transform.position);
+                    revealingTower = obj.GetComponent<TowerAI>();
+
+                    if (revealingTower != null)
+                    {
+                        if (revealDist < revealingTower.attackRange && revealingTower.revealsInvisible)
+                        {
+                            isVisible = true;
+                            break;
+                        }
+                    }
+                    revealingTower = null;
+                }
+            }
+        }
+        else
+        {
+            revealDist = Vector2.Distance(transform.position, revealingTower.gameObject.transform.position);
+            if (revealDist > revealingTower.attackRange)
+            {
+                revealingTower = null;
+                isVisible = false;
+            }
+        }
     }
 
     //Method to drain enemy's health
@@ -65,14 +146,14 @@ public class EnemyAI : MonoBehaviour {
         drainDuration -= drainSpd;
         timer -= drainSpd;
 
-        if(drainDuration < 0)
+        if (drainDuration < 0)
         {
             drainDuration = 0;
             drainDamage = 0;
         }
     }
 
-    public virtual void OnTriggerEnter2D(Collider2D obj)
+    void OnTriggerEnter2D(Collider2D obj)
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {
@@ -80,30 +161,47 @@ public class EnemyAI : MonoBehaviour {
 
             if (projectile.target == this.gameObject)
             {
-                int damage;
-
-                if((damage = projectile.damage - armour) > 0)
-                    health -= damage;
-
-                aSource.PlayOneShot(hitSound, 0.9f);
-
-                if (drainDuration <= 0)
-                {
-                    drainDamage = projectile.drainDamage;
-                    drainSpd = projectile.drainSpd;
-                    drainDuration += projectile.drainDuration;
-                }
-
-                OnDeath();
-
-                Destroy(obj.gameObject);
+                OnCollide(projectile);
             }
 
         }
     }
 
-    protected virtual void OnDeath()
+    /// <summary>
+    /// When a projectile collides with this enemy object
+    /// </summary>
+    protected virtual void OnCollide(projectileAI projectile)
     {
+        int damage;
 
+        if ((damage = projectile.damage - armour) > 0)
+            health -= damage;
+
+        aSource.PlayOneShot(hitSound, 0.9f);
+
+        if (drainDuration <= 0)
+        {
+            drainDamage = projectile.drainDamage;
+            drainSpd = projectile.drainSpd;
+            drainDuration += projectile.drainDuration;
+        }
+
+        Destroy(projectile.gameObject);
+    }
+
+    public virtual void OnDeath()
+    {
+        if(duplicates && !hasDuplicated)
+        {
+            health = maxHealth;
+
+            for (int i = 0; i < numDuplicates; i++)
+            {
+                EnemyAI duplicate = GameObject.Instantiate(this);                
+                duplicate.hasDuplicated = true;
+            }
+
+            Destroy(this.gameObject);
+        }
     }
 }

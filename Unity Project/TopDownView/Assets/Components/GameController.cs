@@ -78,6 +78,9 @@ public class GameController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Check the health of the enemies, if they are 0 then execute their OnDeath functions
+    /// </summary>
     void CheckEnemy()
     {
         for (int i = 0; i < enemies.Count; i++)
@@ -85,6 +88,8 @@ public class GameController : MonoBehaviour
             EnemyAI temp = (EnemyAI)enemies[i];
             if (temp.health <= 0)
             {
+                temp.OnDeath();
+
                 if (temp.duplicates && !(temp.hasDuplicated))
                 {
                     temp.health = 150;
