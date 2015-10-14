@@ -198,11 +198,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Sounds\bloop.mp3" />
-    <Content Include="Content\Sounds\click.mp3" />
-    <Content Include="Content\Sounds\error.mp3" />
-    <Content Include="Content\Sounds\join.mp3" />
-    <Content Include="Content\Sounds\launch.mp3" />
     <Content Include="Content\Theme\material-fullpalette.css" />
     <Content Include="Content\Theme\material-fullpalette.min.css" />
     <Content Include="Content\Theme\material.css" />
@@ -241,9 +236,12 @@
     <None Include="Resources\icon.png" />
     <None Include="Resources\searching.gif" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+<<<<<<< HEAD
     <Content Include="Resources\admin.png" />
+=======
     <None Include="Resources\hero2.jpg" />
     <None Include="Resources\hero3.jpg" />
+>>>>>>> theme
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />

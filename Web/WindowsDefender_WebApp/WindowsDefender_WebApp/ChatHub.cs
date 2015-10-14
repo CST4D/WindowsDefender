@@ -220,12 +220,11 @@ namespace WindowsDefender_WebApp
             Match match = null;
             _matches.TryGetValue(user.MatchId, out match);
 
-            // Update ready count of each user (0-4). Just so the user sees '0/4 players are ready'.
+            // Send ready count to each user (0-4). Just so the user sees '0/4 players are ready'.
             UpdateReadyCount(match);
 
             // Launch match if everyone is ready
-            if (match.Users.Count == 4)
-            {
+            if (match.Users.Count == 4) {
                 if (isReady)
                 {
                     bool allReady = true;
@@ -238,9 +237,10 @@ namespace WindowsDefender_WebApp
                     if (allReady)
                     {
                         SendToMatch("<b>" + rdy_icon + "The match is about to begin...</b>");
+
+                        // Send launch game command with host ip address
                         User host = null;
                         _users.TryGetValue(match.HostId, out host);
-                        // TODO MORE ERROR CHECKING
                         Clients.Client(user.ConnectionId).launchGame(host.IpAddress);
                     }
                 }
@@ -307,7 +307,8 @@ namespace WindowsDefender_WebApp
 
             // Remove user
             User userdummy = null;
-            _users.TryRemove(user.ConnectionId, out userdummy);
+            if (user != null)
+                _users.TryRemove(user.ConnectionId, out userdummy);
 
             return base.OnDisconnected(stopCalled);
         }
@@ -323,11 +324,3 @@ namespace WindowsDefender_WebApp
         }
     }
 }
-
-
-
-
-/*
-         object tempObject;
-         Context.Request.Environment.TryGetValue("server.RemoteIpAddress", out tempObject);
-         */

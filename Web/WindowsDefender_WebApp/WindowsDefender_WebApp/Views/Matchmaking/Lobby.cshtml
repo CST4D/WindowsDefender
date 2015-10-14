@@ -9,6 +9,20 @@
 @section js {
     <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
     <script src="~/signalr/hubs"></script>
+    <script src="https://code.createjs.com/soundjs-0.6.1.min.js"></script>
+
+    <script>
+            var bloopSound = "Bloop";
+            createjs.Sound.registerSound("/Content/Sounds/bloop.mp3", bloopSound);
+            var clickSound = "Click";
+            createjs.Sound.registerSound("/Content/Sounds/click.mp3", clickSound);
+            var errorSound = "Error";
+            createjs.Sound.registerSound("/Content/Sounds/error.mp3", errorSound);
+            var joinSound = "Join";
+            createjs.Sound.registerSound("/Content/Sounds/join.mp3", joinSound);
+            var launchSound = "Launch";
+            createjs.Sound.registerSound("/Content/Sounds/launch.mp3", launchSound);
+    </script>
 
     <script>
         var ws = $.connection.chatHub;
@@ -25,6 +39,7 @@
         /* Receive message */
         ws.client.send = function (message) {
             $("#chat").append('<div>' + message + '</div>');
+            createjs.Sound.play(clickSound);
         };
 
         /* Receive user list */
@@ -37,8 +52,8 @@
 
         /* Receive number of users that are ready */
         ws.client.updateReadyCount = function (count) {
-            // TODO
-            console.log("USERS READY: " + count);
+            $('#readycount').html(count + ' of 4 players ready.');
+            createjs.Sound.play(bloopSound);
         };
 
         var launchTimer = null;
@@ -48,11 +63,13 @@
             hostIP = hostip;
             launchTimer = setTimeout(launch, 5000);
             $('#myModal').modal('show');
+            createjs.Sound.play(launchSound);
         };
 
         ws.client.cancelGame = function () {
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
+            createjs.Sound.play(errorSound);
         };
 
         function launch() {
@@ -78,10 +95,14 @@
                 readyStatus = !readyStatus;
                 ws.server.ready(readyStatus);
 
-                if (readyStatus)
+                if (readyStatus) {
                     $('#readytoggle').text('Not Ready');
-                if (!readyStatus)
+                    $('#readystatus').html('You are ready!');
+                }
+                if (!readyStatus) {
                     $('#readytoggle').text('Ready');
+                    $('#readystatus').html('Please press Ready...');
+                }
 
                 $('#message').focus();
             });
@@ -138,9 +159,9 @@
             </div>
         </div>
         <br />
-        0/4 Users Ready
+        <div id="readycount">0/4 Users Ready</div>
         <br /><br />
-        Waiting...
+        <div id="readystatus">Please press Ready...</div>
         <br /><br />
         <button id="readytoggle" class="btn-lg btn-success" type="button">I'm Ready</button>
         <button id="leave" class="btn-lg btn-danger" type="button">Leave Lobby</button>

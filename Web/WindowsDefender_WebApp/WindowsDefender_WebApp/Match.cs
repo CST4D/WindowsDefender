@@ -55,7 +55,7 @@ namespace WindowsDefender_WebApp
                 Users.Remove(user);
 
                 // If this is the host, re-assign another user as the match host
-                if (HostId == user.ConnectionId && Users.Count >= 0)
+                if (HostId == user.ConnectionId && Users.Count > 0)
                     HostId = ((User)Users[0]).ConnectionId;
             }
         }
