@@ -1,0 +1,77 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Game Lobby";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@section js {
+<script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+<script src="~/signalr/hubs"></script>
+<script>
+    
+    $(function () {
+        var chat = $.connection.chatHub;
+
+        chat.client.broadcastMessage = function (name, message) {
+            var encodedName = $('<div />').text(name).html();
+            var encodedMessage = $('<div />').text(message).html();
+            $("#chat").append('<div>' + "Name: " + encodedName + ", " + "Message: " + encodedMessage + '</div>');
+
+        }
+
+        $.connection.hub.start().done(function () {
+            $('#sendmessage').click(function () {
+                chat.server.send('@User.Identity.GetUserName()', $('#message').val());
+
+                $('#message').html('').focus();
+            });
+        });
+    });
+ 
+</script>
+}
+
+<div class="row">
+
+    <div class="col-xs-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                Chat
+
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="chat" class="chat"></div>
+                        <div class="input-group">
+                            <input id="message" type="text" class="form-control chatmessage" placeholder="Search for...">
+                            <span class="input-group-btn">
+                                <button id="sendmessage" class="btn btn-default" type="button">Send</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>Users</h2>
+                User 1<br />
+                User 2<br />
+                User 3<br />
+                User 4
+            </div>
+        </div>
+        <br />
+        0/4 Users Ready
+        <br /><br />
+        Waiting...
+        <br /><br />
+        <button class="btn-lg btn-success" type="button">I'm Ready</button>
+        <button class="btn-lg btn-danger" type="button">Leave Lobby</button>
+    </div>
+
+</div>
