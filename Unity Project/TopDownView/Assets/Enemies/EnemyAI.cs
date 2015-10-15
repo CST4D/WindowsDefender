@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+
 using System.Collections;
 
 public class EnemyAI : MonoBehaviour
@@ -139,7 +140,9 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
-    //Method to drain enemy's health
+    /// <summary>
+    /// Method to drain enemy's health
+    /// </summary>
     void DrainHealth()
     {
         health -= drainDamage;
@@ -189,19 +192,37 @@ public class EnemyAI : MonoBehaviour
         Destroy(projectile.gameObject);
     }
 
-    public virtual void OnDeath()
+    /// <summary>
+    /// When an enemy dies, if applicable duplicate the enemies on the spot that the enemy had died.
+    /// </summary>
+    /// <returns></returns>
+    public virtual EnemyAI[] OnDeath()
     {
-        if(duplicates && !hasDuplicated)
+        EnemyAI[] duplicateEnemies = null;
+
+        if (duplicates && !hasDuplicated)
         {
             health = maxHealth;
 
+            duplicateEnemies = new EnemyAI[numDuplicates];
+
             for (int i = 0; i < numDuplicates; i++)
             {
-                EnemyAI duplicate = GameObject.Instantiate(this);                
-                duplicate.hasDuplicated = true;
-            }
+                Vector3 newPosition = transform.position - new Vector3(0.1f, 0.1f, 0);
 
-            Destroy(this.gameObject);
+                EnemyAI duplicate = (EnemyAI)GameObject.Instantiate(this, newPosition, transform.rotation);
+                duplicate.transform.Rotate(Vector3.zero, 15 * i, Space.Self);
+                duplicate.hasDuplicated = true;
+                duplicate.health = maxHealth;
+                duplicate.movementPoints = movementPoints;
+                duplicate.transform.parent = transform.parent;
+
+                duplicateEnemies[i] = duplicate;
+            }
         }
+
+        GameObject.Destroy(gameObject);
+
+        return duplicateEnemies;
     }
 }

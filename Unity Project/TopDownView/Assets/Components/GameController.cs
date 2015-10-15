@@ -80,38 +80,38 @@ public class GameController : MonoBehaviour
 
     /// <summary>
     /// Check the health of the enemies, if they are 0 then execute their OnDeath functions
+    /// If the enemy spawned more enemies then add those enemies to the list
     /// </summary>
     void CheckEnemy()
     {
+        ArrayList tempNewEnemies = new ArrayList();
+
         for (int i = 0; i < enemies.Count; i++)
         {
             EnemyAI temp = (EnemyAI)enemies[i];
+
             if (temp.health <= 0)
             {
-                temp.OnDeath();
+                EnemyAI[] newEnemies = null;
 
-                if (temp.duplicates && !(temp.hasDuplicated))
-                {
-                    temp.health = 150;
-                    Vector3 vecTemp = new Vector3(temp.transform.position.x - 0.2f, temp.transform.position.y, temp.transform.position.z);
-                    EnemyAI temp2;
-                    temp2 = (EnemyAI)GameObject.Instantiate(temp, vecTemp, transform.rotation);
-                    temp2.transform.parent = transform.Find("Enemies").transform;
-                    temp2.movementPoints = temp.movementPoints;
+                if((newEnemies = temp.OnDeath()) != null)
+                    for (int j = 0; j < newEnemies.Length; j++)
+                        tempNewEnemies.Add(newEnemies[j]);
 
-                    temp.hasDuplicated = true;
-                    temp2.hasDuplicated = true;
-                    enemies.Add(temp2);
-                }
-                else
-                {
-                    Destroy(temp.gameObject);
-                    enemies.Remove(temp);
-                }
+                enemies.Remove(temp);
             }
         }
+
+        for (int i = 0; i < tempNewEnemies.Count; i++)
+            enemies.Add(tempNewEnemies[i]);
     }
 
+    /// <summary>
+    /// Get Enemies within range of a position
+    /// </summary>
+    /// <param name="atransform"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
     public LinkedList<EnemyAI> getEnemyWithinRange(Transform atransform, float range)
     {
         LinkedList<EnemyAI> enemyList = new LinkedList<EnemyAI>();
@@ -126,6 +126,10 @@ public class GameController : MonoBehaviour
         return enemyList;
     }
 
+    /// <summary>
+    /// Adds a spawner to a spawner list
+    /// </summary>
+    /// <param name="spai"></param>
     public void addSpawnerToSpawnerList(SpawnerAI spai)
     {
 
@@ -133,6 +137,7 @@ public class GameController : MonoBehaviour
         spai.wayPoints = pathFinding(spai);
         spai.flyPoints = pathFinding(spai, true);
     }
+
 
     public void setWayPoint(Waypoint way)
     {
@@ -399,7 +404,14 @@ public class GameController : MonoBehaviour
 
         return dx + dy;
     }
-
+    
+    /// <summary>
+    /// Creates a new square
+    /// </summary>
+    /// <param name="g">Movement Cost</param>
+    /// <param name="v">First Point</param>
+    /// <param name="dv">Second Point</param>
+    /// <returns></returns>
     Square createSquare(int g, Vector2 v, Vector2 dv)
     {
         Square newSquare = new Square();
@@ -434,6 +446,12 @@ public class GameController : MonoBehaviour
         return dx + dy;
     }
 
+    /// <summary>
+    /// creates a new copy of a LinkedList
+    /// </summary>
+    /// <param name="spawner"></param>
+    /// <param name="ground"></param>
+    /// <returns></returns>
     LinkedList<Vector2> copyWaypoints(SpawnerAI spawner, bool ground)
     {
         LinkedList<Vector2> copyWaypoints = new LinkedList<Vector2>();
