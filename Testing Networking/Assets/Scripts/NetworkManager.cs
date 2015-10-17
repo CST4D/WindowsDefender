@@ -30,6 +30,11 @@ public class NetworkManager : MonoBehaviour {
     Dictionary<NetworkPlayer, string> usersByID = new Dictionary<NetworkPlayer, string>();
 
     /// <summary>
+    /// The cube object that we will spawn with.
+    /// </summary>
+    public GameObject myCube;
+
+    /// <summary>
     /// Use this for initialization.
     /// </summary>
     void Start()
@@ -239,6 +244,41 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Ask server to create numbers for a cube spawn.
+    /// </summary>
+    [RPC]
+    void AskCreateCube()
+    {
+        if (Network.isServer)
+        {
+            float randomX = Random.value * 10;
+            float randomY = Random.value * 10;
+            GetComponent<NetworkView>().RPC("CreateCube", RPCMode.All, randomX, randomY);
+        }
+    }
+
+    /// <summary>
+    /// Spawns a cube at a random position.
+    /// </summary>
+    /// <param name="randomValueX">Random value for X.</param>
+    /// <param name="randomValueY">Random value for Y.</param>
+    [RPC]
+    void CreateCube(float randomValueX, float randomValueY)
+    {
+
+        if (myCube != true)
+        {
+            Debug.Log("myCube not set");
+            myCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        }
+        else if (myCube.GetComponent<Renderer>().enabled == false)
+        {
+            Debug.Log("myCube not rendered");
+            myCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        }
+        Instantiate(myCube, new Vector3(randomValueX, randomValueY, 0), Quaternion.identity);
+    }
 
     //--------------------------------------------------------
     /// <summary>
@@ -309,8 +349,11 @@ public class NetworkManager : MonoBehaviour {
             chatOutputRect = new Rect(chatOutputPosition.x, chatOutputPosition.y, chatOutputSize.x, chatOutputSize.y);
             entireChatArea = new Rect(chatInputPosition.x, chatInputPosition.y, Mathf.Max(chatInputSize.x, chatOutputSize.x), chatInputSize.y + chatOutputSize.y);
 
-           
-           
+            if (GUI.Button(new Rect(25f, 100f, 150f, 30f), "Spawn Object"))
+            {
+                GetComponent<NetworkView>().RPC("AskCreateCube", RPCMode.All);
+            }
+
             if (connected)
             {
                 if (nameSet)
