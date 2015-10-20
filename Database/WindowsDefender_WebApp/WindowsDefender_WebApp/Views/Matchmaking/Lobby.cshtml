@@ -1,0 +1,105 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    ViewBag.Title = "Game Lobby";
+}
+
+<h2>@ViewBag.Title</h2>
+
+
+@section js {
+    <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
+    <script src="~/signalr/hubs"></script>
+
+    <script>
+        var ws = $.connection.chatHub;
+        var readyStatus = false;
+
+        /* Connect to server */
+        $(function () {
+            $.connection.hub.start().done(function () {
+                ready = false;
+                registerUIEventHandlers();
+            });
+        });
+
+        /* Receive message */
+        ws.client.send = function (message) {
+            $("#chat").append('<div>' + message + '</div>');
+        }
+
+        /* Receive user list */
+        ws.client.updateUserList = function (json) {
+            var userlist = $.parseJSON(json);
+            $('#userlist').html('');
+            for (var i = 0; i < userlist.length; i++)
+                $("#userlist").append('<div>' + userlist[i] + '</div>');
+        }
+
+        /* Register UI event handlers */
+        function registerUIEventHandlers() {
+            // Send button
+            $('#sendmessage').click(function () {
+                ws.server.sendChatMessage($('#message').val());
+                $('#message').val('').focus();
+            });
+            // Press <enter> key on #message
+            $('#message').keyup(function (e) {
+                if (e.which == 13) {
+                    $('#sendmessage').click();
+                }
+            });
+            // Ready/Not Ready button
+            $('#readytoggle').click(function () {
+                readyStatus = !readyStatus;
+                ws.server.ready(readyStatus);
+
+                if (readyStatus)
+                    $('#readytoggle').text('Not Ready');
+                if (!readyStatus)
+                    $('#readytoggle').text('Ready');
+
+                $('#message').focus();
+            });
+        }
+    </script>
+}
+
+<div class="row">
+
+    <div class="col-xs-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <div id="chat" class="chat"></div>
+                        <div class="input-group">
+                            <input id="message" type="text" class="form-control chatmessage" placeholder="Type a message...">
+                            <span class="input-group-btn">
+                                <button id="sendmessage" class="btn btn-default" type="button">Send</button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>Users</h2>
+                <div id="userlist">
+                    Waiting...
+                </div>
+            </div>
+        </div>
+        <br />
+        0/4 Users Ready
+        <br /><br />
+        Waiting...
+        <br /><br />
+        <button id="readytoggle" class="btn-lg btn-success" type="button">I'm Ready</button>
+        <button id="leave" class="btn-lg btn-danger" type="button">Leave Lobby</button>
+    </div>
+
+</div>
