@@ -84,6 +84,9 @@ namespace WindowsDefender_WebApp
 
             // Update match user list
             UpdateMatchUserLists(match);
+
+            // Update match ready count
+            UpdateReadyCount(match);
         }
 
         /// <summary>
@@ -167,6 +170,26 @@ namespace WindowsDefender_WebApp
         }
 
         /// <summary>
+        /// Sends a chat message to everyone in the user's match with format: 'Name: message'
+        /// </summary>
+        /// <param name="message"></param>
+        public void CancelLaunch()
+        {
+            User user = null;
+            _users.TryGetValue(Context.ConnectionId, out user);
+            if (user == null)
+                return;
+
+            // Get match
+            Match match = null;
+            _matches.TryGetValue(user.MatchId, out match);
+
+            // Send cancel launch command to all users
+            foreach (User u in match.Users)
+                Clients.Client(u.ConnectionId).cancelLaunch();
+        }
+
+        /// <summary>
         /// Sends the current userlist to everyone in a match.
         /// </summary>
         /// <param name="match"></param>
@@ -209,6 +232,7 @@ namespace WindowsDefender_WebApp
             if (user == null)
                 return;
 
+            // Set if user is ready or not
             user.Ready = isReady;
 
             // Send message
@@ -217,6 +241,7 @@ namespace WindowsDefender_WebApp
             else
                 SendToMatch("<b>" + not_rdy_icon + user.Name + " is no longer ready.</b>");
 
+            // Get match
             Match match = null;
             _matches.TryGetValue(user.MatchId, out match);
 
@@ -241,16 +266,19 @@ namespace WindowsDefender_WebApp
                         // Send launch game command with host ip address
                         User host = null;
                         _users.TryGetValue(match.HostId, out host);
-                        Clients.Client(user.ConnectionId).launchGame(host.IpAddress);
+
+                        // Send launch command to all users
+                        foreach (User u in match.Users)
+                            Clients.Client(u.ConnectionId).launchGame(host.IpAddress);
                     }
                 }
                 else
                 {
+                    // If user left during launch countdown
                     foreach (User u in match.Users)
-                    {
-                        Clients.Client(user.ConnectionId).cancelGame();
-                        SendToMatch("<b>" + rdy_icon + "Launch cancelled. Waiting for more players...</b>");
-                    }
+                        Clients.Client(user.ConnectionId).cancelLaunch();
+
+                    SendToMatch("<b>" + rdy_icon + "Launch cancelled. Waiting for more players...</b>");
                 }
             }
         }

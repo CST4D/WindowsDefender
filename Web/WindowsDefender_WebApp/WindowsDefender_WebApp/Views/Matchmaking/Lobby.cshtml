@@ -66,10 +66,11 @@
             createjs.Sound.play(launchSound);
         };
 
-        ws.client.cancelGame = function () {
+        ws.client.cancelLaunch = function () {
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
             createjs.Sound.play(errorSound);
+            createjs.Sound.stop(launchSound);
         };
 
         function launch() {
@@ -82,6 +83,13 @@
             // Send button
             $('#sendmessage').click(function () {
                 ws.server.sendChatMessage($('#message').val());
+                $('#message').val('').focus();
+            });
+            // Cancel button
+            $('#cancelButton').click(function () {
+                readyStatus = false;
+                ws.server.ready(false);
+                ws.server.cancelLaunch();
                 $('#message').val('').focus();
             });
             // Press <enter> key on #message
@@ -122,7 +130,7 @@
                 If game fails to load. We need to make it so the user can go install the urischeme and still come back to join somehow.
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancel()">Cancel</button>
+                <button type="button" id="cancelButton" class="btn btn-default" data-dismiss="modal">Cancel</button>
             </div>
         </div>
 

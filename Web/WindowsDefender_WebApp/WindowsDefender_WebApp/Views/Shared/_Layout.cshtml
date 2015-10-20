@@ -39,24 +39,23 @@
             </div>
         </div> <!-- /navbar -->
         @*@{
-            var controller = ViewContext.RouteData.Values["controller"];
-            var action = ViewContext.RouteData.Values["action"];
-            if ((string)controller == "Home" && (string)action == "Index")
-            {
+                var controller = ViewContext.RouteData.Values["controller"];
+                var action = ViewContext.RouteData.Values["action"];
+                if ((string)controller == "Home" && (string)action == "Index")
+                {
 
-            }
-        }*@
+                }
+            }*@
 
         @if (IsSectionDefined("Hero"))
         {
             @RenderSection("Hero");
         }
-    }
+        
 
         <div class="container body-content">
             @RenderBody()
         </div>
-    
 
         <footer>
             <div class="container">
@@ -65,15 +64,13 @@
                         &copy; @DateTime.Now.Year - Tech Pro Set 4D
                     </div>
                     <div class="col-xs-9" style="text-align: right">
-                        <small>This is an academic project. Use of names and/or media falls under the fair use guidelines.</>
+                        <small>This is an academic project. Use of names and/or media falls under the fair use guidelines.</small>
                     </div>
                 </div>
 
             </div>
         </footer>
-
-        </div>
-    </footer>
+    </div>
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
