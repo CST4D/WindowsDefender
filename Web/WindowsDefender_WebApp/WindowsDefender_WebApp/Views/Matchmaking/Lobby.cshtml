@@ -74,8 +74,13 @@
         };
 
         function launch() {
-            // TODO: Open url: 'windefendgame:hostIP-username
+            clearTimeout(launchTimer);
             console.log("Launching game with ip: " + hostIP);
+            $('#myModal').modal('hide');
+            //            document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()';
+            console.log('towerdefender:' + hostIP + '|@User.Identity.GetUserName()');
+            document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()';
+
         }
 
         /* Register UI event handlers */

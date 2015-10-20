@@ -269,7 +269,11 @@ namespace WindowsDefender_WebApp
 
                         // Send launch command to all users
                         foreach (User u in match.Users)
+                        {
+                            if (host.IpAddress == "::1")
+                                host.IpAddress = "127.0.0.1";
                             Clients.Client(u.ConnectionId).launchGame(host.IpAddress);
+                        }
                     }
                 }
                 else
@@ -321,6 +325,9 @@ namespace WindowsDefender_WebApp
 
                 // Update match's user list
                 UpdateMatchUserLists(match);
+
+                // Update match ready count
+                UpdateReadyCount(match);
 
                 // If match is now empty, close the match entirely
                 if (match.Users.Count == 0)
