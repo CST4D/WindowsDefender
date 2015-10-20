@@ -30,6 +30,10 @@ body {
     padding-bottom: 40px;
 }
 
+.body-content {
+    margin-top: 25px;
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
