@@ -25,10 +25,21 @@
     </script>
 
     <script>
+        // Socket connection object
         var ws = $.connection.chatHub;
+
+        // Ready status of player
         var readyStatus = false;
 
-        /* Connect to server */
+        // Timer for launch sequence
+        var launchTimer = null;
+
+        // IP of host to connect to
+        var hostIP = null;
+
+        /*
+         * Connect to server 
+         */
         $(function () {
             $.connection.hub.start().done(function () {
                 ready = false;
@@ -36,13 +47,17 @@
             });
         });
 
-        /* Receive message */
+        /* 
+         * Receive message
+         */
         ws.client.send = function (message) {
             $("#chat").append('<div>' + message + '</div>');
             createjs.Sound.play(clickSound);
         };
 
-        /* Receive user list */
+        /*
+         * Receive user list
+         */
         ws.client.updateUserList = function (json) {
             var userlist = $.parseJSON(json);
             $('#userlist').html('');
@@ -50,22 +65,27 @@
                 $("#userlist").append('<div>' + userlist[i] + '</div>');
         };
 
-        /* Receive number of users that are ready */
+        /*
+         * Receive number of users that are ready
+         */
         ws.client.updateReadyCount = function (count) {
             $('#readycount').html(count + ' of 4 players ready.');
             createjs.Sound.play(bloopSound);
         };
 
-        var launchTimer = null;
-        var hostIP = null;
-
+        /*
+         * Starts launch sequence
+         */
         ws.client.launchGame = function (hostip) {
             hostIP = hostip;
-            launchTimer = setTimeout(launch, 5000);
+            launchTimer = setTimeout(launch, 10000);
             $('#myModal').modal('show');
             createjs.Sound.play(launchSound);
         };
 
+        /*
+         * Cancels a launch
+         */
         ws.client.cancelLaunch = function () {
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
@@ -73,19 +93,25 @@
             createjs.Sound.stop(launchSound);
         };
 
+        /*
+         * Launches game by visiting URI Scheme
+         */
         function launch() {
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
             document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()';
         }
 
-        /* Register UI event handlers */
+        /*
+         * Register UI event handlers
+         */
         function registerUIEventHandlers() {
             // Send button
             $('#sendmessage').click(function () {
                 ws.server.sendChatMessage($('#message').val());
                 $('#message').val('').focus();
             });
+
             // Cancel button
             $('#cancelButton').click(function () {
                 readyStatus = false;
@@ -93,12 +119,14 @@
                 ws.server.cancelLaunch();
                 $('#message').val('').focus();
             });
+
             // Press <enter> key on #message
             $('#message').keyup(function (e) {
                 if (e.which == 13) {
                     $('#sendmessage').click();
                 }
             });
+
             // Ready/Not Ready button
             $('#readytoggle').click(function () {
                 readyStatus = !readyStatus;

@@ -58,7 +58,8 @@ namespace WindowsDefender_WebApp.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return RedirectToAction("index", "home");
+            //return View();
         }
 
         //
