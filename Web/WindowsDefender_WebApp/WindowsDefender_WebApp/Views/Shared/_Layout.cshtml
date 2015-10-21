@@ -24,15 +24,15 @@
                     <ul class="nav navbar-nav">
                         @if (Request.IsAuthenticated)
                         {
-                            <li>@Html.ActionLink("Search for Game", "Index", "Matchmaking")</li>
+                            <li>@Html.ActionLink("SEARCH FOR GAME", "Index", "Matchmaking")</li>
                         }
                         else
                         {
-                            <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                            <li>@Html.ActionLink("HOME", "Index", "Home")</li>
                         }
-                        <li>@Html.ActionLink("Media", "Media", "Home")</li>
-                        <li>@Html.ActionLink("Download", "Download", "Home")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
+                        <li>@Html.ActionLink("MEDIA", "Media", "Home")</li>
+                        <li>@Html.ActionLink("DOWNLOAD", "Download", "Home")</li>
+                        <li>@Html.ActionLink("ABOUT", "About", "Home")</li>
                     </ul>
                     @Html.Partial("_LoginPartial")
                 </div>
@@ -51,7 +51,6 @@
         {
             @RenderSection("Hero");
         }
-    }
 
         <div class="container body-content">
             @RenderBody()
