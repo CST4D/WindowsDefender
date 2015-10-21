@@ -53,6 +53,7 @@
         ws.client.send = function (message) {
             $("#chat").append('<div>' + message + '</div>');
             createjs.Sound.play(clickSound);
+            $("#chat").animate({ scrollTop: $("#chat").prop("scrollHeight") - $("#chat").height() }, 50);
         };
 
         /*
@@ -71,6 +72,12 @@
         ws.client.updateReadyCount = function (count) {
             $('#readycount').html(count + ' of 4 players ready.');
             createjs.Sound.play(bloopSound);
+            $('#readycount').addClass("animated jello")
+               .one('webkitAnimationEnd oanimationend msAnimationEnd animationend',
+                   function (e) {
+                       $('#readycount').removeClass();
+                   }
+           );
         };
 
         /*
@@ -78,7 +85,7 @@
          */
         ws.client.launchGame = function (hostip) {
             hostIP = hostip;
-            launchTimer = setTimeout(launch, 10000);
+            launchTimer = setTimeout(launch, 11000);
             $('#myModal').modal('show');
             createjs.Sound.play(launchSound);
         };
@@ -99,6 +106,7 @@
         function launch() {
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
+            createjs.Sound.stop(launchSound);
             document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()';
         }
 
@@ -143,6 +151,10 @@
 
                 $('#message').focus();
             });
+
+            $('#leave').click(function () {
+                document.location.href = "/";
+            });
         }
     </script>
 }
@@ -169,7 +181,10 @@
 <div class="row">
 
     <div class="col-xs-8">
-        <div class="panel panel-default">
+        <div class="panel panel-default chatbox">
+            <div class="panel-heading">
+                Chat
+            </div>
             <div class="panel-body">
                 <div class="row">
                     <div class="col-xs-12">
@@ -188,8 +203,10 @@
 
     <div class="col-xs-4">
         <div class="panel panel-default">
+            <div class="panel-heading">
+                Connected Users
+            </div>
             <div class="panel-body">
-                <h2>Users</h2>
                 <div id="userlist">
                     Waiting...
                 </div>

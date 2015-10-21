@@ -28,7 +28,8 @@ namespace WindowsDefender_WebApp {
                       "~/Content/site.css",
                       "~/Content/Theme/roboto.min.css",
                       "~/Content/Theme/material.min.css",
-                      "~/Content/Theme/ripples.min.css"
+                      "~/Content/Theme/ripples.min.css",
+                      "~/Content/animate.css"
                       ));
         }
     }
