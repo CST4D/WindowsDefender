@@ -15,7 +15,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsDefender_WebApp</RootNamespace>
     <AssemblyName>WindowsDefender_WebApp</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
@@ -25,6 +25,7 @@
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -34,6 +35,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <FilesToIncludeForPublish>AllFilesInTheProject</FilesToIncludeForPublish>
+    <PublishDatabaseSettings>&lt;Objects&gt;&lt;ObjectGroup Name="TowerDefenceEntities-Deployment" Order="1"&gt;&lt;Destination Path="Data Source=&amp;quot%3bcompcst.cloudapp.net, 57500&amp;quot%3b%3bInitial Catalog=TowerDefence%3bPersist Security Info=True%3bUser ID=towerdefenceuser%3bPassword=Chickenwings1" /&gt;&lt;Object Type="DbFullSql"&gt;&lt;PreSource Path="" ScriptSchema="True" ScriptData="False" CopyAllFullTextCatalogs="False" DriDefaults="True" /&gt;&lt;Source Path="obj\Debug\AutoScripts\TowerDefenceEntities-Deployment_SchemaOnly.sql" Transacted="True" /&gt;&lt;/Object&gt;&lt;/ObjectGroup&gt;&lt;/Objects&gt;</PublishDatabaseSettings>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -59,16 +62,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Abstractions" />
     <Reference Include="System.Web.Routing" />
     <Reference Include="System.Xml" />
@@ -110,6 +111,7 @@
       <Private>True</Private>
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
     </Reference>
+    <Reference Include="System.Xml.Linq" />
     <Reference Include="WebGrease">
       <Private>True</Private>
       <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
@@ -175,13 +177,40 @@
     <Compile Include="App_Start\IdentityConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
+    <Compile Include="AspNetRole.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUser.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserClaim.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserLogin.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="AspNetUserRole.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ChatHub.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MatchmakingController.cs" />
+    <Compile Include="Friend.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Map.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MatchHistory.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="MatchHistoryDetail.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
@@ -193,8 +222,39 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Match.cs" />
+    <Compile Include="SpecialAbility.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Startup.cs" />
+    <Compile Include="Thread.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="ThreadPost.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Tower.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TowerDefenceModel.Context1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TowerDefenceModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TowerDefenceModel.cs" />
+    <Compile Include="TowerDefenceModel1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="TowerDefenceModel1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TowerDefenceModel.edmx</DependentUpon>
+    </Compile>
     <Compile Include="User.cs" />
+    <Compile Include="Virus.cs">
+      <DependentUpon>TowerDefenceModel.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\animate.css" />
@@ -236,15 +296,16 @@
     <Content Include="fonts\RobotoDraftMedium.woff2" />
     <Content Include="fonts\RobotoDraftRegular.woff" />
     <Content Include="fonts\RobotoDraftRegular.woff2" />
-    <None Include="Resources\hero.JPG" />
-    <None Include="Resources\call_to_action1.png" />
-    <None Include="Resources\bgtexture.png" />
-    <None Include="Resources\icon.png" />
-    <None Include="Resources\searching.gif" />
+    <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <Content Include="Resources\hero.JPG" />
+    <Content Include="Resources\call_to_action1.png" />
+    <Content Include="Resources\bgtexture.png" />
+    <Content Include="Resources\icon.png" />
+    <Content Include="Resources\searching.gif" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Resources\admin.png" />
-    <None Include="Resources\hero2.jpg" />
-    <None Include="Resources\hero3.jpg" />
+    <Content Include="Resources\hero2.jpg" />
+    <Content Include="Resources\hero3.jpg" />
     <Content Include="Resources\towers\antiviruses\avast_base.png" />
     <Content Include="Resources\towers\antiviruses\avast_turret.png" />
     <Content Include="Resources\towers\antiviruses\mcafee_base.png" />
@@ -276,7 +337,17 @@
     <Content Include="Scripts\ripples.js" />
     <Content Include="Scripts\ripples.min.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="TowerDefenceModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TowerDefenceModel.Context1.cs</LastGenOutput>
+    </Content>
+    <Content Include="TowerDefenceModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TowerDefenceModel1.cs</LastGenOutput>
+    </Content>
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -296,7 +367,7 @@
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\LoginOLD.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
@@ -316,6 +387,11 @@
     <Content Include="Views\Matchmaking\Index.cshtml" />
     <Content Include="Scripts\material.min.js.map" />
     <Content Include="Scripts\ripples.min.js.map" />
+    <EntityDeploy Include="TowerDefenceModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>TowerDefenceModel1.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <Content Include="TowerDefenceModel.edmx.diagram" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -333,6 +409,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
