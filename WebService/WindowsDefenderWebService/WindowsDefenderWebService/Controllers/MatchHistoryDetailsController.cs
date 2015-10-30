@@ -36,7 +36,7 @@ namespace WindowsDefenderWebService.Controllers
         {
             return db.MatchHistoryDetails;
         }
-
+                
         // GET: odata/MatchHistoryDetails(5)
         [EnableQuery]
         public SingleResult<MatchHistoryDetail> GetMatchHistoryDetail([FromODataUri] int key)

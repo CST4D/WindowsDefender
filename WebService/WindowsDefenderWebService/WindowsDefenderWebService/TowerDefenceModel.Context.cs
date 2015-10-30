@@ -19,12 +19,11 @@ namespace WindowsDefenderWebService
             : base("name=TowerDefenceEntities")
         {
         }
-    
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder) {
             throw new UnintentionalCodeFirstException();
         }
-    
+
         public virtual DbSet<AspNetRole> AspNetRoles { get; set; }
         public virtual DbSet<AspNetUserClaim> AspNetUserClaims { get; set; }
         public virtual DbSet<AspNetUserLogin> AspNetUserLogins { get; set; }
