@@ -10,6 +10,7 @@ public class GameController : MonoBehaviour
     public SpawnerAI spawner;
     public Game_Timer gameTime;
     public Rounds rounds;
+    public UnityEngine.UI.Text gameInfoDebugText;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -30,6 +31,7 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
         gameTime.setTime(10.0f);
@@ -75,6 +77,22 @@ public class GameController : MonoBehaviour
                     enemies.Add(temp);
                 }
             }
+        }
+    }
+
+    void GetGameInitInfo()
+    {
+        string schemaName = "towerdefender:";
+
+        string serverIpAddr;
+        string username;
+        string[] cmdLineArgs = System.Environment.GetCommandLineArgs();
+        if (cmdLineArgs.Length > 1 && cmdLineArgs[1].StartsWith(schemaName))
+        {
+            string[] uriList = cmdLineArgs[1].Substring(schemaName.Length).Split('|');
+            serverIpAddr = uriList[0];
+            username = uriList[1];
+            gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
         }
     }
 
