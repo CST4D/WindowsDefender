@@ -197,13 +197,7 @@
     <Compile Include="User.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.min.css" />
-    <Content Include="Content\Sounds\bloop.mp3" />
-    <Content Include="Content\Sounds\click.mp3" />
-    <Content Include="Content\Sounds\error.mp3" />
-    <Content Include="Content\Sounds\join.mp3" />
-    <Content Include="Content\Sounds\launch.mp3" />
     <Content Include="Content\Theme\material-fullpalette.css" />
     <Content Include="Content\Theme\material-fullpalette.min.css" />
     <Content Include="Content\Theme\material.css" />
@@ -242,22 +236,12 @@
     <None Include="Resources\icon.png" />
     <None Include="Resources\searching.gif" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+<<<<<<< HEAD
     <Content Include="Resources\admin.png" />
+=======
     <None Include="Resources\hero2.jpg" />
     <None Include="Resources\hero3.jpg" />
-    <Content Include="Resources\towers\antiviruses\avast_base.png" />
-    <Content Include="Resources\towers\antiviruses\avast_turret.png" />
-    <Content Include="Resources\towers\antiviruses\mcafee_base.png" />
-    <Content Include="Resources\towers\antiviruses\mcafee_turret.png" />
-    <Content Include="Resources\towers\antiviruses\norton_base.png" />
-    <Content Include="Resources\towers\antiviruses\norton_turret.png" />
-    <Content Include="Resources\towers\antiviruses\tower-avg.png" />
-    <Content Include="Resources\towers\antiviruses\tower-kaspersky.png" />
-    <Content Include="Resources\towers\viruses\email_virus.png" />
-    <Content Include="Resources\towers\viruses\mob-boot_loader_virus.png" />
-    <Content Include="Resources\towers\viruses\mob-hijacker_virus.png" />
-    <Content Include="Resources\towers\viruses\mob-macro_virus.png" />
-    <Content Include="Resources\towers\viruses\worm_virus.png" />
+>>>>>>> theme
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -296,7 +280,7 @@
     <Content Include="Views\Account\ExternalLoginFailure.cshtml" />
     <Content Include="Views\Account\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordConfirmation.cshtml" />
-    <Content Include="Views\Account\LoginOLD.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
     <Content Include="Views\Account\Register.cshtml" />
     <Content Include="Views\Account\ResetPassword.cshtml" />
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
