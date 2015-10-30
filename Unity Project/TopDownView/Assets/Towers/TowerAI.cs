@@ -75,7 +75,7 @@ public class TowerAI : Building {
     /// Creates a projectile object that will fly towards the target
     /// </summary>
     /// <param name="target"></param>
-    public virtual void shootTarget(GameObject target)
+    public virtual projectileAI shootTarget(GameObject target)
     {
         projectileAI temp = (projectileAI) projectileAI.Instantiate(projectileSource, transform.position, transform.rotation);
         temp.transform.parent = transform;
@@ -85,6 +85,7 @@ public class TowerAI : Building {
         temp.drainDuration = drainDuration;
         temp.target = target;
         aSource.PlayOneShot(aSource.clip, 0.9f);
+        return temp;
     }
 
     /// <summary>
