@@ -16,7 +16,7 @@ namespace DatabaseSiteTest {
 
         protected void Page_Load(object sender, EventArgs e) {
             //Obtain the link from database and get the data
-            string connString = ConfigurationManager.ConnectionStrings["SQLServerTest"]
+            string connString = ConfigurationManager.ConnectionStrings["SQLServerTest1"]
                 .ConnectionString;
             string query = "SELECT * " +
                 "FROM dbo.databasetest";
@@ -42,8 +42,8 @@ namespace DatabaseSiteTest {
                 conn.Open();
             } catch(SqlException ex) {
                 success = false;
-                //message = ex.Message + "<br><br>Failed to connect to the database";
-                message = "<br><br>Failed to connect to the database";
+                message = ex.Message + "<br><br>Failed to connect to the database";
+                //message = "<br><br>Failed to connect to the database";
                 Console.WriteLine(ex.Message + "<br><br>Failed to connect to the database");
             } finally {
                 conn.Close();
@@ -57,6 +57,7 @@ namespace DatabaseSiteTest {
             } catch(SqlException ex) {
                 Console.WriteLine(ex.Message + "<br><br>Failed to connect to the database");
             } finally {
+
                 conn.Close();
                 da.Dispose();
             }
