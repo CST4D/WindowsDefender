@@ -1,4 +1,5 @@
-﻿
+﻿@import url(https://fonts.googleapis.com/css?family=Expletus+Sans:400,500,700);
+
 /* icon */
 *:not(span) {
     font-family: 'Expletus Sans', cursive !important;
@@ -13,7 +14,8 @@ html, body {
 body {
     padding-top: 50px;
     /*background: url(../Resources/bgtexture.png);*/
-    background: #181818 !important;
+    background: #181818;
+    background: url(/Resources/hexabump.png);
     height: 100%;
 }
 
@@ -30,7 +32,7 @@ body {
 }
 
 .body-content {
-    margin-top: 25px;
+    margin-top: 38px;
 }
 
 .form-group .form-control:focus, .form-group-default .form-control:focus {
@@ -80,13 +82,12 @@ body {
     max-height: 300px;
 }
 
-.logotxt {
-    color: white;
-    text-shadow: 0 0 10px #c30042, 0 0 10px #041fb6;
-    font-size: 1.3em;
-    height: 60px;
-    line-height: 60px;
-    margin-right: 20px;
+
+#small-logo {
+    width: auto;
+    height: 35px;
+    margin-left: 15px;
+    margin-right: 15px;
 }
 
 input[type=text], input[type=password] {
@@ -101,10 +102,11 @@ textarea {
 }
 
 .navbar {
-    /*background: #158CBA;*/
     background: #3F51B5 !important;
-    /*box-shadow: 0 2px 2px -2px gray;*/
     line-height: 50px;
+    -webkit-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.36);
+    -moz-box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.36);
+    box-shadow: 0px 10px 10px 0px rgba(0, 0, 0, 0.36);
 }
 
 .navbar-brand {
@@ -120,30 +122,28 @@ textarea {
     width: 30px;
 }
 
+.massivetitle {
+    text-shadow: 0 0 10px #222222, 0 0 20px #C12157;
+}
+
 .hero {
     width: 100%;
     height: 725px;
     padding: 100px 25px 25px 25px;
     margin: 0;
-    background: url(../Resources/hero3.jpg);
+    background: url(../Resources/hero3.JPG);
     background-size: cover;
-    /*background: #171015;*/
-    /*box-shadow: 0 4px 2px -2px gray;*/
-    
-    /*
+    box-shadow: 0px 45px 70px -40px #000000;
+    text-align: center;
     -webkit-box-shadow: 0px 50px 49px -44px #283592;
     -moz-box-shadow: 0px 50px 49px -44px #283592;
-    */
-    box-shadow: 0px 45px 70px -40px #000000;
-    
-    text-align: center;
+    box-shadow: 0px 50px 49px -44px #283592;
 }
 
 .hero h1 {
     text-align: center;
     margin-top: 0;
     color: white;
-    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
     font-size: 5em;
 }
 
@@ -154,7 +154,7 @@ textarea {
 
 .hero .lead {
     font-weight: bold;
-    text-shadow: 1.5px 1px 1.5px #342330;
+    text-shadow: 2px 2px 1.5px #000;
 }
 
 .panel {
@@ -170,7 +170,8 @@ textarea {
 }
 
 .call-to-action-wrapper {
-    margin-top: 100px;
+    margin-top: 40px;
+    margin-bottom: 60px;
 }
 
 .call-to-action {
@@ -181,15 +182,51 @@ textarea {
     text-decoration: none;
 }
 
+.btn-default, .btn-primary {
+}
+
+.btn-default:hover, .btn-primary:hover {
+    box-shadow: 0 0 50px rgba(0, 0, 0, .5) !important;
+}
+
 .call-to-action .panel {
-    background: #171015;
-    /*
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#181818+28,342330+100&amp;0+0,0+28,1+100 */
+    background: -moz-linear-gradient(top,  rgba(24,24,24,0) 0%, rgba(24,24,24,0) 28%, rgba(52,35,48,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(24,24,24,0)), color-stop(28%,rgba(24,24,24,0)), color-stop(100%,rgba(52,35,48,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(24,24,24,0) 0%,rgba(24,24,24,0) 28%,rgba(52,35,48,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(24,24,24,0) 0%,rgba(24,24,24,0) 28%,rgba(52,35,48,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(24,24,24,0) 0%,rgba(24,24,24,0) 28%,rgba(52,35,48,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(24,24,24,0) 0%,rgba(24,24,24,0) 28%,rgba(52,35,48,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00181818', endColorstr='#342330',GradientType=0 ); /* IE6-9 */
+    
     -webkit-box-shadow: 0px 50px 49px -44px #283592;
     -moz-box-shadow: 0px 50px 49px -44px #283592;
     box-shadow: 0px 50px 49px -44px #283592;
+
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    */
+    border-bottom: 2px groove #333;
+    padding-bottom: 20px;
+}
+
+.call-to-action .panel:hover {
+     /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#181818+14,342330+100&amp;0+14,1+100 */
+    background: -moz-linear-gradient(top,  rgba(24,24,24,0) 14%, rgba(52,35,48,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(14%,rgba(24,24,24,0)), color-stop(100%,rgba(52,35,48,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  rgba(24,24,24,0) 14%,rgba(52,35,48,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  rgba(24,24,24,0) 14%,rgba(52,35,48,1) 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  rgba(24,24,24,0) 14%,rgba(52,35,48,1) 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  rgba(24,24,24,0) 14%,rgba(52,35,48,1) 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00181818', endColorstr='#342330',GradientType=0 ); /* IE6-9 */
+
+    -webkit-box-shadow: 0px 50px 49px -44px #C12157;
+    -moz-box-shadow: 0px 50px 49px -44px #C12157;
+    box-shadow: 0px 50px 49px -44px #C12157;
+
+}
+
+.call-to-action .panel-body {
+    padding-bottom: 0;
 }
 
 .panel-heading {
@@ -231,6 +268,9 @@ footer {
 .username {
     font-weight: bold;
 }
+#sendmessage {
+    margin-left: 20px;
+}
 
 /* DOWNLOAD ------------------------------------------------------------------------ */
 .requirementtitle {
@@ -241,9 +281,11 @@ footer {
     background: black;
     padding: 25px;
     margin: 0;
-    background: url(../Resources/hero3.jpg);
+    background: url(../Resources/hero3.JPG);
     background-size: 100% 100%;
-    box-shadow: 0 4px 2px -2px gray;
+     -webkit-box-shadow: 0px 50px 49px -44px #283592;
+    -moz-box-shadow: 0px 50px 49px -44px #283592;
+    box-shadow: 0px 50px 49px -44px #283592;
 }
 .fixed-panel {
     min-height: 305px;
@@ -267,7 +309,7 @@ footer {
     background: black;
     padding: 25px;
     margin: 0;
-    background: url(../Resources/hero3.jpg);
+    background: url(../Resources/hero3.JPG);
     background-size: 100% 100%;
     box-shadow: 0 4px 2px -2px gray;
 }
@@ -287,17 +329,17 @@ footer {
      margin-right: auto;
 }
 .about-hero {
-    background: url(../Resources/hero3.jpg);
+    background: url(../Resources/hero3.JPG);
     width: 100%;
-    height: 300px;
+    height: 200px;
     margin: 0;
+    background: url(../Resources/hero3.JPG);
     background-size: cover;
     box-shadow: 0px 45px 20px -40px #000000;
 }
-.about-header {
-    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
+.about-hero a {
+    text-decoration: none !important
 }
-
 /* MARGINS ------------------------------------------------------------------------ */
 /* top, bottom, left, right + amount */
 .top50 {
@@ -308,4 +350,10 @@ footer {
 }
 .left100 {
     margin-left: 100px;
+}
+
+.valign {
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
