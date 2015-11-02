@@ -1,7 +1,4 @@
-﻿@import url(https://fonts.googleapis.com/css?family=Expletus+Sans:400,500,700);
-
-/* icon */
-*:not(span) {
+﻿*:not(span) {
     font-family: 'Expletus Sans', cursive !important;
     color: #f6f7ff !important;
     text-shadow: 0 0 10px rgba(255, 255, 255, .3);
@@ -13,7 +10,6 @@ html, body {
 
 body {
     padding-top: 50px;
-    /*background: url(../Resources/bgtexture.png);*/
     background: #181818;
     background: url(/Resources/hexabump.png);
     height: 100%;

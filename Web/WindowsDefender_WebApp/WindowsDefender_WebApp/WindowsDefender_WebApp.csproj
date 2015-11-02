@@ -255,16 +255,19 @@
     <Content Include="fonts\RobotoDraftMedium.woff2" />
     <Content Include="fonts\RobotoDraftRegular.woff" />
     <Content Include="fonts\RobotoDraftRegular.woff2" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
+    <Content Include="Resources\call_to_action.png" />
     <Content Include="Resources\hero.JPG" />
-    <Content Include="Resources\call_to_action1.png" />
     <Content Include="Resources\bgtexture.png" />
+    <Content Include="Resources\hexabump.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\searching.gif" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Resources\admin.png" />
     <Content Include="Resources\hero2.jpg" />
     <Content Include="Resources\hero3.jpg" />
+    <Content Include="Resources\smalllogo.png" />
     <Content Include="Resources\towers\antiviruses\avast_base.png" />
     <Content Include="Resources\towers\antiviruses\avast_turret.png" />
     <Content Include="Resources\towers\antiviruses\mcafee_base.png" />
@@ -354,6 +357,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
