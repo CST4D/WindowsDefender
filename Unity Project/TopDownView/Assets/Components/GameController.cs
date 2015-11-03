@@ -11,12 +11,14 @@ public class GameController : MonoBehaviour
     public Game_Timer gameTime;
     public Rounds rounds;
     public UnityEngine.UI.Text gameInfoDebugText;
+    public UnityEngine.UI.Text resourceText;
 
     private ArrayList enemies;
     private ArrayList spawners;
     private float timer;
     private Waypoint _point;
     private Tile[,] map;
+    public int money;
     private int _mapWidth, _mapHeight;
 
     struct Square
@@ -34,9 +36,11 @@ public class GameController : MonoBehaviour
         GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
+        money = 50;
         gameTime.setTime(10.0f);
         timer = 0;
-        rounds.notParsed = true; 
+        rounds.notParsed = true;
+        resourceText.text = money.ToString();
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
         tmxl.loadMeta();
@@ -50,6 +54,7 @@ public class GameController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        money = int.Parse(resourceText.text);
         if (rounds.notParsed)
             rounds.parseWave();
         
@@ -111,12 +116,16 @@ public class GameController : MonoBehaviour
             if (temp.health <= 0)
             {
                 EnemyAI[] newEnemies = null;
+                money += temp.reward;
+                
+                resourceText.text = money.ToString();
 
                 if((newEnemies = temp.OnDeath()) != null)
                     for (int j = 0; j < newEnemies.Length; j++)
                         tempNewEnemies.Add(newEnemies[j]);
-
+                
                 enemies.Remove(temp);
+                
             }
         }
 
