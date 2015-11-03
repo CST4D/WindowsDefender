@@ -1,5 +1,4 @@
-﻿@import url(https://fonts.googleapis.com/css?family=Expletus+Sans:400,500,700);
-
+﻿
 /* icon */
 *:not(span) {
     font-family: 'Expletus Sans', cursive !important;
@@ -30,11 +29,68 @@ body {
     padding-bottom: 40px;
 }
 
+.body-content {
+    margin-top: 25px;
+}
+
+.form-group .form-control:focus, .form-group-default .form-control:focus {
+    background-image: linear-gradient(#3F51B5, #3F51B5),linear-gradient(#d2d2d2,#d2d2d2) !important;
+}
+
+.modal-content {
+    background: #342330 !important;
+}
+
+.navbar a:hover {
+    background: #C12157 !important;
+}
+
 /* Override the default bootstrap behavior where horizontal description lists 
    will truncate terms that are too long to fit in the left column 
 */
 .dl-horizontal dt {
     white-space: normal;
+}
+
+.modal {
+  text-align: center;
+  padding: 0!important;
+}
+
+.modal:before {
+  content: '';
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
+  margin-right: -4px; /* Adjusts for spacing */
+}
+
+.modal-dialog {
+  display: inline-block;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.chatbox, .chat {
+    max-height: 450px;
+}
+
+.chat {
+    overflow-y:auto;
+    max-height: 300px;
+}
+
+.logotxt {
+    color: white;
+    text-shadow: 0 0 10px #c30042, 0 0 10px #041fb6;
+    font-size: 1.3em;
+    height: 60px;
+    line-height: 60px;
+    margin-right: 20px;
+}
+
+input[type=text], input[type=password] {
+    padding-left: 5px;
 }
 
 /* Set width on the form input elements since they're 100% wide by default */
@@ -45,8 +101,9 @@ textarea {
 }
 
 .navbar {
-    background: #158CBA;
-    box-shadow: 0 2px 2px -2px gray;
+    /*background: #158CBA;*/
+    background: #3F51B5 !important;
+    /*box-shadow: 0 2px 2px -2px gray;*/
     line-height: 50px;
 }
 
@@ -68,20 +125,25 @@ textarea {
     height: 725px;
     padding: 100px 25px 25px 25px;
     margin: 0;
-    background: url(../Resources/hero3.JPG);
+    background: url(../Resources/hero3.jpg);
     background-size: cover;
     /*background: #171015;*/
     /*box-shadow: 0 4px 2px -2px gray;*/
+    
+    /*
     -webkit-box-shadow: 0px 50px 49px -44px #283592;
     -moz-box-shadow: 0px 50px 49px -44px #283592;
-    box-shadow: 0px 50px 49px -44px #283592;
+    */
+    box-shadow: 0px 45px 70px -40px #000000;
+    
+    text-align: center;
 }
 
 .hero h1 {
     text-align: center;
     margin-top: 0;
     color: white;
-    text-shadow: 0 0 10px #c30042, 0 0 10px #041fb6;
+    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
     font-size: 5em;
 }
 
@@ -92,7 +154,7 @@ textarea {
 
 .hero .lead {
     font-weight: bold;
-    text-shadow: 0 2px 1px #342330;
+    text-shadow: 1.5px 1px 1.5px #342330;
 }
 
 .panel {
@@ -108,7 +170,7 @@ textarea {
 }
 
 .call-to-action-wrapper {
-        margin-top: 40px;
+    margin-top: 100px;
 }
 
 .call-to-action {
@@ -121,12 +183,13 @@ textarea {
 
 .call-to-action .panel {
     background: #171015;
+    /*
     -webkit-box-shadow: 0px 50px 49px -44px #283592;
     -moz-box-shadow: 0px 50px 49px -44px #283592;
     box-shadow: 0px 50px 49px -44px #283592;
-
     -webkit-border-radius: 5px;
     border-radius: 5px;
+    */
 }
 
 .panel-heading {
@@ -178,7 +241,7 @@ footer {
     background: black;
     padding: 25px;
     margin: 0;
-    background: url(../Resources/hero.JPG);
+    background: url(../Resources/hero3.jpg);
     background-size: 100% 100%;
     box-shadow: 0 4px 2px -2px gray;
 }
@@ -187,14 +250,62 @@ footer {
     max-height: 305px;
 }
 .signup-text {
-    color:#ae2509;
+    color:#ff1b1b !important;
+    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
 }
 .signup-text:hover {
     color: #ae2509;
+}
+.download-banner-text {
+    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
+}
+
+
+/* ABOUT ------------------------------------------------------------------------ */
+.aboutpic {
+    height: 300px;
+    background: black;
+    padding: 25px;
+    margin: 0;
+    background: url(../Resources/hero3.jpg);
+    background-size: 100% 100%;
+    box-shadow: 0 4px 2px -2px gray;
+}
+.header-text {
+    color:#3F51B5 !important;
+    font-size: 30pt;
+}
+.subheader-text {
+    color:#C12157 !important;
+}
+.panel-heading-about {
+    background-color: #423737 !important;
+}
+.center {
+     float: none;
+     margin-left: auto;
+     margin-right: auto;
+}
+.about-hero {
+    background: url(../Resources/hero3.jpg);
+    width: 100%;
+    height: 300px;
+    margin: 0;
+    background-size: cover;
+    box-shadow: 0px 45px 20px -40px #000000;
+}
+.about-header {
+    text-shadow: 0 0 10px #222222, 0 0 20px #342330;
 }
 
 /* MARGINS ------------------------------------------------------------------------ */
 /* top, bottom, left, right + amount */
 .top50 {
     margin-top: 50px;
+}
+.top140 {
+    margin-top: 140px;
+}
+.left100 {
+    margin-left: 100px;
 }
