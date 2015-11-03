@@ -65,6 +65,10 @@ public class BuildMode : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Build Tower Function which allows the player to build the specified tower
+    /// </summary>
+    /// <param name="tower"></param>
     public void BuildTower(Building tower)
     {
         if (!buildMode)

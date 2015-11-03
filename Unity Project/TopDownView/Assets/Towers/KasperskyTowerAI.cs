@@ -15,7 +15,7 @@ namespace AssemblyCSharp
 {
 	public class KasperskyTowerAI : TowerAI
 	{
-		public KasperskyTowerAI ()
+		public KasperskyTowerAI () : base()
 		{
 			towerDamage = 10;
 			attackSpd = 1.5f;
@@ -26,17 +26,6 @@ namespace AssemblyCSharp
 			drainDamage = 20;
 			drainSpd = 0.8f;
 			drainDuration = 2.0f;
-		}
-
-		// Update is called once per frame
-		void Update()
-		{
-			towerAI();
-		}
-		
-		public override void shootTarget(GameObject target)
-		{
-			base.shootTarget(target);
 		}
 	}
 }

@@ -22,6 +22,23 @@ public class EnemyAI : MonoBehaviour
     public bool isVisible;
     public bool isGround;
 
+<<<<<<< HEAD
+	float timer;
+	private AudioSource aSource;
+
+    // Use this for initialization
+	void Start () {
+		renderer = this.GetComponent<SpriteRenderer>();
+		revealingTower = null;
+		revealDist = 0;
+        aSource = GetComponent<AudioSource>();
+	}
+	
+	// Update is called once per frame
+	void Update () {
+        enemyAI();
+	}
+=======
     public int numDuplicates;
     public bool duplicates;
     public bool hasDuplicated;
@@ -31,8 +48,7 @@ public class EnemyAI : MonoBehaviour
     private TowerAI revealingTower;
     private float revealDist;
 
-    float timer;
-	private AudioSource aSource;
+    private AudioSource aSource;
 
     public EnemyAI()
     {
@@ -56,11 +72,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Use this for initialization
-	void Start () {
-		renderer = this.GetComponent<SpriteRenderer>();
-		revealingTower = null;
-		revealDist = 0;
+    void Start()
+    {
         aSource = GetComponent<AudioSource>();
+        revealingTower = null;
+        revealDist = 0;
     }
 
     // Update is called once per frame
@@ -68,6 +84,7 @@ public class EnemyAI : MonoBehaviour
     {
         ExecuteEnemyAI();
     }
+>>>>>>> develop
 
     /// <summary>
     /// The enemies do the following steps:
@@ -150,14 +167,24 @@ public class EnemyAI : MonoBehaviour
 		drainDuration -= drainSpd;
 		timer -= drainSpd;
 
+<<<<<<< HEAD
+		if (drainDuration < 0) {
+			drainDuration = 0;
+			drainDamage = 0;
+		}
+	}
+
+    public virtual void OnTriggerEnter2D(Collider2D obj)
+=======
         if (drainDuration < 0)
         {
             drainDuration = 0;
             drainDamage = 0;
         }
     }
-	
+
     void OnTriggerEnter2D(Collider2D obj)
+>>>>>>> develop
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {

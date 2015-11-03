@@ -6,12 +6,21 @@ public class TowerAI : Building {
 
     public projectileAI projectileSource;
 
-    public int towerDamage;
+<<<<<<< HEAD
+	public bool revealsInvisible;
     //public AudioClip shootSound;
+
+    protected float timer;
+    protected float attackSpd;
+    protected bool attacksGround;
+    protected bool attacksAir;
+=======
+    public int towerDamage;
 
     public float attackSpd;
     public bool attacksGround;
     public bool attacksAir;
+>>>>>>> develop
     public float attackRange;
 
     public int drainDamage;
@@ -28,8 +37,12 @@ public class TowerAI : Building {
         attackSpd = 0.5f;
         attackRange = 1.0f;
         attacksGround = true;
+<<<<<<< HEAD
+		attacksAir = true;
+=======
 
         attacksAir = false;
+>>>>>>> develop
 		revealsInvisible = false;
         towerDamage = 50;
         drainDamage = 0;
