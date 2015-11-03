@@ -10,7 +10,7 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Routing;
-using WindowsDefenderWebService;
+using WindowsDefenderWebService.Models;
 
 namespace WindowsDefenderWebService.Controllers
 {
@@ -19,14 +19,14 @@ namespace WindowsDefenderWebService.Controllers
 
     using System.Web.Http.OData.Builder;
     using System.Web.Http.OData.Extensions;
-    using WindowsDefenderWebService;
+    using WindowsDefenderWebService.Models;
     ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
     builder.EntitySet<Map>("Maps");
     config.Routes.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
     */
     public class MapsController : ODataController
     {
-        private TowerDefenceEntities db = new TowerDefenceEntities();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: odata/Maps
         [EnableQuery]

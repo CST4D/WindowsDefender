@@ -7,6 +7,7 @@ using Microsoft.Owin.Security.OAuth;
 using Newtonsoft.Json.Serialization;
 using System.Web.Http.OData.Builder;
 using System.Web.Http.OData.Extensions;
+using WindowsDefenderWebService.Models;
 
 namespace WindowsDefenderWebService
 {

@@ -10,7 +10,7 @@ using System.Web.Http;
 using System.Web.Http.ModelBinding;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Routing;
-using WindowsDefenderWebService;
+using WindowsDefenderWebService.Models;
 
 namespace WindowsDefenderWebService.Controllers
 {
@@ -19,16 +19,15 @@ namespace WindowsDefenderWebService.Controllers
 
     using System.Web.Http.OData.Builder;
     using System.Web.Http.OData.Extensions;
-    using WindowsDefenderWebService;
+    using WindowsDefenderWebService.Models;
     ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
     builder.EntitySet<MatchHistoryDetail>("MatchHistoryDetails");
-    builder.EntitySet<AspNetUser>("AspNetUsers"); 
     builder.EntitySet<MatchHistory>("MatchHistories"); 
     config.Routes.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
     */
     public class MatchHistoryDetailsController : ODataController
     {
-        private TowerDefenceEntities db = new TowerDefenceEntities();
+        private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: odata/MatchHistoryDetails
         [EnableQuery]
@@ -36,7 +35,7 @@ namespace WindowsDefenderWebService.Controllers
         {
             return db.MatchHistoryDetails;
         }
-                
+
         // GET: odata/MatchHistoryDetails(5)
         [EnableQuery]
         public SingleResult<MatchHistoryDetail> GetMatchHistoryDetail([FromODataUri] int key)
@@ -146,13 +145,6 @@ namespace WindowsDefenderWebService.Controllers
             }
 
             return Updated(matchHistoryDetail);
-        }
-
-        // GET: odata/MatchHistoryDetails(5)/AspNetUser
-        [EnableQuery]
-        public SingleResult<AspNetUser> GetAspNetUser([FromODataUri] int key)
-        {
-            return SingleResult.Create(db.MatchHistoryDetails.Where(m => m.HistoryId == key).Select(m => m.AspNetUser));
         }
 
         // GET: odata/MatchHistoryDetails(5)/MatchHistory
