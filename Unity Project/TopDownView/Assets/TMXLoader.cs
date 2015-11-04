@@ -6,14 +6,22 @@ using System;
 
 public class TMXLoader {
     private TextAsset tAsset;
-    public int mapWidth, mapHeight;
+    private int mapWidth, mapHeight;
+    public int realMapWidth, realMapHeight;
     public Sprite[] sprites;
     public Tile[,] tiles;
     private GameController context;
     private XmlDocument doc;
+    private float tilesize;
+
+    private enum ReflectMode { Horizontal, Vertical };
+    private ReflectMode rMode = ReflectMode.Horizontal;
 
     private XmlNodeList mapList;
     private XmlNode mapNode;
+
+    private Vector2 waypoint;
+    private LinkedList<Vector2> spawners = new LinkedList<Vector2>();
 
     public TMXLoader(TextAsset tAsset, GameController context)
     {
@@ -28,15 +36,32 @@ public class TMXLoader {
         mapList = doc["map"].ChildNodes;
         mapNode = doc["map"];
 
+        XmlNode propNode = mapNode["properties"];
+        foreach (XmlNode prop in propNode.ChildNodes)
+        {
+            if (prop.Attributes["name"].InnerText == "TeamReflectMode")
+            {
+                if (prop.Attributes["value"].InnerText == "vertical")
+                {
+                    rMode = ReflectMode.Vertical;
+                }
+            }
+        }
+
         int tilewidth = Convert.ToInt32(((XmlElement)mapNode).Attributes["tilewidth"].InnerText);
         int tileheight = Convert.ToInt32(((XmlElement)mapNode).Attributes["tileheight"].InnerText);
         mapWidth = Convert.ToInt32(((XmlElement)mapNode).Attributes["width"].InnerText);
         mapHeight = Convert.ToInt32(((XmlElement)mapNode).Attributes["height"].InnerText);
-        float tilesize = 0.32f;
-        tiles = new Tile[mapHeight, mapWidth];
-        for (int i = 0; i < mapHeight; i++)
+        tilesize = 0.32f;
+
+        realMapHeight = mapHeight * (rMode == ReflectMode.Vertical ? 2 : 1);
+        realMapWidth = mapWidth * (rMode == ReflectMode.Horizontal ? 2 : 1);
+
+        tiles = new Tile[realMapHeight, realMapWidth];
+
+        for (int i = 0; i < mapHeight * (rMode == ReflectMode.Vertical ? 2 : 1); i++)
         {
-            for (int j = 0; j < mapWidth; j++)
+            for (int j = 0; j < mapWidth * (rMode == ReflectMode.Horizontal ? 2 : 1); j++)
             {
                 tiles[i, j] = (Tile)UnityEngine.Object.Instantiate(context.tile, new Vector2((tilesize * j), (tilesize * i)), context.transform.rotation);
                 tiles[i, j].Buildable = false;
@@ -118,7 +143,8 @@ public class TMXLoader {
                         {
                             Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[y, x].transform.position, context.transform.rotation);
                             point.transform.parent = context.transform;
-                            context.setWayPoint(point);
+                            context.setWayPoint(point, false);
+                            waypoint = new Vector2(x, y);
                         }
                     }
                     foreach (XmlNode obj in i2.ChildNodes)
@@ -129,13 +155,60 @@ public class TMXLoader {
                         {
                             SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[y, x].transform.position, context.transform.rotation);
                             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
-                            context.addSpawnerToSpawnerList(enemySpawner);
-                            
+                            context.addSpawnerToSpawnerList(enemySpawner, false);
+                            spawners.AddLast(new Vector2(x, y));
                         }
                     }
                 }
 
             }
+        }
+        if (rMode == ReflectMode.Horizontal)
+            reflectMapHorizontal();
+        else
+            reflectMapVertical();
+    }
+    private void reflectMapHorizontal()
+    {
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                tiles[mapHeight - y - 1, x + mapWidth].Buildable = false;
+                tiles[mapHeight - y - 1, x + mapWidth].Walkable = tiles[mapHeight - y - 1, mapWidth - x - 1].Walkable;
+                tiles[mapHeight - y - 1, x + mapWidth].mapSprite = tiles[mapHeight - y - 1, mapWidth - x - 1].mapSprite;
+
+            }
+        }
+        Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(int)waypoint.y, (mapWidth * 2 - (int)waypoint.x - 1)].transform.position, context.transform.rotation);
+        point.transform.parent = context.transform;
+        context.setWayPoint(point, true);
+        foreach (Vector2 pos in spawners)
+        {
+            SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[(int)pos.y, (mapWidth * 2 - (int)pos.x - 1)].transform.position, context.transform.rotation);
+            enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
+            context.addSpawnerToSpawnerList(enemySpawner, true);
+        }
+    }
+    private void reflectMapVertical()
+    {
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                tiles[mapHeight + y, x].Buildable = false;
+                tiles[mapHeight + y, x].Walkable = tiles[mapHeight - y - 1, x].Walkable;
+                tiles[mapHeight + y, x].mapSprite = tiles[mapHeight - y - 1, x].mapSprite;
+            }
+        }
+        Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(2 * mapHeight - (int)waypoint.y - 1), (int)waypoint.x].transform.position, context.transform.rotation);
+        point.transform.parent = context.transform;
+        context.setWayPoint(point, true);
+        foreach (Vector2 pos in spawners)
+        {
+            SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[(2 * mapHeight - (int)pos.y - 1), (int)pos.x].transform.position, context.transform.rotation);
+            enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
+            context.addSpawnerToSpawnerList(enemySpawner, true);
         }
     }
 }
