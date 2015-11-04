@@ -4,8 +4,9 @@ using System.Collections;
 public class BuildMode : MonoBehaviour {
 
     private bool buildMode;
-    
 
+    public UnityEngine.UI.Text resourceText;
+    
     Building building;
 
 	// Use this for initialization
@@ -15,7 +16,7 @@ public class BuildMode : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-
+        int money = int.Parse(resourceText.text);
         if (buildMode && building != null)
         {
             
@@ -40,16 +41,20 @@ public class BuildMode : MonoBehaviour {
 
             if(closestTile != null)
             {
+                TowerAI temp = building.GetComponent<TowerAI>();
                 
+
                 if (closestTile.Buildable)
                 {
                     building.GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
                     building.transform.position = closestTile.transform.position;
-                    if (Input.GetMouseButtonDown(0))
+                    
+                    if (Input.GetMouseButtonDown(0) && ((money - temp.cost) >= 0))
                     {
                         building.operating = true;
                         buildMode = false;
-                        
+                        money -= temp.cost;
+                        resourceText.text = money.ToString();
                         building.transform.position = closestTile.transform.position;
                         closestTile.Buildable = false;
                         closestTile.Walkable = false;
