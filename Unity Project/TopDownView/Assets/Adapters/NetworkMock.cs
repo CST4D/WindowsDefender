@@ -2,9 +2,9 @@
 using System.Collections;
 
 public class NetworkMock {
-    private MultiplayerNetworkAdapter syncObj;
+    private MessagingNetworkAdapter syncObj;
 
-    public NetworkMock(MultiplayerNetworkAdapter syncObj)
+    public NetworkMock(MessagingNetworkAdapter syncObj)
     {
         this.syncObj = syncObj;
     }
@@ -17,6 +17,6 @@ public class NetworkMock {
     public void Recv(string msg)
     {
         Debug.Log("recv: " + msg);
-        syncObj.Recv(msg);
+        syncObj.RecvData(msg);
     }
 }

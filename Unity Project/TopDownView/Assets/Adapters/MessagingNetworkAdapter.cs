@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class MultiplayerNetworkAdapter {
+public class MessagingNetworkAdapter {
     public class Message
     {
         public enum MessageType
@@ -32,13 +32,13 @@ public class MultiplayerNetworkAdapter {
     private send_msg_delegate send;
     private System.Collections.Generic.Queue<Message> queue;
 
-    public MultiplayerNetworkAdapter() : this(null)
+    public MessagingNetworkAdapter() : this(null)
     {
         NetworkMock mock = new NetworkMock(this);
         this.send = mock.Send;
     }
 
-    public MultiplayerNetworkAdapter(send_msg_delegate send)
+    public MessagingNetworkAdapter(send_msg_delegate send)
     {
         this.send = send;
         queue = new System.Collections.Generic.Queue<Message>();
