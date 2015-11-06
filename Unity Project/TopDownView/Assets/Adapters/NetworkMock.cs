@@ -17,6 +17,6 @@ public class NetworkMock {
     public void Recv(string msg)
     {
         Debug.Log("recv: " + msg);
-        syncObj.RecvData(msg);
+        syncObj.InputRecvData(msg);
     }
 }
