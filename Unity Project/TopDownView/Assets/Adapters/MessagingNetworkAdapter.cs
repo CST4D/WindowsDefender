@@ -5,22 +5,14 @@ using System;
 public class MessagingNetworkAdapter {
     public class Message
     {
-        public enum MessageType
-        {
-            GameStart = 1,
-            TowerBuilt = 2,
-            EnemyDies = 3,
-            HealthUpdate = 4,
-            SendEnemy = 5
-        };
+        
         private string[] args;
-        private MessageType type;
+        private int type;
         public string[] Args { get { return args; } }
-        public MessageType Type { get { return type; } }
+        public int Type { get { return type; } }
         public Message(string[] parts)
         {
-            int msgType = Convert.ToInt32(parts[0]);
-            type = (MessageType)msgType;
+            type = Convert.ToInt32(parts[0]);
             args = new string[parts.Length - 1];
             for (int i = 1; i < parts.Length; i++)
                 args[i - 1] = parts[i];
@@ -44,18 +36,23 @@ public class MessagingNetworkAdapter {
         queue = new System.Collections.Generic.Queue<Message>();
     }
 
-    public void RecvData(string msg)
+    public void InputRecvData(string msg)
     {
         string[] parts = msg.Split('|');
         queue.Enqueue(new Message(parts));
     }
 
-    public Message ConsumeMessage()
+    public bool MessageRecvReady()
+    {
+        return queue.Count > 0;
+    }
+
+    public Message Recv()
     {
         return queue.Dequeue();
     }
 
-    public void SendMessage(Message.MessageType type, params string[] args)
+    public void Send(int type, params string[] args)
     {
         string msg = string.Join("|", args);
         send(msg);
