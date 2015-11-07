@@ -54,7 +54,7 @@ public class MessagingNetworkAdapter {
 
     public void Send(int type, params string[] args)
     {
-        string msg = string.Join("|", args);
+        string msg = type + "|" + string.Join("|", args);
         send(msg);
     }
 
