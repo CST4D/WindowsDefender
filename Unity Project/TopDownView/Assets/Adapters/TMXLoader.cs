@@ -22,11 +22,13 @@ public class TMXLoader {
 
     private Vector2 waypoint;
     private LinkedList<Vector2> spawners = new LinkedList<Vector2>();
+    private int teamId;
 
-    public TMXLoader(TextAsset tAsset, GameController context)
+    public TMXLoader(TextAsset tAsset, GameController context, int teamId)
     {
         this.tAsset = tAsset;
         this.context = context;
+        this.teamId = teamId;
     }
     public void loadMeta()
     {
@@ -143,7 +145,7 @@ public class TMXLoader {
                         {
                             Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[y, x].transform.position, context.transform.rotation);
                             point.transform.parent = context.transform;
-                            context.setWayPoint(point, false);
+                            context.setWayPoint(point, 1);
                             waypoint = new Vector2(x, y);
                         }
                     }
@@ -155,7 +157,7 @@ public class TMXLoader {
                         {
                             SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[y, x].transform.position, context.transform.rotation);
                             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
-                            context.addSpawnerToSpawnerList(enemySpawner, false);
+                            context.addSpawnerToSpawnerList(enemySpawner, 1);
                             spawners.AddLast(new Vector2(x, y));
                         }
                     }
@@ -177,17 +179,17 @@ public class TMXLoader {
                 tiles[mapHeight - y - 1, x + mapWidth].Buildable = false;
                 tiles[mapHeight - y - 1, x + mapWidth].Walkable = tiles[mapHeight - y - 1, mapWidth - x - 1].Walkable;
                 tiles[mapHeight - y - 1, x + mapWidth].mapSprite = tiles[mapHeight - y - 1, mapWidth - x - 1].mapSprite;
-
+                tiles[mapHeight - y - 1, x + (teamId == 1 ? mapWidth : 0)].Buildable = false;
             }
         }
         Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(int)waypoint.y, (mapWidth * 2 - (int)waypoint.x - 1)].transform.position, context.transform.rotation);
         point.transform.parent = context.transform;
-        context.setWayPoint(point, true);
+        context.setWayPoint(point, 2);
         foreach (Vector2 pos in spawners)
         {
             SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[(int)pos.y, (mapWidth * 2 - (int)pos.x - 1)].transform.position, context.transform.rotation);
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
-            context.addSpawnerToSpawnerList(enemySpawner, true);
+            context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
     }
     private void reflectMapVertical()
@@ -196,19 +198,20 @@ public class TMXLoader {
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                tiles[mapHeight + y, x].Buildable = false;
+                tiles[mapHeight + y, x].Buildable = tiles[mapHeight - y - 1, x].Buildable;
                 tiles[mapHeight + y, x].Walkable = tiles[mapHeight - y - 1, x].Walkable;
                 tiles[mapHeight + y, x].mapSprite = tiles[mapHeight - y - 1, x].mapSprite;
+                tiles[(teamId == 1 ? mapHeight : 0) + y, x].Buildable = false;
             }
         }
         Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(2 * mapHeight - (int)waypoint.y - 1), (int)waypoint.x].transform.position, context.transform.rotation);
         point.transform.parent = context.transform;
-        context.setWayPoint(point, true);
+        context.setWayPoint(point, 2);
         foreach (Vector2 pos in spawners)
         {
             SpawnerAI enemySpawner = (SpawnerAI)UnityEngine.Object.Instantiate(context.spawner, tiles[(2 * mapHeight - (int)pos.y - 1), (int)pos.x].transform.position, context.transform.rotation);
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
-            context.addSpawnerToSpawnerList(enemySpawner, true);
+            context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
     }
 }
