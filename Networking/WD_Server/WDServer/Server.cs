@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -26,12 +26,11 @@ namespace WDServer
         private ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>(); // Keys are IP address' of users
         private ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
 
+        // Keeps track of user timeouts (heartbeats)
         private Thread _checkForTimeouts;
 
-        public enum InstructionType { JOIN, CMD };
-
         /// <summary>
-        /// Entry point
+        /// Entry point.
         /// </summary>
         public Server()
         {
@@ -39,7 +38,7 @@ namespace WDServer
             Init();
 
             // Create thread that continuously checks for timed out users
-            _checkForTimeouts = new Thread(new ThreadStart(HeartBeatsThread));
+            _checkForTimeouts = new Thread(new ThreadStart(TimeoutCheckerThread));
             _checkForTimeouts.Start();
 
             // Start listening
@@ -47,7 +46,7 @@ namespace WDServer
         }
 
         /// <summary>
-        /// Initializes the server socket and tells the user if everything worked
+        /// Initializes the server socket and tells the user if everything worked.
         /// </summary>
         private void Init()
         {
@@ -73,7 +72,7 @@ namespace WDServer
 
         /// <summary>
         /// Listens for packets and responds accordingly by passing
-        /// the incoming data to other functions
+        /// the incoming data to other functions.
         /// </summary>
         private void Listen()
         {
@@ -83,22 +82,47 @@ namespace WDServer
                 {
                     IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
 
-                    byte[] received = new byte[256];
+                    // Block and wait for incoming data
+                    byte[] received = new byte[512];
                     received = newsock.Receive(ref sender);
 
-                    string dataReceived = Encoding.ASCII.GetString(received).TrimEnd('\0');
+                    if (DEBUG)
+                        Console.WriteLine("Data recieved");
+
+                    // Data received, remove trailing nulls
+
+                    int i = received.Length - 1;
+                    while (received[i] == 0)
+                        --i;
+                    byte[] data = new byte[i + 1];
+                    Array.Copy(received, data, i + 1);
+
+                    // Get ip address of sender
                     string ipAddress = sender.Address.ToString();
+
+                    // Send back test data
+                    if (DEBUG)
+                    {
+                        Instruction echo = new Instruction()
+                        {
+                            Command = Instruction.Type.CMD,
+                            Arg1 = "DEBUG: SIR, I HAVE I RECEIVED YOUR DATA. - Server",
+                            Arg2 = "TEST"
+                        };
+                        byte[] echobytes = Serializer.Serialize(echo);
+                        newsock.Send(echobytes, echobytes.Length, sender);
+                    }
+
+                    // Deserialize received instruction
+                    Instruction instruction = Serializer.DeSerialize(data);
 
                     // Debug
                     if (DEBUG)
-                        Console.WriteLine("Received: " + dataReceived + " from ip: " + ipAddress);
-
-                    // Send back test data
-                    byte[] data1 = Encoding.ASCII.GetBytes("SIR, I HAVE I RECEIVED YOUR DATA.");
-                    newsock.Send(data1, data1.Length, sender);
-
-                    // Parse command and arguments
-                    Instruction instruction = (Instruction)JsonConvert.DeserializeObject(dataReceived);
+                    {
+                        Console.WriteLine("DEBUG: Received command: " + instruction.Command + " from ip: "
+                            + ipAddress + "." + " with arguments: " + instruction.Arg1 + "/" + instruction.Arg2
+                            + "/" + instruction.Arg3 + "/" + instruction.Arg4);
+                    }
 
                     // Reset the user's timeout counter
                     ResetUserTimeout(ipAddress);
@@ -106,36 +130,41 @@ namespace WDServer
                     // Parse instruction
                     switch (instruction.Command)
                     {
-                        case InstructionType.JOIN:
+                        case Instruction.Type.JOIN:
                             OnJoin(sender, ipAddress, instruction);
                             break;
 
-                        case InstructionType.CMD:
-                            OnCommand(ipAddress, instruction);
+                        case Instruction.Type.LEAVE:
+                            OnDisconnect(ipAddress);
+                            break;
+
+                        case Instruction.Type.CMD:
+                            OnCommand(ipAddress, instruction, data);
                             break;
 
                         default:
-                            if (DEBUG)
-                            {
-                                // Just echo back (for testing)
-                                byte[] data = Encoding.ASCII.GetBytes(dataReceived);
-                                newsock.Send(data, data.Length, sender);
-                                Console.WriteLine("Echoed data back");
-                            }
                             break;
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    // Do nothing if an error occurred - just continue with next request.
+                    Console.WriteLine(ex.StackTrace);
                 }
             }
         }
 
-        private void OnJoin(EndPoint remoteEndPoint, string ipAddress, Instruction instruction)
+        /// <summary>
+        /// When the JOIN command is received by a user.
+        /// </summary>
+        /// <param name="remoteEndPoint"></param>
+        /// <param name="ipAddress"></param>
+        /// <param name="instruction"></param>
+        private void OnJoin(IPEndPoint remoteEndPoint, string ipAddress, Instruction instruction)
         {
-            User user;
-            user = new User(remoteEndPoint);
+            User user = new User()
+            {
+                EndPoint = remoteEndPoint
+            };
 
             // Set username
             user.Username = instruction.Arg1;
@@ -148,23 +177,19 @@ namespace WDServer
 
             // Find the user's match and add him/her to it
             AddToMatch(user);
+
+            Instruction i = new Instruction() { Command = Instruction.Type.JOINED };
+            byte[] data = Serializer.Serialize(i);
+            newsock.Send(data, data.Length, user.EndPoint);
         }
 
-        private void AddToMatch(User user)
-        {
-            Match m;
-            _matches.TryGetValue(user.MatchId, out m);
-            //if (m)
-        }
-
-        private void ResetUserTimeout(string ipAddress)
-        {
-            User user;
-            _users.TryGetValue(ipAddress, out user);
-            user?.ResetTimeout();
-        }
-
-        private void OnCommand(string ipAddress, Instruction instruction)
+        /// <summary>
+        /// When a command instruction is received it is simply
+        /// echoed to everyone in the same match as the user.
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        /// <param name="instruction"></param>
+        private void OnCommand(string ipAddress, Instruction instruction, byte[] data)
         {
             User user;
 
@@ -173,57 +198,59 @@ namespace WDServer
                 return;
             }
 
-            SendToMatch(user, instruction);
+            SendToMatch(user, data);
         }
 
         /// <summary>
-        /// Sends to all users in a match
+        /// Adds a user to his/her Match.
+        /// If it doesn't exist yet then it will be created.
+        /// </summary>
+        /// <param name="user"></param>
+        private void AddToMatch(User user)
+        {
+            Match match;
+            if (_matches.TryGetValue(user.MatchId, out match))
+            {
+                match.AddUser(user);
+                if (DEBUG)
+                    Console.WriteLine("DEBUG: Added " + user.Username + " to match");
+            }
+            else
+            {
+                match = new Match()
+                {
+                    ID = user.MatchId
+                };
+                match.AddUser(user);
+                _matches.TryAdd(user.MatchId, match);
+                if (DEBUG)
+                    Console.WriteLine("DEBUG: Created new match and added " + user.Username + " to it.");
+            }
+        }
+
+        /// <summary>
+        /// Sends to all users in a match.
         /// </summary>
         /// <param name="user"></param>
         /// <param name="instruction"></param>
-        private void SendToMatch(User user, Instruction instruction)
+        private void SendToMatch(User user, byte[] data)
         {
-            /*
-            string welcome = "Welcome to my test server";
-            data = Encoding.ASCII.GetBytes(welcome);
-            newsock.Send(data, data.Length, sender);
-
-            byte[] bytes = ObjectToByteArray(instruction);
-            socket.SendTo(bytes, user.EndPoint);
-            */
-            // TODO
             // Find match
-            // Send instruction to everyone in match
+            Match match;
+            if (!_matches.TryGetValue(user.MatchId, out match))
+                return;
 
-            foreach (KeyValuePair<string, User> u in _users) // This needs to be users in a match instead
-            {
-                //byte[] returningByte = Encoding.ASCII.GetBytes(instruction.ToString().ToCharArray()); // Is ToCharArray necessary here?
-                //socket.SendTo(returningByte, u.Value.EndPoint);
-            }
+            // Send to every user in the match
+            foreach (KeyValuePair<string, User> u in match.Users)
+                newsock.Send(data, data.Length, u.Value.EndPoint);
         }
 
         /// <summary>
-        /// Taken from
-        /// https://stackoverflow.com/questions/1446547/how-to-convert-an-object-to-a-byte-array-in-c-sharp
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static byte[] ObjectToByteArray(object obj)
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            using (var ms = new MemoryStream())
-            {
-                bf.Serialize(ms, obj);
-                return ms.ToArray();
-            }
-        }
-
-        /// <summary>
-        /// Sends to all users in a match except the current user
+        /// Sends to all users in a match except the current user.
         /// </summary>
         /// <param name="user"></param>
         /// <param name="instruction"></param>
-        private void SendToMatchExcept(User user, Instruction instruction)
+        private void SendToMatchExcept(User user, byte[] data)
         {
             // TODO
             // Find match
@@ -235,7 +262,7 @@ namespace WDServer
         /// we consider them disconnected and they can be removed
         /// from any match they were a part of.
         /// </summary>
-        private void HeartBeatsThread()
+        private void TimeoutCheckerThread()
         {
             while (true)
             {
@@ -243,25 +270,66 @@ namespace WDServer
                 {
                     user.Value.IncrementTimeout();
                     if (user.Value.IsConnectionExpired())
-                        DisconnectUser(user.Key);
+                    {
+                        // Disconnect user
+                        OnDisconnect(user.Key);
+                    }
                 }
                 Thread.Sleep(1000);
             }
         }
 
         /// <summary>
-        /// Disconnects a user based on their ip address
+        /// Resets a user's timeout (heartbeat counter).
+        /// </summary>
+        /// <param name="ipAddress"></param>
+        private void ResetUserTimeout(string ipAddress)
+        {
+            User user;
+            if (_users.TryGetValue(ipAddress, out user))
+                user.ResetTimeout();
+        }
+
+        /// <summary>
+        /// Disconnects a user based on their ip address.
         /// </summary>
         /// <param name="ipaddress"></param>
-        private void DisconnectUser(string ipaddress)
+        private void OnDisconnect(string ipAddress)
         {
+            // Get user
+            User user;
+            if (!_users.TryGetValue(ipAddress, out user))
+                return;
+
             // Remove user from match
-            //todo
+            Match match;
+            if (_matches.TryGetValue(user.MatchId, out match))
+            {
+                match.RemoveUser(user);
+                // If user is last person in his/her match, remove the match completely
+                if (match.Users.Count <= 0)
+                {
+                    Match dummyMatch;
+                    _matches.TryRemove(match.ID, out dummyMatch);
+                    if (DEBUG)
+                        Console.WriteLine("DEBUG: Removed match because no more users are in it.");
+                }
+            }
+
+            // Tell user they have been disconnected
+            Instruction inactive = new Instruction()
+            {
+                Command = Instruction.Type.LEAVE
+            };
+            byte[] data = Serializer.Serialize(inactive);
+            newsock.Send(data, data.Length, user.EndPoint);
 
             // Remove user
             User dummy;
-            _users.TryRemove(ipaddress, out dummy);
-            // TODO - CHECK IF USER WAS LAST PERSON IN HIS/HER MATCH. IF SO, REMOVE THE MATCH FROM _matches
+            _users.TryRemove(user.EndPoint.Address.ToString(), out dummy);
+
+            if (DEBUG && dummy != null)
+                Console.WriteLine("DEBUG: " + user.Username + " disconnected.");
         }
     }
 }

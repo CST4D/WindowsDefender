@@ -9,19 +9,10 @@ namespace WindowsDefender_WebApp
 {
     public class Match
     {
-        public string Id { get; set; }
-        public string HostId { get; set; } = null;
+        public string ID { get; set; }
 
         public ArrayList Users = new ArrayList();
         private object _usersLock = new object();
-
-        /// <summary>
-        /// Creates a unique GUID for the match
-        /// </summary>
-        public Match()
-        {
-
-        }
 
         /// <summary>
         /// Adds a user to the match.

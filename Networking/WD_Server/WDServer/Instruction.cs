@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Runtime.Serialization;
 
 namespace WDServer
 {
     [Serializable()]
-    class Instruction
+    public class Instruction
     {
-        public Server.InstructionType Command { get; set; } = Server.InstructionType.JOIN;
+        public enum Type { JOIN, LEAVE, CMD, JOINED };
+        public Type Command { get; set; } = Type.JOIN;
         public string Arg1 { get; set; } = "";
         public string Arg2 { get; set; } = "";
         public string Arg3 { get; set; } = "";

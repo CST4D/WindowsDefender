@@ -7,15 +7,10 @@ namespace WindowsDefender_WebApp
     public class User
     {
         private object  _lock = new object();
-        public EndPoint  EndPoint { get; set; }
+        public IPEndPoint  EndPoint { get; set; }
         public string    Username { get; set; }
         public string    MatchId { get; set; }
         private int     _timeout = 0;
-
-        public User(EndPoint endpoint)
-        {
-            EndPoint = endpoint;
-        }
 
         public void IncrementTimeout()
         {
