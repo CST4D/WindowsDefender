@@ -38,7 +38,7 @@ public class GameController : MonoBehaviour
         timer = 0;
         rounds.notParsed = true; 
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this);
         tmxl.loadMeta();
         _mapWidth = tmxl.mapWidth;
         _mapHeight = tmxl.mapHeight;    

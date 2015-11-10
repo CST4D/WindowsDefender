@@ -31,8 +31,8 @@ public class EnemyAI : MonoBehaviour
     private TowerAI revealingTower;
     private float revealDist;
 
-    float timer;
 	private AudioSource aSource;
+	private SpriteRenderer renderer;
 
     public EnemyAI()
     {
