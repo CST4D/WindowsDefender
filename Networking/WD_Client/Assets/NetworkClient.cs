@@ -16,7 +16,7 @@ public class NetworkClient : MonoBehaviour
     string username = "Jeff";
     string matchID = "4fg7-38g3-d922-f75g-48g6";
 
-    public NetworkClient(string matchID = "Jeff", string username = "4fg7-38g3-d922-f75g-48g6")
+    public NetworkClient(string matchID = "4fg7-38g3-d922-f75g-48g6", string username = "Jeff")
     {
         this.matchID = matchID;
         this.username = username;
