@@ -86,6 +86,7 @@ public class TMXLoader {
             {
                 Texture2D tileset = Resources.Load<Texture2D>(i2["image"].Attributes["source"].InnerText.Substring(0, i2["image"].Attributes["source"].InnerText.LastIndexOf('.')));
                 int imgWidth = Convert.ToInt32(i2["image"].Attributes["width"].InnerText);
+                int imgHeight = Convert.ToInt32(i2["image"].Attributes["height"].InnerText);
                 int firstgid = Convert.ToInt32(i2.Attributes["firstgid"].InnerText);
 
                 int tilecount = Convert.ToInt32(i2.Attributes["tilecount"].InnerText);
@@ -95,7 +96,7 @@ public class TMXLoader {
                 Vector2 pivot = new Vector2(0.5f, 0.5f);
 
                 Array.Resize<Sprite>(ref sprites, spriteArraySize);
-                for (int y = 0; firstgid < afterlastgid; y++)
+                for (int y = (imgHeight / 32) - 1; firstgid < afterlastgid; y--)
                 {
                     for (int x = 0; (firstgid < afterlastgid) && (x * 32 < imgWidth); x++)
                     {
