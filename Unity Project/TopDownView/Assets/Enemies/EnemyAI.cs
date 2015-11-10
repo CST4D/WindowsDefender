@@ -6,12 +6,14 @@ using System.Collections;
 public class EnemyAI : MonoBehaviour
 {
     public LinkedList<Vector2> movementPoints;
+    
 
     public AudioClip hitSound;
 
     public int maxHealth;
     public int health;
     public int armour;
+    public int reward;
     public float movementSpeed;
     public double resistance;
 
@@ -40,6 +42,7 @@ public class EnemyAI : MonoBehaviour
         armour = 0;
         movementSpeed = 1.5f;
         resistance = 0;
+        reward = 50;
         timer = 0;
 
         drainDamage = 0;

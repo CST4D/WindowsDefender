@@ -11,13 +11,20 @@ public class GameController : MonoBehaviour
     public Game_Timer gameTime;
     public Rounds rounds;
     public UnityEngine.UI.Text gameInfoDebugText;
+    public UnityEngine.UI.Text resourceText;
 
     private ArrayList enemies;
     private ArrayList spawners;
+    private ArrayList[] teamSpawners = new ArrayList[2];
     private float timer;
+
     private Waypoint _point;
+    private Waypoint _opponentPoint;
+
     private Tile[,] map;
+    public int money;
     private int _mapWidth, _mapHeight;
+    private int teamId = 1;
 
     struct Square
     {
@@ -34,22 +41,30 @@ public class GameController : MonoBehaviour
         GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
+        teamSpawners[0] = new ArrayList();
+        teamSpawners[1] = new ArrayList();
+
+        money = 50;
         gameTime.setTime(10.0f);
         timer = 0;
-        rounds.notParsed = true; 
+        rounds.notParsed = true;
+        resourceText.text = money.ToString();
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this);
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this, teamId);
         tmxl.loadMeta();
-        _mapWidth = tmxl.mapWidth;
-        _mapHeight = tmxl.mapHeight;    
+        _mapWidth = tmxl.realMapWidth;
+        _mapHeight = tmxl.realMapHeight;    
         map = tmxl.tiles;
         tmxl.load();
+
+        
     }
 
 
     // Update is called once per frame
     void Update()
     {
+        money = int.Parse(resourceText.text);
         if (rounds.notParsed)
             rounds.parseWave();
         
@@ -64,11 +79,12 @@ public class GameController : MonoBehaviour
             timer += 1*Time.deltaTime;
             if (timer > 0.5f)
             {
+                EnemyAI selectedAI = rounds.getEnemySpawn();
                 foreach (SpawnerAI spawn in spawners)
                 {
                     EnemyAI temp;
                     timer -= 0.5f;
-                    temp = (EnemyAI)GameObject.Instantiate(rounds.getEnemySpawn(), spawn.transform.position, transform.rotation);
+                    temp = (EnemyAI)GameObject.Instantiate(selectedAI, spawn.transform.position, transform.rotation);
                     temp.transform.parent = transform.Find("Enemies").transform;
                     // Some Path-finding Algorithm here
                     temp.movementPoints = copyWaypoints(spawn, temp.isGround);
@@ -79,6 +95,8 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
+
 
     void GetGameInitInfo()
     {
@@ -111,12 +129,16 @@ public class GameController : MonoBehaviour
             if (temp.health <= 0)
             {
                 EnemyAI[] newEnemies = null;
+                money += temp.reward;
+                
+                resourceText.text = money.ToString();
 
                 if((newEnemies = temp.OnDeath()) != null)
                     for (int j = 0; j < newEnemies.Length; j++)
                         tempNewEnemies.Add(newEnemies[j]);
-
+                
                 enemies.Remove(temp);
+                
             }
         }
 
@@ -148,18 +170,22 @@ public class GameController : MonoBehaviour
     /// Adds a spawner to a spawner list
     /// </summary>
     /// <param name="spai"></param>
-    public void addSpawnerToSpawnerList(SpawnerAI spai)
+    public void addSpawnerToSpawnerList(SpawnerAI spai, int teamId)
     {
 
         spawners.Add(spai);
-        spai.wayPoints = pathFinding(spai);
-        spai.flyPoints = pathFinding(spai, true);
+        spai.wayPoints = pathFinding(spai, false, teamId);
+        spai.flyPoints = pathFinding(spai, true, teamId);
+        teamSpawners[teamId - 1].Add(spai);
     }
 
 
-    public void setWayPoint(Waypoint way)
+    public void setWayPoint(Waypoint way, int teamId)
     {
-        _point = way;
+        if (teamId != this.teamId)
+            _opponentPoint = way;
+        else
+            _point = way;
     }
 
     /// <summary>
@@ -167,7 +193,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     /// <param name="spawner"></param>
     /// <returns>List of Vectors that the Monsters will follow till they reach their destination</returns>
-    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying = false)
+    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying, int teamId)
     {
         // 2D Array List of possible paths monsters can take to reach their destination
         LinkedList<Vector2> paths = new LinkedList<Vector2>();
@@ -178,7 +204,7 @@ public class GameController : MonoBehaviour
 
         LinkedList<Square> leadingSquares = new LinkedList<Square>();
 
-        Vector2 destSquare = FindTile(_point.gameObject);
+        Vector2 destSquare = FindTile((teamId != this.teamId ? _opponentPoint.gameObject : _point.gameObject));
         int fMin = 0, g = 0;
         Square spawn = createSquare(g, FindTile(spawner.gameObject), destSquare);
         leadingSquares.AddLast(spawn);

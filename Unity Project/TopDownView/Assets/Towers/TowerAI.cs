@@ -5,9 +5,10 @@ using System.Reflection;
 public class TowerAI : Building {
 
     public projectileAI projectileSource;
+    
 
     public int towerDamage;
-    //public AudioClip shootSound;
+    public int cost;
 
     public float attackSpd;
     public bool attacksGround;
@@ -28,6 +29,7 @@ public class TowerAI : Building {
         attackSpd = 0.5f;
         attackRange = 1.0f;
         attacksGround = true;
+        cost = 50;
 
         attacksAir = false;
 		revealsInvisible = false;
