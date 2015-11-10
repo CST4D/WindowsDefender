@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
 
     private ArrayList enemies;
     private ArrayList spawners;
+    private ArrayList[] teamSpawners = new ArrayList[2];
     private float timer;
 
     private Waypoint _point;
@@ -23,6 +24,7 @@ public class GameController : MonoBehaviour
     private Tile[,] map;
     public int money;
     private int _mapWidth, _mapHeight;
+    private int teamId = 1;
 
     struct Square
     {
@@ -39,18 +41,23 @@ public class GameController : MonoBehaviour
         GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
+        teamSpawners[0] = new ArrayList();
+        teamSpawners[1] = new ArrayList();
+
         money = 50;
         gameTime.setTime(10.0f);
         timer = 0;
         rounds.notParsed = true;
         resourceText.text = money.ToString();
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this, teamId);
         tmxl.loadMeta();
         _mapWidth = tmxl.realMapWidth;
         _mapHeight = tmxl.realMapHeight;    
         map = tmxl.tiles;
         tmxl.load();
+
+        
     }
 
 
@@ -88,6 +95,8 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
+
 
     void GetGameInitInfo()
     {
@@ -161,18 +170,19 @@ public class GameController : MonoBehaviour
     /// Adds a spawner to a spawner list
     /// </summary>
     /// <param name="spai"></param>
-    public void addSpawnerToSpawnerList(SpawnerAI spai, bool opponent)
+    public void addSpawnerToSpawnerList(SpawnerAI spai, int teamId)
     {
 
         spawners.Add(spai);
-        spai.wayPoints = pathFinding(spai, false, opponent);
-        spai.flyPoints = pathFinding(spai, true, opponent);
+        spai.wayPoints = pathFinding(spai, false, teamId);
+        spai.flyPoints = pathFinding(spai, true, teamId);
+        teamSpawners[teamId - 1].Add(spai);
     }
 
 
-    public void setWayPoint(Waypoint way, bool opponent)
+    public void setWayPoint(Waypoint way, int teamId)
     {
-        if (opponent)
+        if (teamId != this.teamId)
             _opponentPoint = way;
         else
             _point = way;
@@ -183,7 +193,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     /// <param name="spawner"></param>
     /// <returns>List of Vectors that the Monsters will follow till they reach their destination</returns>
-    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying, bool opponent)
+    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying, int teamId)
     {
         // 2D Array List of possible paths monsters can take to reach their destination
         LinkedList<Vector2> paths = new LinkedList<Vector2>();
@@ -194,7 +204,7 @@ public class GameController : MonoBehaviour
 
         LinkedList<Square> leadingSquares = new LinkedList<Square>();
 
-        Vector2 destSquare = FindTile((opponent ? _opponentPoint.gameObject : _point.gameObject));
+        Vector2 destSquare = FindTile((teamId != this.teamId ? _opponentPoint.gameObject : _point.gameObject));
         int fMin = 0, g = 0;
         Square spawn = createSquare(g, FindTile(spawner.gameObject), destSquare);
         leadingSquares.AddLast(spawn);
