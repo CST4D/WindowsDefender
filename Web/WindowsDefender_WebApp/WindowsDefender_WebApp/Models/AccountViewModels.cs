@@ -49,7 +49,7 @@ namespace WindowsDefender_WebApp.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
+        [Display(Name = "Username")]
         public string Email { get; set; }
 
         [Required]
