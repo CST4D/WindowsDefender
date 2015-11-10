@@ -217,3 +217,5 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+!Assets/JsonFx.dll
