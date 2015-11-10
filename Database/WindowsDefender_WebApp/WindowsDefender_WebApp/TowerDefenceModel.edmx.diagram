@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="ff68451e6b5e45a5bb2dd5f2f0a8fe2a" Name="Diagram1" ZoomLevel="64">
+        <EntityTypeShape EntityType="TowerDefenceModel.AspNetUser" Width="1.5" PointX="0.75" PointY="3.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.Friend" Width="1.5" PointX="3" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.Map" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.MatchHistory" Width="1.5" PointX="3" PointY="4" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.MatchHistoryDetail" Width="1.5" PointX="5.25" PointY="4.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.SpecialAbility" Width="1.5" PointX="7.75" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.ThreadPost" Width="1.5" PointX="3" PointY="7" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.Thread" Width="1.5" PointX="5.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.Tower" Width="1.5" PointX="10" PointY="1.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="TowerDefenceModel.Virus" Width="1.5" PointX="10" PointY="5" IsExpanded="true" />
+        <AssociationConnector Association="TowerDefenceModel.FK_FRIENDS_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_FRIENDS_AspNetUsers1" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_MATCH_HISTORY_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_MATCH_HISTORY_DETAILS_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_THREAD_POSTS_AspNetUsers" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_THREAD_POSTS_THREAD_POSTS" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_MATCH_HISTORY_DETAILS_MATCH_HISTORY" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_TOWERS_TOWERS" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_VIRUSES_SPECIAL_ABILITY" ManuallyRouted="false" />
+        <AssociationConnector Association="TowerDefenceModel.FK_THREAD_POSTS_THREAD_POSTS1" />
+        <EntityTypeShape EntityType="TowerDefenceModel.AspNetRole" Width="1.5" PointX="8.375" PointY="8.75" />
+        <EntityTypeShape EntityType="TowerDefenceModel.AspNetUserClaim" Width="1.5" PointX="2.75" PointY="9.875" />
+        <EntityTypeShape EntityType="TowerDefenceModel.AspNetUserLogin" Width="1.5" PointX="0.625" PointY="11.25" />
+        <EntityTypeShape EntityType="TowerDefenceModel.AspNetUserRole" Width="1.5" PointX="8.25" PointY="10.75" />
+        <AssociationConnector Association="TowerDefenceModel.FK_AspNetUserClaims_AspNetUsers" />
+        <AssociationConnector Association="TowerDefenceModel.FK_AspNetUserLogins_AspNetUsers" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

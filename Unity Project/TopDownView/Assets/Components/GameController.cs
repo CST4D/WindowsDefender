@@ -4,13 +4,13 @@ using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
-
     public Waypoint wayPoint;
     public EnemyAI enemy;
     public Tile tile;
     public SpawnerAI spawner;
     public Game_Timer gameTime;
     public Rounds rounds;
+    public UnityEngine.UI.Text gameInfoDebugText;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -31,6 +31,7 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
         gameTime.setTime(10.0f);
@@ -39,25 +40,9 @@ public class GameController : MonoBehaviour
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
         tmxl.loadMeta();
-
-        float tilesize = 0.32f;
         _mapWidth = tmxl.mapWidth;
-        _mapHeight = tmxl.mapHeight;
-
-        map = new Tile[_mapHeight, _mapWidth];
-
-        for (int i = 0; i < _mapHeight; i++)
-        {
-            for (int j = 0; j < _mapWidth; j++)
-            {
-                map[i, j] = (Tile)Instantiate(tile, new Vector2((tilesize * j), (tilesize * i)), transform.rotation);
-                map[i, j].Buildable = false;
-                map[i, j].Walkable = true;
-                map[i, j].transform.parent = transform.Find("Tilemap").transform;
-            }
-        }
-
-        tmxl.tiles = map;
+        _mapHeight = tmxl.mapHeight;    
+        map = tmxl.tiles;
         tmxl.load();
     }
 
@@ -95,19 +80,74 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void CheckEnemy()
+    void GetGameInitInfo()
     {
-        for (int i = 0; i < enemies.Count; i++)
+        string schemaName = "towerdefender:";
+
+        string serverIpAddr;
+        string username;
+        string[] cmdLineArgs = System.Environment.GetCommandLineArgs();
+        if (cmdLineArgs.Length > 1 && cmdLineArgs[1].StartsWith(schemaName))
         {
-            EnemyAI temp = (EnemyAI)enemies[i];
-            if (temp.health < 0)
-            {
-                Destroy(temp.gameObject);
-                enemies.Remove(temp);
-            }
+            string[] uriList = cmdLineArgs[1].Substring(schemaName.Length).Split('|');
+            serverIpAddr = uriList[0];
+            username = uriList[1];
+            gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
         }
     }
 
+    /// <summary>
+    /// Check the health of the enemies, if they are 0 then execute their OnDeath functions
+    /// If the enemy spawned more enemies then add those enemies to the list
+    /// </summary>
+    void CheckEnemy()
+    {
+        ArrayList tempNewEnemies = new ArrayList();
+
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            EnemyAI temp = (EnemyAI)enemies[i];
+
+            if (temp.health <= 0)
+            {
+                EnemyAI[] newEnemies = null;
+
+                if((newEnemies = temp.OnDeath()) != null)
+                    for (int j = 0; j < newEnemies.Length; j++)
+                        tempNewEnemies.Add(newEnemies[j]);
+
+                enemies.Remove(temp);
+            }
+        }
+
+        for (int i = 0; i < tempNewEnemies.Count; i++)
+            enemies.Add(tempNewEnemies[i]);
+    }
+
+    /// <summary>
+    /// Get Enemies within range of a position
+    /// </summary>
+    /// <param name="atransform"></param>
+    /// <param name="range"></param>
+    /// <returns></returns>
+    public LinkedList<EnemyAI> getEnemyWithinRange(Transform atransform, float range)
+    {
+        LinkedList<EnemyAI> enemyList = new LinkedList<EnemyAI>();
+        for (int i = 0; i < enemies.Count; i++)
+        {
+            EnemyAI temp = (EnemyAI)enemies[i];
+            if ((temp.transform.position - atransform.position).magnitude <= range && temp.transform != atransform)
+            {
+                enemyList.AddLast(temp);
+            }
+        }
+        return enemyList;
+    }
+
+    /// <summary>
+    /// Adds a spawner to a spawner list
+    /// </summary>
+    /// <param name="spai"></param>
     public void addSpawnerToSpawnerList(SpawnerAI spai)
     {
 
@@ -115,6 +155,7 @@ public class GameController : MonoBehaviour
         spai.wayPoints = pathFinding(spai);
         spai.flyPoints = pathFinding(spai, true);
     }
+
 
     public void setWayPoint(Waypoint way)
     {
@@ -381,7 +422,14 @@ public class GameController : MonoBehaviour
 
         return dx + dy;
     }
-
+    
+    /// <summary>
+    /// Creates a new square
+    /// </summary>
+    /// <param name="g">Movement Cost</param>
+    /// <param name="v">First Point</param>
+    /// <param name="dv">Second Point</param>
+    /// <returns></returns>
     Square createSquare(int g, Vector2 v, Vector2 dv)
     {
         Square newSquare = new Square();
@@ -416,6 +464,12 @@ public class GameController : MonoBehaviour
         return dx + dy;
     }
 
+    /// <summary>
+    /// creates a new copy of a LinkedList
+    /// </summary>
+    /// <param name="spawner"></param>
+    /// <param name="ground"></param>
+    /// <returns></returns>
     LinkedList<Vector2> copyWaypoints(SpawnerAI spawner, bool ground)
     {
         LinkedList<Vector2> copyWaypoints = new LinkedList<Vector2>();
