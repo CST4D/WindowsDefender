@@ -14,7 +14,8 @@ public class MultiplayerMessagingAdapter {
         ChatMessage = 6,
         KeepAlive = 7,
         JoinAcknowledge = 8,
-        Connected = 9
+        Connected = 9,
+        Disconnected = 10,
     };
 
     public enum GameState
@@ -38,6 +39,7 @@ public class MultiplayerMessagingAdapter {
     private Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     private ArrayList[] teamSpawners;
     private ArrayList gcEnemies;
+    private float lastTimeCommunication = Time.time;
 
     public MultiplayerMessagingAdapter(MessagingNetworkAdapter netAdapter, MonoBehaviour context, string username, int teamId, ArrayList[] teamSpawners, ArrayList enemies)
     {
@@ -83,6 +85,9 @@ public class MultiplayerMessagingAdapter {
                 case MessageType.Connected:
                     ReceiveConnected();
                     break;
+                case MessageType.Disconnected:
+                    ReceiveDisconnected();
+                    break;
             }
         }
         CheckAndKeepAlive();
@@ -102,6 +107,10 @@ public class MultiplayerMessagingAdapter {
                     SendKeepAlive();
             }
         }
+        if (Time.time - lastTimeCommunication >= 1.0f)
+        {
+            SendKeepAlive();
+        }
     }
 
     private void UpdateLastCommunication(string username)
@@ -109,10 +118,20 @@ public class MultiplayerMessagingAdapter {
         peers[username].lastTimeCommunicated = Time.time;
     }
 
+    private void UpdateLastCommunicationWithServer()
+    {
+        lastTimeCommunication = Time.time;
+    }
+
     private void ReceiveConnected()
     {
         currGameState = GameState.WaitingForPlayers;
         SendJoinGame();
+    }
+
+    private void ReceiveDisconnected()
+    {
+        currGameState = GameState.PlayerDisconnect;
     }
 
     private void ReceiveJoinGame(string username, int teamId)
@@ -128,6 +147,7 @@ public class MultiplayerMessagingAdapter {
     public void SendJoinGame()
     {
         netAdapter.Send((int)MessageType.JoinGame, username, teamId.ToString());
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveTowerBuilt(string prefabName, int teamId, double x, double y)
@@ -156,6 +176,7 @@ public class MultiplayerMessagingAdapter {
     public void SendTowerBuilt(string prefabName, double x, double y)
     {
         netAdapter.Send((int)MessageType.TowerBuilt, prefabName, teamId.ToString(), x.ToString(), y.ToString());
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveEnemyDeath(int enemyId, int teamId)
@@ -170,6 +191,7 @@ public class MultiplayerMessagingAdapter {
     public void SendEnemyDeath(int enemyId)
     {
         netAdapter.Send((int)MessageType.EnemyDies, enemyId.ToString(), teamId.ToString());
+        UpdateLastCommunicationWithServer();
     } 
 
     private void ReceiveHealthUpdate(string username, int teamId, int health)
@@ -180,6 +202,7 @@ public class MultiplayerMessagingAdapter {
     public void SendHealthUpdate(int health)
     {
         netAdapter.Send((int)MessageType.HealthUpdate, username, teamId.ToString(), health.ToString());
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
@@ -204,6 +227,7 @@ public class MultiplayerMessagingAdapter {
     public void SendEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
     {
         netAdapter.Send((int)MessageType.SendEnemy, enemyId.ToString(), prefabName, teamId.ToString(), spawnerId.ToString());
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveChatMessage(string username, string content, int teamId)
@@ -213,7 +237,7 @@ public class MultiplayerMessagingAdapter {
 
     public void SendChatMessage(string content)
     {
-
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveKeepAlive(string username)
@@ -224,6 +248,7 @@ public class MultiplayerMessagingAdapter {
     public void SendKeepAlive()
     {
         netAdapter.Send((int)MessageType.KeepAlive, username);
+        UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveJoinAcknowledge(string username, int teamId)
@@ -240,6 +265,7 @@ public class MultiplayerMessagingAdapter {
     public void SendJoinAcknowledge()
     {
         netAdapter.Send((int)MessageType.JoinAcknowledge, username, teamId.ToString());
+        UpdateLastCommunicationWithServer();
     }
 
     private int intr(string value)

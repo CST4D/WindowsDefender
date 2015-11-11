@@ -119,6 +119,7 @@ public class NetworkClient : MonoBehaviour
         if (instruction.Command == Instruction.Type.LEAVE)
         {
             print("Disconnected from the server.");
+            netAdapter.InputRecvData("" + (int)MultiplayerMessagingAdapter.MessageType.Disconnected);
         }
 
         // If user joined match successfully
