@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     public UnityEngine.UI.Text gameInfoDebugText;
     public UnityEngine.UI.Text resourceText;
     public NetworkClient NetworkCli;
+    public UnityEngine.UI.Text gameStateText;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -77,7 +78,23 @@ public class GameController : MonoBehaviour
         multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
     }
 
-
+    void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)
+    {
+        switch (gs)
+        {
+            case MultiplayerMessagingAdapter.GameState.WaitingForPlayers:
+                gameStateText.text = "Waiting For Players...";
+                break;
+            case MultiplayerMessagingAdapter.GameState.GameInProgress:
+                gameStateText.text = "Game In Progress!";
+                break;
+            case MultiplayerMessagingAdapter.GameState.PlayerDisconnect:
+                gameStateText.text = "Peer left game, game over.";
+                break;
+            default:
+                break;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -89,6 +106,7 @@ public class GameController : MonoBehaviour
         CheckEnemy();
 
         multiMessageAdapter.ReceiveAndUpdate();
+        UpdateStateText(multiMessageAdapter.CurrentGameState);
 
         gameTime.tick();
 
