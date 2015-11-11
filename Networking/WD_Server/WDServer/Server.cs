@@ -241,8 +241,8 @@ namespace WDServer
                 return;
 
             // Send to every user in the match
-            foreach (KeyValuePair<string, User> u in match.Users)
-                newsock.Send(data, data.Length, u.Value.EndPoint);
+            foreach (User u in match.Users)
+                newsock.Send(data, data.Length, u.EndPoint);
         }
 
         /// <summary>

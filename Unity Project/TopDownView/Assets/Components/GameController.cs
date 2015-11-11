@@ -28,10 +28,10 @@ public class GameController : MonoBehaviour
     private int _mapWidth, _mapHeight;
 
 
-    private string username = "darnell";
-    private string ip = "compcst.cloudapp.net";
-    private string matchId = "dsds";
-    private int teamId = 1;
+    private string username = "darnell2";
+    private string ip = "127.0.0.1";
+    private string matchId = "4fg7-38g3-d922-f75g-48g6";
+    private int teamId = 2;
 
     
     MessagingNetworkAdapter netAdapter;

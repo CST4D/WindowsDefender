@@ -59,7 +59,7 @@ public class MultiplayerMessagingAdapter {
             {
                 case MessageType.TowerBuilt:
                     ReceiveTowerBuilt(msg.Args[0], intr(msg.Args[1]),
-                        Convert.ToDouble(msg.Args[2]), Convert.ToDouble(msg.Args[3]));
+                        Convert.ToDouble(msg.Args[2]), Convert.ToDouble(msg.Args[3]), msg.Args[4]);
                     break;
                 case MessageType.EnemyDies:
                     ReceiveEnemyDeath(intr(msg.Args[0]), intr(msg.Args[1]));
@@ -136,8 +136,10 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveJoinGame(string username, int teamId)
     {
+        if (username == this.username)
+            return;
         peers[username] = new Peer(teamId, username);
-        if (peers.Count == 3)
+        if (peers.Count == 1)
         {
             currGameState = GameState.GameInProgress;
         }
@@ -150,14 +152,14 @@ public class MultiplayerMessagingAdapter {
         UpdateLastCommunicationWithServer();
     }
 
-    private void ReceiveTowerBuilt(string prefabName, int teamId, double x, double y)
+    private void ReceiveTowerBuilt(string prefabName, int teamId, double x, double y, string username)
     {
+        if (username == this.username)
+            return;
         Tile[] tiles = UnityEngine.Object.FindObjectsOfType<Tile>();
         Tile closestTile = null;
         float closestDist = 1.0f;
         Vector2 pos = new Vector2((float)x, (float)y);
-        Building building = (Building)UnityEngine.Object.Instantiate(Resources.Load("Towers/" + prefabName), pos, context.transform.rotation);
-        building.operating = true;
         foreach (Tile tile in tiles)
         {
             float dist = Vector2.Distance(tile.transform.position, pos);
@@ -170,12 +172,15 @@ public class MultiplayerMessagingAdapter {
         }
         closestTile.Buildable = false;
         closestTile.Walkable = false;
+        Building building = (Building)UnityEngine.Object.Instantiate(Resources.Load("Towers/" + prefabName), pos, context.transform.rotation);
+        building.operating = true;
+        
         building.transform.parent = context.transform.Find("Towers").transform;
     }
 
     public void SendTowerBuilt(string prefabName, double x, double y)
     {
-        netAdapter.Send((int)MessageType.TowerBuilt, prefabName, teamId.ToString(), x.ToString(), y.ToString());
+        netAdapter.Send((int)MessageType.TowerBuilt, prefabName, teamId.ToString(), x.ToString(), y.ToString(), username);
         UpdateLastCommunicationWithServer();
     }
 
@@ -196,7 +201,8 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveHealthUpdate(string username, int teamId, int health)
     {
-
+        if (username == this.username)
+            return;
     }
 
     public void SendHealthUpdate(int health)
@@ -207,6 +213,8 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
     {
+        if (enemies.ContainsKey(enemyId))
+            return;
         EnemyAI temp;
         SpawnerAI spai = ((SpawnerAI)teamSpawners[teamId - 1][spawnerId]);
         temp = (EnemyAI)GameObject.Instantiate(Resources.Load("Enemies/" + prefabName), spai.transform.position, context.transform.rotation);
@@ -242,6 +250,8 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveKeepAlive(string username)
     {
+        if (username == this.username)
+            return;
         peers[username].lastTimeCommunicated = Time.time;
     }
 
@@ -253,10 +263,12 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveJoinAcknowledge(string username, int teamId)
     {
+        if (username == this.username)
+            return;
         if (peers.ContainsKey(username))
             return;
         peers[username] = new Peer(teamId, username);
-        if (peers.Count == 3)
+        if (peers.Count == 1)
         {
             currGameState = GameState.GameInProgress;
         }
