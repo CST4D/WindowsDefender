@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 
 public class MultiplayerMessagingAdapter {
-    private enum MessageType
+    public enum MessageType
     {
         JoinGame = 1,
         TowerBuilt = 2,
@@ -13,24 +13,25 @@ public class MultiplayerMessagingAdapter {
         SendEnemy = 5,
         ChatMessage = 6,
         KeepAlive = 7,
-        JoinAcknowledge = 8
+        JoinAcknowledge = 8,
+        Connected = 9
     };
 
     public enum GameState
     {
-        WaitingForPlayers = 1,
-        GameInProgress = 2,
-        TeamLoss = 3,
-        TeamWin = 4,
-        PlayerDisconnect = 5
+        Connecting = 1,
+        WaitingForPlayers = 2,
+        GameInProgress = 3,
+        TeamLoss = 4,
+        TeamWin = 5,
+        PlayerDisconnect = 6
     }
-    private GameState currGameState = GameState.WaitingForPlayers;
+    private GameState currGameState = GameState.Connecting;
     public GameState CurrentGameState { get { return currGameState; } }
 
     private MessagingNetworkAdapter netAdapter;
     private MonoBehaviour context;
 
-    private string hostId;
     private int teamId;
     private string username;
     private Dictionary<string, Peer> peers = new Dictionary<string, Peer>();
@@ -38,13 +39,14 @@ public class MultiplayerMessagingAdapter {
     private ArrayList[] teamSpawners;
     private ArrayList gcEnemies;
 
-    public MultiplayerMessagingAdapter(MessagingNetworkAdapter netAdapter, MonoBehaviour context, string hostId, int teamId, ArrayList[] teamSpawners, ArrayList enemies)
+    public MultiplayerMessagingAdapter(MessagingNetworkAdapter netAdapter, MonoBehaviour context, string username, int teamId, ArrayList[] teamSpawners, ArrayList enemies)
     {
         this.netAdapter = netAdapter;
         this.context = context;
-        this.hostId = hostId;
         this.teamSpawners = teamSpawners;
         gcEnemies = enemies;
+        this.username = username;
+        this.teamId = teamId;
     }
 
     public void ReceiveAndUpdate()
@@ -61,7 +63,7 @@ public class MultiplayerMessagingAdapter {
                     ReceiveEnemyDeath(intr(msg.Args[0]), intr(msg.Args[1]));
                     break;
                 case MessageType.JoinGame:
-                    ReceiveJoinGame(msg.Args[0], intr(msg.Args[1]), msg.Args[2]);
+                    ReceiveJoinGame(msg.Args[0], intr(msg.Args[1]));
                     break;
                 case MessageType.HealthUpdate:
                     ReceiveHealthUpdate(msg.Args[0], intr(msg.Args[1]), intr(msg.Args[2]));
@@ -76,7 +78,10 @@ public class MultiplayerMessagingAdapter {
                     ReceiveKeepAlive(msg.Args[0]);
                     break;
                 case MessageType.JoinAcknowledge:
-                    ReceiveJoinAcknowledge(msg.Args[0], intr(msg.Args[1]), msg.Args[2]);
+                    ReceiveJoinAcknowledge(msg.Args[0], intr(msg.Args[1]));
+                    break;
+                case MessageType.Connected:
+                    ReceiveConnected();
                     break;
             }
         }
@@ -99,14 +104,20 @@ public class MultiplayerMessagingAdapter {
         }
     }
 
-    private void UpdateLastCommunication(string hostId)
+    private void UpdateLastCommunication(string username)
     {
-        peers[hostId].lastTimeCommunicated = Time.time;
+        peers[username].lastTimeCommunicated = Time.time;
     }
 
-    private void ReceiveJoinGame(string username, int teamId, string hostId)
+    private void ReceiveConnected()
     {
-        peers[hostId] = new Peer(teamId, hostId, username);
+        currGameState = GameState.WaitingForPlayers;
+        SendJoinGame();
+    }
+
+    private void ReceiveJoinGame(string username, int teamId)
+    {
+        peers[username] = new Peer(teamId, username);
         if (peers.Count == 3)
         {
             currGameState = GameState.GameInProgress;
@@ -116,7 +127,7 @@ public class MultiplayerMessagingAdapter {
 
     public void SendJoinGame()
     {
-        netAdapter.Send((int)MessageType.JoinGame, username, teamId.ToString(), hostId.ToString());
+        netAdapter.Send((int)MessageType.JoinGame, username, teamId.ToString());
     }
 
     private void ReceiveTowerBuilt(string prefabName, int teamId, double x, double y)
@@ -161,14 +172,14 @@ public class MultiplayerMessagingAdapter {
         netAdapter.Send((int)MessageType.EnemyDies, enemyId.ToString(), teamId.ToString());
     } 
 
-    private void ReceiveHealthUpdate(string hostId, int teamId, int health)
+    private void ReceiveHealthUpdate(string username, int teamId, int health)
     {
 
     }
 
     public void SendHealthUpdate(int health)
     {
-        netAdapter.Send((int)MessageType.HealthUpdate, hostId, teamId.ToString(), health.ToString());
+        netAdapter.Send((int)MessageType.HealthUpdate, username, teamId.ToString(), health.ToString());
     }
 
     private void ReceiveEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
@@ -205,21 +216,21 @@ public class MultiplayerMessagingAdapter {
 
     }
 
-    private void ReceiveKeepAlive(string hostId)
+    private void ReceiveKeepAlive(string username)
     {
-        peers[hostId].lastTimeCommunicated = Time.time;
+        peers[username].lastTimeCommunicated = Time.time;
     }
 
     public void SendKeepAlive()
     {
-        netAdapter.Send((int)MessageType.KeepAlive, hostId);
+        netAdapter.Send((int)MessageType.KeepAlive, username);
     }
 
-    private void ReceiveJoinAcknowledge(string username, int teamId, string hostId)
+    private void ReceiveJoinAcknowledge(string username, int teamId)
     {
-        if (peers.ContainsKey(hostId))
+        if (peers.ContainsKey(username))
             return;
-        peers[hostId] = new Peer(teamId, hostId, username);
+        peers[username] = new Peer(teamId, username);
         if (peers.Count == 3)
         {
             currGameState = GameState.GameInProgress;
@@ -228,7 +239,7 @@ public class MultiplayerMessagingAdapter {
 
     public void SendJoinAcknowledge()
     {
-        netAdapter.Send((int)MessageType.JoinAcknowledge, username, teamId.ToString(), hostId.ToString());
+        netAdapter.Send((int)MessageType.JoinAcknowledge, username, teamId.ToString());
     }
 
     private int intr(string value)
@@ -238,16 +249,14 @@ public class MultiplayerMessagingAdapter {
 
     private class Peer
     {
-        public Peer(int teamId, string hostId, string username)
+        public Peer(int teamId, string username)
         {
             lastTimeCommunicated = Time.time;
             this.teamId = teamId;
-            this.hostId = hostId;
             this.username = username;
         }
         public float lastTimeCommunicated;
         public int teamId;
-        public string hostId;
         public string username;
         public int health = 100;
     }

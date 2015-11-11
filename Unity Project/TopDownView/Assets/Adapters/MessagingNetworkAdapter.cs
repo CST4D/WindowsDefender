@@ -19,43 +19,63 @@ public class MessagingNetworkAdapter {
         }
     }
 
-    public delegate void send_msg_delegate(string msg);
-
-    private send_msg_delegate send;
+    private NetworkClient netClient;
     private System.Collections.Generic.Queue<Message> queue;
+    private System.Threading.Mutex queueMutex;
 
     public MessagingNetworkAdapter() : this(null)
     {
-        NetworkMock mock = new NetworkMock(this);
-        this.send = mock.Send;
+        
     }
 
-    public MessagingNetworkAdapter(send_msg_delegate send)
+    public MessagingNetworkAdapter(NetworkClient netClient)
     {
-        this.send = send;
+        this.netClient = netClient;
         queue = new System.Collections.Generic.Queue<Message>();
+        queueMutex = new System.Threading.Mutex();
     }
 
     public void InputRecvData(string msg)
     {
         string[] parts = msg.Split('|');
+        try
+        {
+            int i = Convert.ToInt32(parts[0]);
+        }
+        catch (Exception)
+        {
+            return;
+        }
+        queueMutex.WaitOne();
         queue.Enqueue(new Message(parts));
+        queueMutex.ReleaseMutex();
     }
 
     public bool MessageRecvReady()
     {
-        return queue.Count > 0;
+        bool queueCount;
+        if (queueMutex.WaitOne(500))
+        {
+            queueCount = queue.Count > 0;
+            queueMutex.ReleaseMutex();
+            return queueCount;
+        }
+        return false;
     }
 
     public Message Recv()
     {
-        return queue.Dequeue();
+        Message msg;
+        queueMutex.WaitOne();
+        msg = queue.Dequeue();
+        queueMutex.ReleaseMutex();
+        return msg;
     }
 
     public void Send(int type, params string[] args)
     {
         string msg = type + "|" + string.Join("|", args);
-        send(msg);
+        netClient.Send(msg);
     }
 
 }

@@ -12,6 +12,7 @@ public class GameController : MonoBehaviour
     public Rounds rounds;
     public UnityEngine.UI.Text gameInfoDebugText;
     public UnityEngine.UI.Text resourceText;
+    public NetworkClient NetworkCli;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -24,7 +25,16 @@ public class GameController : MonoBehaviour
     private Tile[,] map;
     public int money;
     private int _mapWidth, _mapHeight;
+
+
+    private string username = "darnell";
+    private string ip = "compcst.cloudapp.net";
+    private string matchId = "dsds";
     private int teamId = 1;
+
+    
+    MessagingNetworkAdapter netAdapter;
+    MultiplayerMessagingAdapter multiMessageAdapter;
 
     struct Square
     {
@@ -57,7 +67,14 @@ public class GameController : MonoBehaviour
         map = tmxl.tiles;
         tmxl.load();
 
-        
+        StartNetworking();
+    }
+
+    void StartNetworking()
+    {
+        netAdapter = new MessagingNetworkAdapter(NetworkCli);
+        NetworkCli.Initialize(ip, matchId, username, netAdapter);
+        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
     }
 
 
@@ -70,6 +87,8 @@ public class GameController : MonoBehaviour
         
         // Check health of monsters
         CheckEnemy();
+
+        multiMessageAdapter.ReceiveAndUpdate();
 
         gameTime.tick();
 

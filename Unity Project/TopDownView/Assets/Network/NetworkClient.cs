@@ -9,25 +9,36 @@ public class NetworkClient : MonoBehaviour
 {
     private Thread clientThread = null;
     private UdpClient socket = null;
+    private object sendLock = new object();
     bool running = true;
+    private string ip = "127.0.0.1";
+    private const int SERVER_PORT = 25001;
+    string username;
+    string matchID;
+    MessagingNetworkAdapter netAdapter;
 
-    void Start()
+    public void Initialize(string ip, string matchID, string username, MessagingNetworkAdapter netAdapter)
     {
+        this.matchID = matchID;
+        this.username = username;
+        this.netAdapter = netAdapter;
+        this.ip = ip;
         clientThread = new Thread(StartClient);
         clientThread.Start();
     }
 
+    void Start()
+    {
+        
+    }
+
     private void StartClient()
     {
-        string serverIP   = "127.0.0.1";
-        int    serverPort = 25001;
-        string username   = "Jeff";
-        string matchID    = "4fg7-38g3-d922-f75g-48g6";
        
         // Setup
         byte[] receivedData = new byte[512];
         IPEndPoint receiverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        socket = new UdpClient(serverIP, serverPort);
+        socket = new UdpClient(ip, SERVER_PORT);
 
         // Send JOIN command (This adds the user to the server's user 
         // list and inserts him/her into the correct match based on matchID)
@@ -61,6 +72,11 @@ public class NetworkClient : MonoBehaviour
         }
     }
 
+    public void Send(string msg)
+    {
+        SendInstruction(Instruction.Type.CMD, msg);
+    }
+
     /// <summary>
     /// Sends an instruction to the server
     /// </summary>
@@ -71,24 +87,26 @@ public class NetworkClient : MonoBehaviour
     /// <param name="arg4"></param>
     public void SendInstruction(Instruction.Type command, string arg1 = "", string arg2 = "", string arg3 = "", string arg4 = "")
     {
-        try {
-            Instruction newInstruction = new Instruction()
-            {
-                Command = command,
-                Arg1 = arg1,
-                Arg2 = arg2,
-                Arg3 = arg3,
-                Arg4 = arg4
-            };
+        lock(sendLock) {
+            try {
+                Instruction newInstruction = new Instruction()
+                {
+                    Command = command,
+                    Arg1 = arg1,
+                    Arg2 = arg2,
+                    Arg3 = arg3,
+                    Arg4 = arg4
+                };
 
-            // Send instruction
-            byte[] dataToSend = Serializer.Serialize(newInstruction);
-            socket.Send(dataToSend, dataToSend.Length);
-            print("Size of data being sent: " + dataToSend.Length);
-            print("Data sent: " + arg1 + "/" + arg2 + "/" + arg3 + "/" + arg4);
-        } catch (Exception ex)
-        {
-            print(ex.StackTrace);
+                // Send instruction
+                byte[] dataToSend = Serializer.Serialize(newInstruction);
+                socket.Send(dataToSend, dataToSend.Length);
+                print("Size of data being sent: " + dataToSend.Length);
+                print("Data sent: " + arg1 + "/" + arg2 + "/" + arg3 + "/" + arg4);
+            } catch (Exception ex)
+            {
+                print(ex.StackTrace);
+            }
         }
     }
 
@@ -99,11 +117,16 @@ public class NetworkClient : MonoBehaviour
     {
         // If user was disconnected
         if (instruction.Command == Instruction.Type.LEAVE)
+        {
             print("Disconnected from the server.");
+        }
 
         // If user joined match successfully
         if (instruction.Command == Instruction.Type.JOINED)
+        {
             print("You have joined the match successfully.");
+            netAdapter.InputRecvData("" + (int)MultiplayerMessagingAdapter.MessageType.Connected);
+        }
 
         if (instruction.Command == Instruction.Type.CMD)
         {
@@ -113,6 +136,7 @@ public class NetworkClient : MonoBehaviour
             string arg3 = instruction.Arg3;
             string arg4 = instruction.Arg4;
             print("Received command with arguments: " + arg1 + "/" + arg2 + "/" + arg3 + "/" + arg4);
+            netAdapter.InputRecvData(arg1);
         }
     }
 
