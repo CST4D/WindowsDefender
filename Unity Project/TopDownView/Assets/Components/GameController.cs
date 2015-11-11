@@ -14,6 +14,7 @@ public class GameController : MonoBehaviour
     public UnityEngine.UI.Text resourceText;
     public NetworkClient NetworkCli;
     public UnityEngine.UI.Text gameStateText;
+    public BuildMode buildMode;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -28,7 +29,7 @@ public class GameController : MonoBehaviour
     private int _mapWidth, _mapHeight;
 
 
-    private string username = "darnell2";
+    private string username = "darnel2";
     private string ip = "127.0.0.1";
     private string matchId = "4fg7-38g3-d922-f75g-48g6";
     private int teamId = 2;
@@ -68,6 +69,8 @@ public class GameController : MonoBehaviour
         map = tmxl.tiles;
         tmxl.load();
 
+        GameObject.FindWithTag("MainCamera").transform.position += tmxl.TransformVector;
+
         StartNetworking();
     }
 
@@ -76,6 +79,7 @@ public class GameController : MonoBehaviour
         netAdapter = new MessagingNetworkAdapter(NetworkCli);
         NetworkCli.Initialize(ip, matchId, username, netAdapter);
         multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
+        buildMode.Initialize(multiMessageAdapter);
     }
 
     void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)

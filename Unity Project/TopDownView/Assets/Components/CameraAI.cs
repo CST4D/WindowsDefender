@@ -29,9 +29,9 @@ public class CameraAI : MonoBehaviour {
             direction.y -= 20;
         if (Input.mousePosition.x < 30)
             direction.x -= 20;
-        if (Input.mousePosition.y > (Display.main.renderingHeight - 30))
+        if (Input.mousePosition.y > (Screen.height - 30))
             direction.y += 20;
-        if (Input.mousePosition.x > (Display.main.renderingWidth - 30))
+        if (Input.mousePosition.x > (Screen.width - 30))
             direction.x += 20;
         if (Input.GetAxis("Mouse ScrollWheel") > 0.01f || Input.GetAxis("Mouse ScrollWheel") < -0.01f)
             direction.z += Input.GetAxis("Mouse ScrollWheel");

@@ -23,6 +23,8 @@ public class TMXLoader {
     private Vector2 waypoint;
     private LinkedList<Vector2> spawners = new LinkedList<Vector2>();
     private int teamId;
+    private Vector3 transformVector;
+    public Vector3 TransformVector { get { return transformVector; } }
 
     public TMXLoader(TextAsset tAsset, GameController context, int teamId)
     {
@@ -177,7 +179,7 @@ public class TMXLoader {
         {
             for (int x = 0; x < mapWidth; x++)
             {
-                tiles[mapHeight - y - 1, x + mapWidth].Buildable = false;
+                tiles[mapHeight - y - 1, x + mapWidth].Buildable = tiles[mapHeight - y - 1, mapWidth - x - 1].Buildable;
                 tiles[mapHeight - y - 1, x + mapWidth].Walkable = tiles[mapHeight - y - 1, mapWidth - x - 1].Walkable;
                 tiles[mapHeight - y - 1, x + mapWidth].mapSprite = tiles[mapHeight - y - 1, mapWidth - x - 1].mapSprite;
                 tiles[mapHeight - y - 1, x + (teamId == 1 ? mapWidth : 0)].Buildable = false;
@@ -192,6 +194,7 @@ public class TMXLoader {
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
+        transformVector = new Vector3(((teamId == 2 ? realMapWidth : 0) * 0.32f), realMapHeight / 2 * 0.32f, 0);
     }
     private void reflectMapVertical()
     {
@@ -214,5 +217,6 @@ public class TMXLoader {
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
+        transformVector = new Vector3(realMapWidth / 2 * 0.32f, ((teamId == 2 ? realMapHeight : 0) * 0.32f), 0);
     }
 }

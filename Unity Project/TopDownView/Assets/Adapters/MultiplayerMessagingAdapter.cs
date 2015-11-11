@@ -172,6 +172,7 @@ public class MultiplayerMessagingAdapter {
         }
         closestTile.Buildable = false;
         closestTile.Walkable = false;
+
         Building building = (Building)UnityEngine.Object.Instantiate(Resources.Load("Towers/" + prefabName), pos, context.transform.rotation);
         building.operating = true;
         
