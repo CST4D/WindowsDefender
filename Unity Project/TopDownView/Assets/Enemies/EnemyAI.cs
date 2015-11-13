@@ -10,6 +10,7 @@ public class EnemyAI : MonoBehaviour
 
     public AudioClip hitSound;
 
+    public int cost = 10;
     public int maxHealth;
     public int health;
     public int armour;

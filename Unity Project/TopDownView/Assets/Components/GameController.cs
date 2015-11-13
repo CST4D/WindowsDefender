@@ -15,6 +15,7 @@ public class GameController : MonoBehaviour
     public NetworkClient NetworkCli;
     public UnityEngine.UI.Text gameStateText;
     public BuildMode buildMode;
+    public EnemyMode enemyMode;
 
     private ArrayList enemies;
     private ArrayList spawners;
