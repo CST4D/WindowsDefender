@@ -81,6 +81,7 @@ public class GameController : MonoBehaviour
         NetworkCli.Initialize(ip, matchId, username, netAdapter);
         multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
         buildMode.Initialize(multiMessageAdapter);
+        enemyMode.Initialize(multiMessageAdapter, (teamId == 1 ? 2 : 1), teamSpawners, enemies);
     }
 
     void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)
