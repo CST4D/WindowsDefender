@@ -30,7 +30,7 @@ public class GameController : MonoBehaviour
     private int _mapWidth, _mapHeight;
 
 
-    private string username = "darnel2";
+    private string username = "darnell2";
     private string ip = "127.0.0.1";
     private string matchId = "4fg7-38g3-d922-f75g-48g6";
     private int teamId = 2;
@@ -57,8 +57,8 @@ public class GameController : MonoBehaviour
         teamSpawners[0] = new ArrayList();
         teamSpawners[1] = new ArrayList();
 
-        money = 50;
-        gameTime.setTime(10.0f);
+        money = 5000;
+        gameTime.setTime(0.0f);
         timer = 0;
         rounds.notParsed = true;
         resourceText.text = money.ToString();
@@ -119,6 +119,8 @@ public class GameController : MonoBehaviour
         if (gameTime.timeUp())
         {
             // Create Monsters
+            // Below for single-player debug enemy spawning
+            /*
             timer += 1*Time.deltaTime;
             if (timer > 0.5f)
             {
@@ -131,11 +133,12 @@ public class GameController : MonoBehaviour
                     temp.transform.parent = transform.Find("Enemies").transform;
                     // Some Path-finding Algorithm here
                     temp.movementPoints = copyWaypoints(spawn, temp.isGround);
-                    
+                    temp.targetWaypoint = spawn.targetWaypoint;
 
                     enemies.Add(temp);
                 }
             }
+            */
         }
     }
 
@@ -172,9 +175,12 @@ public class GameController : MonoBehaviour
             if (temp.health <= 0)
             {
                 EnemyAI[] newEnemies = null;
-                money += temp.reward;
-                
-                resourceText.text = money.ToString();
+
+                if (temp.targetWaypoint == _point)
+                {
+                    money += temp.reward;
+                    resourceText.text = money.ToString();
+                }
 
                 if((newEnemies = temp.OnDeath()) != null)
                     for (int j = 0; j < newEnemies.Length; j++)
@@ -215,7 +221,7 @@ public class GameController : MonoBehaviour
     /// <param name="spai"></param>
     public void addSpawnerToSpawnerList(SpawnerAI spai, int teamId)
     {
-
+        spai.targetWaypoint = (teamId == this.teamId ? _point : _opponentPoint);
         spawners.Add(spai);
         spai.wayPoints = pathFinding(spai, false, teamId);
         spai.flyPoints = pathFinding(spai, true, teamId);

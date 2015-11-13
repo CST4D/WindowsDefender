@@ -17,6 +17,7 @@ public class EnemyAI : MonoBehaviour
     public int reward;
     public float movementSpeed;
     public double resistance;
+    public Waypoint targetWaypoint;
 
     public int drainDamage;
     public float drainSpd;

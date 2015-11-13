@@ -36,7 +36,7 @@ public class MultiplayerMessagingAdapter {
     private int teamId;
     private string username;
     private Dictionary<string, Peer> peers = new Dictionary<string, Peer>();
-    private Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    private Dictionary<int, EnemyAI> enemies = new Dictionary<int, EnemyAI>();
     private ArrayList[] teamSpawners;
     private ArrayList gcEnemies;
     private float lastTimeCommunication = Time.time;
@@ -230,11 +230,14 @@ public class MultiplayerMessagingAdapter {
                 copyWaypoints.AddLast(v);
 
         temp.movementPoints = copyWaypoints;
+        temp.targetWaypoint = spai.targetWaypoint;
         gcEnemies.Add(temp);
+        enemies.Add(enemyId, temp);
     }
 
-    public void SendEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
+    public void SendEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId, EnemyAI enemy)
     {
+        enemies.Add(enemyId, enemy);
         netAdapter.Send((int)MessageType.SendEnemy, enemyId.ToString(), prefabName, teamId.ToString(), spawnerId.ToString());
         UpdateLastCommunicationWithServer();
     }

@@ -72,8 +72,9 @@ public class EnemyMode : MonoBehaviour {
                 copyWaypoints.AddLast(v);
 
         temp.movementPoints = copyWaypoints;
+        temp.targetWaypoint = spai.targetWaypoint;
         enemies.Add(temp);
-        messageAdapter.SendEnemyAttack(currentEnemyId++, temp.name, opposingTeam, spawnerId);
+        messageAdapter.SendEnemyAttack(currentEnemyId++, enemy.name, opposingTeam, spawnerId, temp);
         money -= temp.cost;
         resourceText.text = money.ToString();
     }

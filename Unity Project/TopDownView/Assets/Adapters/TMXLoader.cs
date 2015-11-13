@@ -182,8 +182,12 @@ public class TMXLoader {
                 tiles[mapHeight - y - 1, x + mapWidth].Buildable = tiles[mapHeight - y - 1, mapWidth - x - 1].Buildable;
                 tiles[mapHeight - y - 1, x + mapWidth].Walkable = tiles[mapHeight - y - 1, mapWidth - x - 1].Walkable;
                 tiles[mapHeight - y - 1, x + mapWidth].mapSprite = tiles[mapHeight - y - 1, mapWidth - x - 1].mapSprite;
-                tiles[mapHeight - y - 1, x + (teamId == 1 ? mapWidth : 0)].Buildable = false;
             }
+        }
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+                tiles[mapHeight - y - 1, x + (teamId == 1 ? mapWidth : 0)].Buildable = false;
         }
         Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(int)waypoint.y, (mapWidth * 2 - (int)waypoint.x - 1)].transform.position, context.transform.rotation);
         point.transform.parent = context.transform;
@@ -205,8 +209,13 @@ public class TMXLoader {
                 tiles[mapHeight + y, x].Buildable = tiles[mapHeight - y - 1, x].Buildable;
                 tiles[mapHeight + y, x].Walkable = tiles[mapHeight - y - 1, x].Walkable;
                 tiles[mapHeight + y, x].mapSprite = tiles[mapHeight - y - 1, x].mapSprite;
-                tiles[(teamId == 1 ? mapHeight : 0) + y, x].Buildable = false;
+                
             }
+        }
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+                tiles[(teamId == 1 ? mapHeight : 0) + y, x].Buildable = false;
         }
         Waypoint point = (Waypoint)UnityEngine.Object.Instantiate(context.wayPoint, tiles[(2 * mapHeight - (int)waypoint.y - 1), (int)waypoint.x].transform.position, context.transform.rotation);
         point.transform.parent = context.transform;
