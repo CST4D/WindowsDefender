@@ -62,7 +62,7 @@ public class MultiplayerMessagingAdapter {
                         Convert.ToDouble(msg.Args[2]), Convert.ToDouble(msg.Args[3]), msg.Args[4]);
                     break;
                 case MessageType.EnemyDies:
-                    ReceiveEnemyDeath(intr(msg.Args[0]), intr(msg.Args[1]));
+                    ReceiveEnemyDeath(intr(msg.Args[0]), intr(msg.Args[1]), msg.Args[2]);
                     break;
                 case MessageType.JoinGame:
                     ReceiveJoinGame(msg.Args[0], intr(msg.Args[1]));
@@ -71,7 +71,7 @@ public class MultiplayerMessagingAdapter {
                     ReceiveHealthUpdate(msg.Args[0], intr(msg.Args[1]), intr(msg.Args[2]));
                     break;
                 case MessageType.SendEnemy:
-                    ReceiveEnemyAttack(intr(msg.Args[0]), msg.Args[1], intr(msg.Args[2]), intr(msg.Args[3]));
+                    ReceiveEnemyAttack(intr(msg.Args[0]), msg.Args[1], intr(msg.Args[2]), intr(msg.Args[3]), msg.Args[4]);
                     break;
                 case MessageType.ChatMessage:
                     ReceiveChatMessage(msg.Args[0], msg.Args[1], intr(msg.Args[2]));
@@ -90,13 +90,14 @@ public class MultiplayerMessagingAdapter {
                     break;
             }
         }
-        CheckAndKeepAlive();
+        if (currGameState <= GameState.GameInProgress)
+            CheckAndKeepAlive();
     }
 
     private void CheckAndKeepAlive()
     {
-        float keepAliveTime = Time.time - 2000;
-        float expireTime = Time.time - 4000;
+        float keepAliveTime = Time.time - 1.5f;
+        float expireTime = Time.time - 4.0f;
         foreach (KeyValuePair<string, Peer> peerpair in peers)
         {
             if (keepAliveTime > peerpair.Value.lastTimeCommunicated)
@@ -131,7 +132,8 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveDisconnected()
     {
-        currGameState = GameState.PlayerDisconnect;
+        if (currGameState <= GameState.GameInProgress)
+            currGameState = GameState.PlayerDisconnect;
     }
 
     private void ReceiveJoinGame(string username, int teamId)
@@ -144,6 +146,7 @@ public class MultiplayerMessagingAdapter {
             currGameState = GameState.GameInProgress;
         }
         SendJoinAcknowledge();
+        
     }
 
     public void SendJoinGame()
@@ -173,10 +176,11 @@ public class MultiplayerMessagingAdapter {
         closestTile.Buildable = false;
         closestTile.Walkable = false;
 
-        Building building = (Building)UnityEngine.Object.Instantiate(Resources.Load("Towers/" + prefabName), pos, context.transform.rotation);
-        building.operating = true;
-        
-        building.transform.parent = context.transform.Find("Towers").transform;
+        GameObject building = (GameObject)UnityEngine.Object.Instantiate(Resources.Load("Towers/" + prefabName), pos, context.transform.rotation);
+        building.GetComponent<Building>().transform.parent = context.transform.Find("Towers").transform;
+        building.GetComponent<Building>().operating = true;
+
+        UpdateLastCommunication(username);
     }
 
     public void SendTowerBuilt(string prefabName, double x, double y)
@@ -185,25 +189,36 @@ public class MultiplayerMessagingAdapter {
         UpdateLastCommunicationWithServer();
     }
 
-    private void ReceiveEnemyDeath(int enemyId, int teamId)
+    private void ReceiveEnemyDeath(int enemyId, int teamId, string username)
     {
         if (enemies.ContainsKey(enemyId))
         {
-            UnityEngine.Object.Destroy(enemies[enemyId]);
+            enemies[enemyId].health = 0;
             enemies.Remove(enemyId);
         }
+        UpdateLastCommunication(username);
     }
 
     public void SendEnemyDeath(int enemyId)
     {
-        netAdapter.Send((int)MessageType.EnemyDies, enemyId.ToString(), teamId.ToString());
+        netAdapter.Send((int)MessageType.EnemyDies, enemyId.ToString(), teamId.ToString(), username);
         UpdateLastCommunicationWithServer();
     } 
 
     private void ReceiveHealthUpdate(string username, int teamId, int health)
     {
-        if (username == this.username)
-            return;
+        if (health <= 0 && currGameState == GameState.GameInProgress)
+        {
+            if (teamId == this.teamId)
+            {
+                currGameState = GameState.TeamLoss;
+            } else
+            {
+                currGameState = GameState.TeamWin;
+            }
+        }
+        if (username != this.username)
+            UpdateLastCommunication(username);
     }
 
     public void SendHealthUpdate(int health)
@@ -212,39 +227,43 @@ public class MultiplayerMessagingAdapter {
         UpdateLastCommunicationWithServer();
     }
 
-    private void ReceiveEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId)
+    private void ReceiveEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId, string username)
     {
         if (enemies.ContainsKey(enemyId))
             return;
-        EnemyAI temp;
+        GameObject temp;
         SpawnerAI spai = ((SpawnerAI)teamSpawners[teamId - 1][spawnerId]);
-        temp = (EnemyAI)GameObject.Instantiate(Resources.Load("Enemies/" + prefabName), spai.transform.position, context.transform.rotation);
+        GameObject prefab = (GameObject)Resources.Load("Enemies/" + prefabName);
+        temp = (GameObject)UnityEngine.Object.Instantiate(prefab, spai.transform.position, context.transform.rotation);
         temp.transform.parent = context.transform.Find("Enemies").transform;
+        temp.GetComponent<EnemyAI>().enemyId = enemyId;
         LinkedList<Vector2> copyWaypoints = new LinkedList<Vector2>();
 
-        if (temp.isGround)
+        if (temp.GetComponent<EnemyAI>().isGround)
             foreach (Vector2 v in spai.wayPoints)
                 copyWaypoints.AddLast(v);
         else
             foreach (Vector2 v in spai.flyPoints)
                 copyWaypoints.AddLast(v);
 
-        temp.movementPoints = copyWaypoints;
-        temp.targetWaypoint = spai.targetWaypoint;
-        gcEnemies.Add(temp);
-        enemies.Add(enemyId, temp);
+        temp.GetComponent<EnemyAI>().movementPoints = copyWaypoints;
+        temp.GetComponent<EnemyAI>().targetWaypoint = spai.targetWaypoint;
+        gcEnemies.Add(temp.GetComponent<EnemyAI>());
+        enemies.Add(enemyId, temp.GetComponent<EnemyAI>());
+
+        UpdateLastCommunication(username);
     }
 
     public void SendEnemyAttack(int enemyId, string prefabName, int teamId, int spawnerId, EnemyAI enemy)
     {
         enemies.Add(enemyId, enemy);
-        netAdapter.Send((int)MessageType.SendEnemy, enemyId.ToString(), prefabName, teamId.ToString(), spawnerId.ToString());
+        netAdapter.Send((int)MessageType.SendEnemy, enemyId.ToString(), prefabName, teamId.ToString(), spawnerId.ToString(), username);
         UpdateLastCommunicationWithServer();
     }
 
     private void ReceiveChatMessage(string username, string content, int teamId)
     {
-
+        UpdateLastCommunication(username);
     }
 
     public void SendChatMessage(string content)

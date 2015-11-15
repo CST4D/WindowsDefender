@@ -5,7 +5,7 @@ public class CameraAI : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
+	    
 	}
 
     Vector3 KeyboardNavigation(Vector3 position)
@@ -19,6 +19,10 @@ public class CameraAI : MonoBehaviour {
             direction.y -= 2;
         if (Input.GetKey(KeyCode.D))
             direction.x += 2;
+        if (Input.GetKey(KeyCode.X))
+            direction.z += 2;
+        if (Input.GetKey(KeyCode.Z))
+            direction.z -= 2;
         return direction;
     }
 

@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour
     public Rounds rounds;
     public UnityEngine.UI.Text gameInfoDebugText;
     public UnityEngine.UI.Text resourceText;
+    public UnityEngine.UI.Text healthText;
+    public UnityEngine.UI.Text opponentHealthText;
     public NetworkClient NetworkCli;
     public UnityEngine.UI.Text gameStateText;
     public BuildMode buildMode;
@@ -27,10 +29,13 @@ public class GameController : MonoBehaviour
 
     private Tile[,] map;
     public int money;
+    public int health;
+    private int opponentHealth;
+    public int healthDamageAmount;
     private int _mapWidth, _mapHeight;
 
 
-    private string username = "darnell2";
+    private string username = "test12";
     private string ip = "127.0.0.1";
     private string matchId = "4fg7-38g3-d922-f75g-48g6";
     private int teamId = 2;
@@ -51,17 +56,23 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Application.runInBackground = true;
+
         GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
         teamSpawners[0] = new ArrayList();
         teamSpawners[1] = new ArrayList();
 
-        money = 5000;
+        
         gameTime.setTime(0.0f);
         timer = 0;
         rounds.notParsed = true;
         resourceText.text = money.ToString();
+        healthText.text = health.ToString();
+        opponentHealth = health;
+        opponentHealthText.text = opponentHealth.ToString();
+
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this, teamId);
         tmxl.loadMeta();
@@ -96,6 +107,12 @@ public class GameController : MonoBehaviour
                 break;
             case MultiplayerMessagingAdapter.GameState.PlayerDisconnect:
                 gameStateText.text = "Peer left game, game over.";
+                break;
+            case MultiplayerMessagingAdapter.GameState.TeamLoss:
+                gameStateText.text = "Game Loss";
+                break;
+            case MultiplayerMessagingAdapter.GameState.TeamWin:
+                gameStateText.text = "Game Win";
                 break;
             default:
                 break;
@@ -172,6 +189,21 @@ public class GameController : MonoBehaviour
         {
             EnemyAI temp = (EnemyAI)enemies[i];
 
+            if (temp.Arrived)
+            {
+                if (temp.targetWaypoint == _point)
+                {
+                    health -= healthDamageAmount;
+                    healthText.text = health.ToString();
+                    multiMessageAdapter.SendHealthUpdate(health);
+                } else
+                {
+                    opponentHealth -= healthDamageAmount;
+                    opponentHealthText.text = opponentHealth.ToString();
+                }
+                GameObject.Destroy(temp.gameObject);
+                enemies.Remove(temp);
+            }
             if (temp.health <= 0)
             {
                 EnemyAI[] newEnemies = null;
@@ -187,7 +219,7 @@ public class GameController : MonoBehaviour
                         tempNewEnemies.Add(newEnemies[j]);
                 
                 enemies.Remove(temp);
-                
+                multiMessageAdapter.SendEnemyDeath(temp.enemyId);
             }
         }
 

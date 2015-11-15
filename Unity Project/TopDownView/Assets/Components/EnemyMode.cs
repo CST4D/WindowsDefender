@@ -15,7 +15,7 @@ public class EnemyMode : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        currentEnemyId = new System.Random().Next() % 10000000;
+        currentEnemyId = new System.Random().Next() % 1000000000;
 	}
 
     public void Initialize(MultiplayerMessagingAdapter msgAdapter, int opposingTeam, ArrayList[] teamSpawners, ArrayList enemies)
@@ -73,6 +73,7 @@ public class EnemyMode : MonoBehaviour {
 
         temp.movementPoints = copyWaypoints;
         temp.targetWaypoint = spai.targetWaypoint;
+        temp.enemyId = currentEnemyId;
         enemies.Add(temp);
         messageAdapter.SendEnemyAttack(currentEnemyId++, enemy.name, opposingTeam, spawnerId, temp);
         money -= temp.cost;
