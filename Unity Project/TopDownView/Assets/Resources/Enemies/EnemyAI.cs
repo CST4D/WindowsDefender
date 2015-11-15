@@ -10,12 +10,16 @@ public class EnemyAI : MonoBehaviour
 
     public AudioClip hitSound;
 
+    public int enemyId;
+    
+    public int cost = 10;
     public int maxHealth;
     public int health;
     public int armour;
     public int reward;
     public float movementSpeed;
     public double resistance;
+    public Waypoint targetWaypoint;
 
     public int drainDamage;
     public float drainSpd;
@@ -34,6 +38,8 @@ public class EnemyAI : MonoBehaviour
     private float revealDist;
 
     private AudioSource aSource;
+    private bool arrived = false;
+    public bool Arrived { get { return arrived; } }
 
     public EnemyAI()
     {
@@ -79,16 +85,22 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     protected void ExecuteEnemyAI()
     {
-        if (movementPoints != null && movementPoints.Count > 0)
+        if (movementPoints != null)
         {
-            Vector2 first = movementPoints.First.Value;
+            if (movementPoints.Count > 0)
+            {
+                Vector2 first = movementPoints.First.Value;
 
-            float dist = Vector2.Distance(transform.position, first);
+                float dist = Vector2.Distance(transform.position, first);
 
-            if (dist <= 0.1)
-                movementPoints.RemoveFirst();
-            else
-                transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
+                if (dist <= 0.1)
+                    movementPoints.RemoveFirst();
+                else
+                    transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
+            } else
+            {
+                arrived = true;
+            }
         }
 
         timer += Time.deltaTime;
