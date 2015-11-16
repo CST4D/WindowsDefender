@@ -6,14 +6,20 @@ using System.Collections;
 public class EnemyAI : MonoBehaviour
 {
     public LinkedList<Vector2> movementPoints;
+    
 
     public AudioClip hitSound;
 
+    public int enemyId;
+    
+    public int cost = 10;
     public int maxHealth;
     public int health;
     public int armour;
+    public int reward;
     public float movementSpeed;
     public double resistance;
+    public Waypoint targetWaypoint;
 
     public int drainDamage;
     public float drainSpd;
@@ -22,23 +28,6 @@ public class EnemyAI : MonoBehaviour
     public bool isVisible;
     public bool isGround;
 
-<<<<<<< HEAD
-	float timer;
-	private AudioSource aSource;
-
-    // Use this for initialization
-	void Start () {
-		renderer = this.GetComponent<SpriteRenderer>();
-		revealingTower = null;
-		revealDist = 0;
-        aSource = GetComponent<AudioSource>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        enemyAI();
-	}
-=======
     public int numDuplicates;
     public bool duplicates;
     public bool hasDuplicated;
@@ -48,7 +37,14 @@ public class EnemyAI : MonoBehaviour
     private TowerAI revealingTower;
     private float revealDist;
 
+<<<<<<< HEAD:Unity Project/TopDownView/Assets/Enemies/EnemyAI.cs
+	private AudioSource aSource;
+	private SpriteRenderer renderer;
+=======
     private AudioSource aSource;
+    private bool arrived = false;
+    public bool Arrived { get { return arrived; } }
+>>>>>>> develop:Unity Project/TopDownView/Assets/Resources/Enemies/EnemyAI.cs
 
     public EnemyAI()
     {
@@ -56,6 +52,7 @@ public class EnemyAI : MonoBehaviour
         armour = 0;
         movementSpeed = 1.5f;
         resistance = 0;
+        reward = 50;
         timer = 0;
 
         drainDamage = 0;
@@ -72,11 +69,11 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Use this for initialization
-    void Start()
-    {
+	void Start () {
+		renderer = this.GetComponent<SpriteRenderer>();
+		revealingTower = null;
+		revealDist = 0;
         aSource = GetComponent<AudioSource>();
-        revealingTower = null;
-        revealDist = 0;
     }
 
     // Update is called once per frame
@@ -84,7 +81,6 @@ public class EnemyAI : MonoBehaviour
     {
         ExecuteEnemyAI();
     }
->>>>>>> develop
 
     /// <summary>
     /// The enemies do the following steps:
@@ -94,16 +90,22 @@ public class EnemyAI : MonoBehaviour
     /// </summary>
     protected void ExecuteEnemyAI()
     {
-        if (movementPoints != null && movementPoints.Count > 0)
+        if (movementPoints != null)
         {
-            Vector2 first = movementPoints.First.Value;
+            if (movementPoints.Count > 0)
+            {
+                Vector2 first = movementPoints.First.Value;
 
-            float dist = Vector2.Distance(transform.position, first);
+                float dist = Vector2.Distance(transform.position, first);
 
-            if (dist <= 0.1)
-                movementPoints.RemoveFirst();
-            else
-                transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
+                if (dist <= 0.1)
+                    movementPoints.RemoveFirst();
+                else
+                    transform.position = Vector2.MoveTowards(transform.position, first, movementSpeed * Time.deltaTime);
+            } else
+            {
+                arrived = true;
+            }
         }
 
         timer += Time.deltaTime;
@@ -167,24 +169,14 @@ public class EnemyAI : MonoBehaviour
 		drainDuration -= drainSpd;
 		timer -= drainSpd;
 
-<<<<<<< HEAD
-		if (drainDuration < 0) {
-			drainDuration = 0;
-			drainDamage = 0;
-		}
-	}
-
-    public virtual void OnTriggerEnter2D(Collider2D obj)
-=======
         if (drainDuration < 0)
         {
             drainDuration = 0;
             drainDamage = 0;
         }
     }
-
+	
     void OnTriggerEnter2D(Collider2D obj)
->>>>>>> develop
     {
         if (obj.gameObject.tag == "PROJECTILE")
         {
