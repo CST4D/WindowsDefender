@@ -7,13 +7,21 @@ public class BuildMode : MonoBehaviour {
 
     public UnityEngine.UI.Text resourceText;
     public int flashCount;
-    
+
+    Building preBuilding;
     Building building;
+
+    MultiplayerMessagingAdapter messageAdapter;
 
 	// Use this for initialization
 	void Start () {
         buildMode = false;
 	}
+
+    public void Initialize(MultiplayerMessagingAdapter msgAdapter)
+    {
+        messageAdapter = msgAdapter;
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -66,6 +74,8 @@ public class BuildMode : MonoBehaviour {
                         closestTile.Buildable = false;
                         closestTile.Walkable = false;
                         building.transform.parent = transform.Find("Towers").transform;
+                        building.GetComponent<SpriteRenderer>().color = preBuilding.GetComponent<SpriteRenderer>().color;
+                        messageAdapter.SendTowerBuilt(preBuilding.name, building.transform.position.x, building.transform.position.y);
                         building = null;
                     }
                     else if (Input.GetMouseButtonDown(0) && !((money - temp.cost) >= 0))
@@ -104,6 +114,7 @@ public class BuildMode : MonoBehaviour {
     /// <param name="tower"></param>
     public void BuildTower(Building tower)
     {
+        preBuilding = tower;
         if (!buildMode)
         {
             buildMode = true;
