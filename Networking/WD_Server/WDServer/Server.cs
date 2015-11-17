@@ -114,11 +114,7 @@ namespace WDServer
                     byte[] received = new byte[512];
                     received = newsock.Receive(ref sender);
 
-                    if (DEBUG)
-                        Console.WriteLine("Data recieved");
-
                     // Data received, remove trailing nulls
-
                     int i = received.Length - 1;
                     while (received[i] == 0)
                         --i;
@@ -127,19 +123,6 @@ namespace WDServer
 
                     // Get ip address of sender
                     string ipAddress = sender.Address.ToString();
-
-                    // Send back test data
-                    if (DEBUG)
-                    {
-                        Instruction echo = new Instruction()
-                        {
-                            Command = Instruction.Type.CMD,
-                            Arg1 = "DEBUG: SIR, I HAVE I RECEIVED YOUR DATA. - Server",
-                            Arg2 = "TEST"
-                        };
-                        byte[] echobytes = Serializer.Serialize(echo);
-                        newsock.Send(echobytes, echobytes.Length, sender);
-                    }
 
                     // Deserialize received instruction
                     Instruction instruction = Serializer.DeSerialize(data);
@@ -205,7 +188,8 @@ namespace WDServer
 
             // Find the user's match and add him/her to it
             AddToMatch(user);
-
+            
+            // Send JOINED command to client as connection confirmation
             Instruction i = new Instruction() { Command = Instruction.Type.JOINED };
             byte[] data = Serializer.Serialize(i);
             newsock.Send(data, data.Length, user.EndPoint);
@@ -237,12 +221,15 @@ namespace WDServer
         private void AddToMatch(User user)
         {
             Match match;
+
+            // Try and find match
             if (_matches.TryGetValue(user.MatchId, out match))
             {
                 match.AddUser(user);
                 if (DEBUG)
                     Console.WriteLine("DEBUG: Added " + user.Username + " to match");
             }
+            // Match not found, create it
             else
             {
                 match = new Match()
@@ -272,19 +259,6 @@ namespace WDServer
             // Send to every user in the match
             foreach (User u in match.Users)
                 newsock.Send(data, data.Length, u.EndPoint);
-        }
-
-        /// <summary>
-        /// Sends to all users in a match except the current user.
-        /// Note: possibly remove this function. Does nothing.
-        /// </summary>
-        /// <param name="user">The user that sent the data.</param>
-        /// <param name="instruction">The data that is sent from one client.</param>
-        private void SendToMatchExcept(User user, byte[] data)
-        {
-            // TODO
-            // Find match
-            // Send instruction to everyone in match except current user
         }
 
         /// <summary>
