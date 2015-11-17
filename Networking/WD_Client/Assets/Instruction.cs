@@ -2,6 +2,12 @@
 
 namespace WDClient
 {
+    /// <summary>
+    /// This class defines the type of instruction sent between client and server.
+    /// Functionality: It contains either Join, Leave, Command, or Joined commands.
+    /// </summary>
+    /// <remarks>Authors: Duy, Nadia, Joel (Client Team). Comments by Nadia and Rosanna.</remarks>
+    /// <remarks>Updated by: NA</remarks>
     [Serializable()]
     public class Instruction
     {

@@ -15,6 +15,7 @@ namespace WindowsDefender_WebApp
     {
         private static ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
         private static ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
+        private const string SERVER_IP = "compcst.cloudapp.net";
 
         string msg_icon = "<span class=\"glyphicon glyphicon-info-sign server-message-icon\"></span> ";
         string rdy_icon = "<span class=\"glyphicon glyphicon-ok lobby-ready-icon\"></span> ";
@@ -45,7 +46,7 @@ namespace WindowsDefender_WebApp
             // Add to collection
             _users.TryAdd(Context.ConnectionId, user);
         }
-
+        
         /// <summary>
         /// Finds a match for the user.
         /// </summary>
@@ -264,15 +265,11 @@ namespace WindowsDefender_WebApp
                         SendToMatch("<b>" + rdy_icon + "The match is about to begin...</b>");
 
                         // Send launch game command with host ip address
-                        User host = null;
-                        _users.TryGetValue(match.HostId, out host);
 
                         // Send launch command to all users
                         foreach (User u in match.Users)
                         {
-                            if (host.IpAddress == "::1")
-                                host.IpAddress = "127.0.0.1";
-                            Clients.Client(u.ConnectionId).launchGame(host.IpAddress);
+                            Clients.Client(u.ConnectionId).launchGame(SERVER_IP, u.MatchId);
                         }
                     }
                 }

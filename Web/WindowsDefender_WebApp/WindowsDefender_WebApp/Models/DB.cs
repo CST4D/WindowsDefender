@@ -39,7 +39,7 @@ namespace WindowsDefender_WebApp.Models
         public virtual DbSet<AspNetUser> AspNetUsers { get; set; }
         public virtual DbSet<Friend> Friends { get; set; }
         public virtual DbSet<Map> Maps { get; set; }
-        public virtual DbSet<MatchHistory> MatchHistories { get; set; }
+        public virtual DbSet<MatchHistory> MatchHistoryDetail { get; set; }
         public virtual DbSet<MatchHistoryDetail> MatchHistoryDetails { get; set; }
         public virtual DbSet<SpecialAbility> SpecialAbilities { get; set; }
         public virtual DbSet<ThreadPost> ThreadPosts { get; set; }

@@ -48,6 +48,9 @@
         // IP of host to connect to
         var hostIP = null;
 
+        // ID of match
+        var matchID = null;
+
         /*
          * Connect to server 
          */
@@ -94,8 +97,9 @@
         /*
          * Starts launch sequence
          */
-        ws.client.launchGame = function (hostip) {
+        ws.client.launchGame = function (hostip, matchid) {
             hostIP = hostip;
+            matchID = matchid;
             launchTimer = setTimeout(launch, 11000);
             $('#myModal').modal('show');
             createjs.Sound.play(launchSound);
@@ -118,7 +122,7 @@
             clearTimeout(launchTimer);
             $('#myModal').modal('hide');
             createjs.Sound.stop(launchSound);
-            document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()';
+            document.location.href = 'towerdefender:' + hostIP + '|@User.Identity.GetUserName()|' + matchID;
         }
 
         /*
