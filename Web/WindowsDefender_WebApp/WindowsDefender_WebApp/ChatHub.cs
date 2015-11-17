@@ -264,12 +264,17 @@ namespace WindowsDefender_WebApp
                     {
                         SendToMatch("<b>" + rdy_icon + "The match is about to begin...</b>");
 
-                        // Send launch game command with host ip address
-
                         // Send launch command to all users
+                        int teamNumber = 1;
+                        int i = 0;
+                        Random rand = new Random();
+                        int mapId = rand.Next(1, 3);
                         foreach (User u in match.Users)
                         {
-                            Clients.Client(u.ConnectionId).launchGame(SERVER_IP, u.MatchId);
+                            Clients.Client(u.ConnectionId).launchGame(SERVER_IP, u.MatchId, teamNumber, mapId);
+                            i++;
+                            if (i == 2)
+                                teamNumber++;
                         }
                     }
                 }
@@ -351,7 +356,7 @@ namespace WindowsDefender_WebApp
         /// <returns></returns>
         public override Task OnReconnected()
         {
-            // TODO
+            // - Not being implemented
             return base.OnReconnected();
         }
     }

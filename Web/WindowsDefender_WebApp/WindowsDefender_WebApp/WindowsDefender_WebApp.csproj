@@ -257,7 +257,8 @@
     <Content Include="fonts\RobotoDraftRegular.woff2" />
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Properties\PublishProfiles\Default Settings.pubxml" />
-    <Content Include="Resources\call_to_action.png" />
+    <Content Include="Resources\call_to_action1.png" />
+    <Content Include="Resources\call_to_action2.png" />
     <Content Include="Resources\hero.JPG" />
     <Content Include="Resources\bgtexture.png" />
     <Content Include="Resources\hexabump.png" />
@@ -377,7 +378,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>50026</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>

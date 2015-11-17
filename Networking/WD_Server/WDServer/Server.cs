@@ -159,7 +159,7 @@ namespace WDServer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine("EXCEPTION: " + ex.Message);
                 }
             }
         }
