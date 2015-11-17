@@ -17,12 +17,20 @@ namespace WindowsDefender_WebApp {
                         "~/Scripts/modernizr-*"));
 
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js",
-                      "~/Scripts/respond.js"));
-
+                      "~/Scripts/bootstrap.min.js",
+                      "~/Scripts/respond.js",
+                      "~/Scripts/ripples.min.js",
+                      "~/Scripts/material.min.js"
+                      ));
+            
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.min.css",
-                      "~/Content/site.css"));
+                      "~/Content/site.css",
+                      "~/Content/Theme/roboto.min.css",
+                      "~/Content/Theme/material.min.css",
+                      "~/Content/Theme/ripples.min.css",
+                      "~/Content/animate.css"
+                      ));
         }
     }
 }
