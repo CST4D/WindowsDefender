@@ -225,4 +225,35 @@ public class EnemyAI : MonoBehaviour
 
         return duplicateEnemies;
     }
+
+    public string VirusToolTip()
+    {
+        string toolTip = "";
+        toolTip += name;
+        toolTip += 
+        return toolTip;
+    }
+
+    //public string toolTip()
+    //{
+    //    string toolTipContents = "";
+    //    toolTipContents += name.Substring(0, name.Length - 5);
+    //    toolTipContents += "\nCost: " + cost;
+    //    toolTipContents += "\nDamage: " + towerDamage;
+    //    toolTipContents += "\nAttack Speed: " + attackSpd;
+    //    toolTipContents += "\nAttack Range: " + attackRange;
+    //    if (attacksGround && attacksAir)
+    //    {
+    //        toolTipContents += "\nAttacks Air & Ground Enemies";
+    //    }
+    //    else if (attacksGround && !attacksAir)
+    //    {
+    //        toolTipContents += "\nAttacks Ground Enemies";
+    //    }
+    //    else
+    //    {
+    //        toolTipContents += "\nAttacks Air Enemies";
+    //    }
+    //    return toolTipContents;
+    //}
 }
