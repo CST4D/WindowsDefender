@@ -2,11 +2,15 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="5">
  <properties>
   <property name="TeamReflectMode" value="horizontal"/>
+  <property name="background" value="mapmap"/>
  </properties>
  <tileset firstgid="1" name="TileSheetv2" tilewidth="32" tileheight="32" tilecount="20">
   <image source="TileSheetv2.png" width="160" height="128"/>
  </tileset>
  <layer name="Walkables" width="20" height="20">
+  <properties>
+   <property name="visible" value="0"/>
+  </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -31,6 +35,9 @@
 </data>
  </layer>
  <layer name="Walls" width="20" height="20">
+  <properties>
+   <property name="visible" value="0"/>
+  </properties>
   <data encoding="csv">
 9,16,16,16,16,16,16,16,12,8,8,11,12,7,9,8,8,10,18,17,
 9,7,10,7,8,9,8,8,10,11,12,11,12,9,10,10,12,8,12,8,

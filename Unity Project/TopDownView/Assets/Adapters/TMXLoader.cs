@@ -25,6 +25,7 @@ public class TMXLoader {
     private int teamId;
     private Vector3 transformVector;
     public Vector3 TransformVector { get { return transformVector; } }
+    private Sprite background = null;
 
     public TMXLoader(TextAsset tAsset, GameController context, int teamId)
     {
@@ -50,6 +51,11 @@ public class TMXLoader {
                     rMode = ReflectMode.Vertical;
                 }
             }
+            if (prop.Attributes["name"].InnerText == "background")
+            {
+                background = Resources.Load<Sprite>(prop.Attributes["value"].InnerText);
+                
+            }
         }
 
         int tilewidth = Convert.ToInt32(((XmlElement)mapNode).Attributes["tilewidth"].InnerText);
@@ -62,6 +68,15 @@ public class TMXLoader {
         realMapWidth = mapWidth * (rMode == ReflectMode.Horizontal ? 2 : 1);
 
         tiles = new Tile[realMapHeight, realMapWidth];
+
+        if (background != null)
+        {
+            context.transform.Find("Tilemap").Find("Background").GetComponent<SpriteRenderer>().sprite = background;
+            context.transform.Find("Tilemap").Find("Background").transform.position = new Vector2((background.rect.width/32)*0.32f/2-0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f);
+        }
+        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
+        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
+        context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
 
         for (int i = 0; i < mapHeight * (rMode == ReflectMode.Vertical ? 2 : 1); i++)
         {
@@ -111,6 +126,7 @@ public class TMXLoader {
             {
                 bool walkable = false;
                 bool buildable = false;
+                bool visible = true;
                 if (i2.Attributes["name"].InnerText.ToLower() == "walls")
                 {
                     buildable = true;
@@ -118,6 +134,19 @@ public class TMXLoader {
                 if (i2.Attributes["name"].InnerText.ToLower() == "walkables")
                 {
                     walkable = true;
+                }
+                foreach (XmlNode prop in i2.ChildNodes)
+                {
+                    if (prop.Name == "properties")
+                    {
+                        foreach (XmlNode prop2 in prop.ChildNodes)
+                        {
+                            if (prop2.Attributes["name"].InnerText.ToLower() == "visible" && prop2.Attributes["value"].InnerText == "0")
+                            {
+                                visible = false;
+                            }
+                        }
+                    }
                 }
                 string[] linesplit = i2["data"].InnerText.Split(',');
                 for (int y = 0; y < mapHeight; y++)
@@ -128,7 +157,12 @@ public class TMXLoader {
                         {
                             tiles[mapHeight - y - 1, x].Buildable = buildable;
                             tiles[mapHeight - y - 1, x].Walkable = walkable;
-                            tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
+                            if (visible)
+                                tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
+                        } else
+                        {
+                            tiles[mapHeight - y - 1, x].Walkable = true;
+                            tiles[mapHeight - y - 1, x].Buildable = false;
                         }
                     }
                 }
@@ -199,6 +233,12 @@ public class TMXLoader {
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
         transformVector = new Vector3(((teamId == 2 ? realMapWidth : 0) * 0.32f), realMapHeight / 2 * 0.32f, 0);
+        if (background != null)
+        {
+            context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
+            context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
+        }
+        
     }
     private void reflectMapVertical()
     {
@@ -227,5 +267,11 @@ public class TMXLoader {
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
         transformVector = new Vector3(realMapWidth / 2 * 0.32f, ((teamId == 2 ? realMapHeight : 0) * 0.32f), 0);
+        if (background != null)
+        {
+            context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f + ((background.rect.height / 32) * 0.32f));
+            context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(1, -1, 1);
+        }
+       
     }
 }
