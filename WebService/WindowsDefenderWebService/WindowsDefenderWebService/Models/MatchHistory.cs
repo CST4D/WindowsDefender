@@ -16,7 +16,7 @@ namespace WindowsDefenderWebService.Models
         }
 
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int MatchId { get; set; }
 
         public int TimeElapsed { get; set; }

@@ -43,6 +43,27 @@ namespace WindowsDefenderWebService.Controllers
             return SingleResult.Create(db.Viruses.Where(virus => virus.VirusId == key));
         }
 
+        // POST: odata/MatchHistoryDetails
+        public IHttpActionResult Post(Virus virus) {
+            if (!ModelState.IsValid) {
+                return BadRequest(ModelState);
+            }
+
+            db.Viruses.Add(virus);
+
+            try {
+                db.SaveChanges();
+            } catch (DbUpdateException) {
+                if (VirusExists(virus.VirusId)) {
+                    return Conflict();
+                } else {
+                    throw;
+                }
+            }
+
+            return Created(virus);
+        }
+
         // GET: odata/Virus(5)/SpecialAbility
         [EnableQuery]
         public SingleResult<SpecialAbility> GetSpecialAbility([FromODataUri] int key)

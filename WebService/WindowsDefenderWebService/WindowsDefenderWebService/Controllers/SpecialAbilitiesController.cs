@@ -58,6 +58,8 @@ namespace WindowsDefenderWebService.Controllers
             return db.SpecialAbilities.Where(m => m.SpAbilityId == key).SelectMany(m => m.Viruses);
         }
 
+
+
         protected override void Dispose(bool disposing)
         {
             if (disposing)

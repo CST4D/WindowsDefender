@@ -11,97 +11,45 @@ using System.Web.Http.ModelBinding;
 using System.Web.Http.OData;
 using System.Web.Http.OData.Routing;
 using WindowsDefenderWebService.Models;
+using WindowsDefenderWebService.Authorization;
 
-namespace WindowsDefenderWebService.Controllers
-{
-    /*
-    The WebApiConfig class may require additional changes to add a route for this controller. Merge these statements into the Register method of the WebApiConfig class as applicable. Note that OData URLs are case sensitive.
-
-    using System.Web.Http.OData.Builder;
-    using System.Web.Http.OData.Extensions;
-    using WindowsDefenderWebService.Models;
-    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<MatchHistory>("MatchHistories");
-    builder.EntitySet<MatchHistoryDetail>("MatchHistoryDetails"); 
-    config.Routes.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
-    */
-    public class MatchHistoriesController : ODataController
-    {
+namespace WindowsDefenderWebService.Controllers {
+    /// <summary>
+    /// 
+    /// Authors: Gerald Becker, Wilson Carpenter
+    /// </summary>
+    public class MatchHistoriesController : ODataController {
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: odata/MatchHistories
+        [AuthorizeRequest(AccessLevel = "All")]
         [EnableQuery]
-        public IQueryable<MatchHistory> GetMatchHistories()
-        {
+        public IQueryable<MatchHistory> GetMatchHistories() {
             return db.MatchHistories;
         }
 
         // GET: odata/MatchHistories(5)
+        [AuthorizeRequest(AccessLevel = "All")]
         [EnableQuery]
-        public SingleResult<MatchHistory> GetMatchHistory([FromODataUri] int key)
-        {
+        public SingleResult<MatchHistory> GetMatchHistory([FromODataUri] int key) {
             return SingleResult.Create(db.MatchHistories.Where(matchHistory => matchHistory.MatchId == key));
         }
 
-        // PUT: odata/MatchHistories(5)
-        public IHttpActionResult Put([FromODataUri] int key, Delta<MatchHistory> patch)
-        {
-            Validate(patch.GetEntity());
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            MatchHistory matchHistory = db.MatchHistories.Find(key);
-            if (matchHistory == null)
-            {
-                return NotFound();
-            }
-
-            patch.Put(matchHistory);
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MatchHistoryExists(key))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Updated(matchHistory);
-        }
-
         // POST: odata/MatchHistories
-        public IHttpActionResult Post(MatchHistory matchHistory)
-        {
-            if (!ModelState.IsValid)
-            {
+        [AuthorizeRequest(AccessLevel = "All")]
+        public IHttpActionResult Post(MatchHistory matchHistory) {
+            if (!ModelState.IsValid) {
                 return BadRequest(ModelState);
             }
 
             db.MatchHistories.Add(matchHistory);
 
-            try
-            {
+            try {
                 db.SaveChanges();
-            }
-            catch (DbUpdateException)
-            {
-                if (MatchHistoryExists(matchHistory.MatchId))
-                {
+            } catch (DbUpdateException) {
+                if (MatchHistoryExists(matchHistory.MatchId)) {
                     return Conflict();
-                }
-                else
-                {
+                } else {
                     throw;
                 }
             }
@@ -109,62 +57,21 @@ namespace WindowsDefenderWebService.Controllers
             return Created(matchHistory);
         }
 
-        // PATCH: odata/MatchHistories(5)
-        [AcceptVerbs("PATCH", "MERGE")]
-        public IHttpActionResult Patch([FromODataUri] int key, Delta<MatchHistory> patch)
-        {
-            Validate(patch.GetEntity());
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            MatchHistory matchHistory = db.MatchHistories.Find(key);
-            if (matchHistory == null)
-            {
-                return NotFound();
-            }
-
-            patch.Patch(matchHistory);
-
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MatchHistoryExists(key))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return Updated(matchHistory);
-        }
-
         // GET: odata/MatchHistories(5)/MatchHistoryDetails
+        [AuthorizeRequest(AccessLevel = "All")]
         [EnableQuery]
-        public IQueryable<MatchHistoryDetail> GetMatchHistoryDetails([FromODataUri] int key)
-        {
+        public IQueryable<MatchHistoryDetail> GetMatchHistoryDetails([FromODataUri] int key) {
             return db.MatchHistories.Where(m => m.MatchId == key).SelectMany(m => m.MatchHistoryDetails);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
                 db.Dispose();
             }
             base.Dispose(disposing);
         }
 
-        private bool MatchHistoryExists(int key)
-        {
+        private bool MatchHistoryExists(int key) {
             return db.MatchHistories.Count(e => e.MatchId == key) > 0;
         }
     }
