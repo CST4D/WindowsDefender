@@ -135,6 +135,10 @@ public class TMXLoader {
                 {
                     walkable = true;
                 }
+                if (i2.Attributes["name"].InnerText.ToLower() == "nowalk")
+                {
+                    walkable = false;
+                }
                 foreach (XmlNode prop in i2.ChildNodes)
                 {
                     if (prop.Name == "properties")
@@ -159,7 +163,7 @@ public class TMXLoader {
                             tiles[mapHeight - y - 1, x].Walkable = walkable;
                             if (visible)
                                 tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
-                        } else
+                        } else if (buildable)
                         {
                             tiles[mapHeight - y - 1, x].Walkable = true;
                             tiles[mapHeight - y - 1, x].Buildable = false;
