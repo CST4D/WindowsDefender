@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -11,13 +12,38 @@ public class GameController : MonoBehaviour
     public Game_Timer gameTime;
     public Rounds rounds;
     public UnityEngine.UI.Text gameInfoDebugText;
+    public UnityEngine.UI.Text resourceText;
+    public UnityEngine.UI.Text healthText;
+    public UnityEngine.UI.Text opponentHealthText;
+    public NetworkClient NetworkCli;
+    public UnityEngine.UI.Text gameStateText;
+    public BuildMode buildMode;
+    public EnemyMode enemyMode;
 
     private ArrayList enemies;
     private ArrayList spawners;
+    private ArrayList[] teamSpawners = new ArrayList[2];
     private float timer;
+
     private Waypoint _point;
+    private Waypoint _opponentPoint;
+
     private Tile[,] map;
+    public int money;
+    public int health;
+    private int opponentHealth;
+    public int healthDamageAmount;
     private int _mapWidth, _mapHeight;
+
+
+    private string username = "test12";
+    private string ip = "127.0.0.1";
+    private string matchId = "4fg7-38g3-d922-f75g-48g6";
+    private int teamId = 2;
+
+    
+    MessagingNetworkAdapter netAdapter;
+    MultiplayerMessagingAdapter multiMessageAdapter;
 
     struct Square
     {
@@ -31,68 +57,123 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Application.runInBackground = true;
+
         GetGameInitInfo();
         enemies = new ArrayList();
         spawners = new ArrayList();
-        gameTime.setTime(10.0f);
-        timer = 0;
-        rounds.notParsed = true; 
+        teamSpawners[0] = new ArrayList();
+        teamSpawners[1] = new ArrayList();
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("coolmap2"), this);
+        
+        gameTime.setTime(0.0f);
+        timer = 0;
+        rounds.notParsed = true;
+        resourceText.text = money.ToString();
+        healthText.text = health.ToString();
+        opponentHealth = health;
+        opponentHealthText.text = opponentHealth.ToString();
+
+
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this, teamId);
         tmxl.loadMeta();
-        _mapWidth = tmxl.mapWidth;
-        _mapHeight = tmxl.mapHeight;    
+        _mapWidth = tmxl.realMapWidth;
+        _mapHeight = tmxl.realMapHeight;    
         map = tmxl.tiles;
         tmxl.load();
+
+        GameObject.FindWithTag("MainCamera").transform.position += tmxl.TransformVector;
+
+        StartNetworking();
     }
 
+    void StartNetworking()
+    {
+        netAdapter = new MessagingNetworkAdapter(NetworkCli);
+        NetworkCli.Initialize(ip, matchId, username, netAdapter);
+        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
+        buildMode.Initialize(multiMessageAdapter);
+        enemyMode.Initialize(multiMessageAdapter, (teamId == 1 ? 2 : 1), teamSpawners, enemies);
+    }
 
+    void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)
+    {
+        switch (gs)
+        {
+            case MultiplayerMessagingAdapter.GameState.WaitingForPlayers:
+                gameStateText.text = "Waiting For Players...";
+                break;
+            case MultiplayerMessagingAdapter.GameState.GameInProgress:
+                gameStateText.text = "Game In Progress!";
+                break;
+            case MultiplayerMessagingAdapter.GameState.PlayerDisconnect:
+                gameStateText.text = "Peer left game, game over.";
+                break;
+            case MultiplayerMessagingAdapter.GameState.TeamLoss:
+                gameStateText.text = "Game Loss";
+                break;
+            case MultiplayerMessagingAdapter.GameState.TeamWin:
+                gameStateText.text = "Game Win";
+                break;
+            default:
+                break;
+        }
+    }
     // Update is called once per frame
     void Update()
     {
+        money = int.Parse(resourceText.text);
         if (rounds.notParsed)
             rounds.parseWave();
         
         // Check health of monsters
         CheckEnemy();
 
+        multiMessageAdapter.ReceiveAndUpdate();
+        UpdateStateText(multiMessageAdapter.CurrentGameState);
+
         gameTime.tick();
 
         if (gameTime.timeUp())
         {
             // Create Monsters
+            // Below for single-player debug enemy spawning
+            /*
             timer += 1*Time.deltaTime;
             if (timer > 0.5f)
             {
+                EnemyAI selectedAI = rounds.getEnemySpawn();
                 foreach (SpawnerAI spawn in spawners)
                 {
                     EnemyAI temp;
                     timer -= 0.5f;
-                    temp = (EnemyAI)GameObject.Instantiate(rounds.getEnemySpawn(), spawn.transform.position, transform.rotation);
+                    temp = (EnemyAI)GameObject.Instantiate(selectedAI, spawn.transform.position, transform.rotation);
                     temp.transform.parent = transform.Find("Enemies").transform;
                     // Some Path-finding Algorithm here
                     temp.movementPoints = copyWaypoints(spawn, temp.isGround);
-                    
+                    temp.targetWaypoint = spawn.targetWaypoint;
 
                     enemies.Add(temp);
                 }
             }
+            */
         }
     }
+
+
 
     void GetGameInitInfo()
     {
         string schemaName = "towerdefender:";
-
-        string serverIpAddr;
-        string username;
         string[] cmdLineArgs = System.Environment.GetCommandLineArgs();
         if (cmdLineArgs.Length > 1 && cmdLineArgs[1].StartsWith(schemaName))
         {
             string[] uriList = cmdLineArgs[1].Substring(schemaName.Length).Split('|');
-            serverIpAddr = uriList[0];
+            ip = uriList[0];
             username = uriList[1];
-            gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
+            matchId = uriList[2];
+            teamId = Convert.ToInt32(uriList[3]);
+            //gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
         }
     }
 
@@ -108,15 +189,37 @@ public class GameController : MonoBehaviour
         {
             EnemyAI temp = (EnemyAI)enemies[i];
 
+            if (temp.Arrived)
+            {
+                if (temp.targetWaypoint == _point)
+                {
+                    health -= healthDamageAmount;
+                    healthText.text = health.ToString();
+                    multiMessageAdapter.SendHealthUpdate(health);
+                } else
+                {
+                    opponentHealth -= healthDamageAmount;
+                    opponentHealthText.text = opponentHealth.ToString();
+                }
+                GameObject.Destroy(temp.gameObject);
+                enemies.Remove(temp);
+            }
             if (temp.health <= 0)
             {
                 EnemyAI[] newEnemies = null;
 
+                if (temp.targetWaypoint == _point)
+                {
+                    money += temp.reward;
+                    resourceText.text = money.ToString();
+                }
+
                 if((newEnemies = temp.OnDeath()) != null)
                     for (int j = 0; j < newEnemies.Length; j++)
                         tempNewEnemies.Add(newEnemies[j]);
-
+                
                 enemies.Remove(temp);
+                multiMessageAdapter.SendEnemyDeath(temp.enemyId);
             }
         }
 
@@ -148,18 +251,22 @@ public class GameController : MonoBehaviour
     /// Adds a spawner to a spawner list
     /// </summary>
     /// <param name="spai"></param>
-    public void addSpawnerToSpawnerList(SpawnerAI spai)
+    public void addSpawnerToSpawnerList(SpawnerAI spai, int teamId)
     {
-
+        spai.targetWaypoint = (teamId == this.teamId ? _point : _opponentPoint);
         spawners.Add(spai);
-        spai.wayPoints = pathFinding(spai);
-        spai.flyPoints = pathFinding(spai, true);
+        spai.wayPoints = pathFinding(spai, false, teamId);
+        spai.flyPoints = pathFinding(spai, true, teamId);
+        teamSpawners[teamId - 1].Add(spai);
     }
 
 
-    public void setWayPoint(Waypoint way)
+    public void setWayPoint(Waypoint way, int teamId)
     {
-        _point = way;
+        if (teamId != this.teamId)
+            _opponentPoint = way;
+        else
+            _point = way;
     }
 
     /// <summary>
@@ -167,7 +274,7 @@ public class GameController : MonoBehaviour
     /// </summary>
     /// <param name="spawner"></param>
     /// <returns>List of Vectors that the Monsters will follow till they reach their destination</returns>
-    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying = false)
+    LinkedList<Vector2> pathFinding(SpawnerAI spawner, bool flying, int teamId)
     {
         // 2D Array List of possible paths monsters can take to reach their destination
         LinkedList<Vector2> paths = new LinkedList<Vector2>();
@@ -178,7 +285,7 @@ public class GameController : MonoBehaviour
 
         LinkedList<Square> leadingSquares = new LinkedList<Square>();
 
-        Vector2 destSquare = FindTile(_point.gameObject);
+        Vector2 destSquare = FindTile((teamId != this.teamId ? _opponentPoint.gameObject : _point.gameObject));
         int fMin = 0, g = 0;
         Square spawn = createSquare(g, FindTile(spawner.gameObject), destSquare);
         leadingSquares.AddLast(spawn);
