@@ -91,8 +91,15 @@ public class TMXLoader {
     }
     public void load()
     {
-        
-        
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                tiles[mapHeight - y - 1, x].Walkable = true;
+                tiles[mapHeight - y - 1, x].Buildable = false;
+            }
+        }
+
         sprites = new Sprite[1];
         int spriteArraySize = 1;
 
@@ -163,10 +170,6 @@ public class TMXLoader {
                             tiles[mapHeight - y - 1, x].Walkable = walkable;
                             if (visible)
                                 tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
-                        } else if (buildable)
-                        {
-                            tiles[mapHeight - y - 1, x].Walkable = true;
-                            tiles[mapHeight - y - 1, x].Buildable = false;
                         }
                     }
                 }
