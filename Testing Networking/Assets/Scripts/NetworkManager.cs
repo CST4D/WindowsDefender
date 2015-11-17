@@ -2,7 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 
-// creates a new network manager class
+/// <summary>
+/// Creates a new network manager class.
+/// </summary>
 [RequireComponent (typeof (NetworkView))] // because we will use rpc calls
 public class NetworkManager : MonoBehaviour {
 
@@ -26,8 +28,15 @@ public class NetworkManager : MonoBehaviour {
     bool nameSet = false;
     bool connected = false;
     Dictionary<NetworkPlayer, string> usersByID = new Dictionary<NetworkPlayer, string>();
-    
-    // Use this for initialization
+
+    /// <summary>
+    /// The cube object that we will spawn with.
+    /// </summary>
+    public GameObject myCube;
+
+    /// <summary>
+    /// Use this for initialization.
+    /// </summary>
     void Start()
     {
 
@@ -40,24 +49,27 @@ public class NetworkManager : MonoBehaviour {
 
 
 
-    // Update is called once per frame
-   /* void Update()
-    {
+    // Update is called once per frame //Note: not currently using this method.
+    /* void Update()
+     {
 
-        if(!networkView.isMine)
-        return;
-        if (!GUIUtils.MouseOverRect(entireChatArea))
-        {
-            messageWindow.pauseAutoScroll = false;
-            messageWindow.CountDownTimers();
-        }
-        else
-        {
-            messageWindow.pauseAutoScroll = true;
-        }
-    }*/
+         if(!networkView.isMine)
+         return;
+         if (!GUIUtils.MouseOverRect(entireChatArea))
+         {
+             messageWindow.pauseAutoScroll = false;
+             messageWindow.CountDownTimers();
+         }
+         else
+         {
+             messageWindow.pauseAutoScroll = true;
+         }
+     }*/
 
-    // Sets the name of the person connecting or hosting the game
+    /// <summary>
+    /// Sets the name of the person connecting or hosting the game.
+    /// </summary>
+    /// <param name="newName">The name of the person.</param>
     void SetName(string newName)
     {
         //Only after setting a name will the player be joined to the chat
@@ -75,7 +87,9 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // Sends a message to everyone when one player has updated the message log
+    /// <summary>
+    /// Sends a message to everyone when one player has updated the message log.
+    /// </summary>
     void ProcessInput()
     {
         if (chatInput.Length > 0)
@@ -86,13 +100,18 @@ public class NetworkManager : MonoBehaviour {
         chatInput = "";
     }
 
-    // When someone has connected it will set their network connected state to true
+    /// <summary>
+    /// When someone has connected it will set their network connected state to true.
+    /// </summary>
     void OnConnectedToServer()
     {
         connected = true;
     }
 
-    // when someone has disconnected from the server it will set their network connected state to false
+    /// <summary>
+    /// When someone has disconnected from the server it will set their network connected state to false.
+    /// </summary>
+    /// <param name="info">The information on disconnect.</param>
     void OnDisconnectedFromServer(NetworkDisconnection info)
     {
         if (Network.isServer)
@@ -105,14 +124,20 @@ public class NetworkManager : MonoBehaviour {
     }
 
 
-    // when someone has disconnected fromt he server it will set their network connected state to false
+    /// <summary>
+    /// When someone has disconnected from the server.
+    /// </summary>
+    /// <param name="player">The player that disconnected.</param>
     void OnPlayerDisconnected(NetworkPlayer player)
     {
         RemoveUser(player);
     }
 
 
-    // when a message is sent, should send to current users
+    /// <summary>
+    /// When a message is sent, it should send to current users.
+    /// </summary>
+    /// <param name="recipient">The recipient for the message.</param>
     [RPC]
     void Server_SendCurrentUsers(NetworkPlayer recipient)
     {
@@ -127,7 +152,11 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // when someone joins the game, this method is called
+    /// <summary>
+    /// When someone joins the game, this method is called.
+    /// </summary>
+    /// <param name="name">The name of the user joining.</param>
+    /// <param name="player">The player that is joining.</param>
     [RPC]
     void JoinUser(string name, NetworkPlayer player)
     {
@@ -147,7 +176,10 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // when someone is removed, this method is called
+    /// <summary>
+    /// When someone is removed, this method is called.
+    /// </summary>
+    /// <param name="player">The player that is joining.</param>
     [RPC]
     void RemoveUser(NetworkPlayer player)
     {
@@ -164,7 +196,11 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // handling sending system messages to players
+    /// <summary>
+    /// Handling sending system messages to players.
+    /// </summary>
+    /// <param name="message">The message the client sends.</param>
+    /// <param name="player">The player sent.</param>
     [RPC]
     void SystemMessage(string message, NetworkPlayer player)
     {
@@ -182,7 +218,11 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // this method is called when someone sends a message
+    /// <summary>
+    /// This method is called when someone sends a message.
+    /// </summary>
+    /// <param name="message">The message the client sends.</param>
+    /// <param name="player">The player sent.</param>
     [RPC]
     void LogMessage(string message, NetworkPlayer player)
     {
@@ -204,23 +244,65 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
+    /// <summary>
+    /// Ask server to create numbers for a cube spawn.
+    /// </summary>
+    [RPC]
+    void AskCreateCube()
+    {
+        if (Network.isServer)
+        {
+            float randomX = Random.value * 10;
+            float randomY = Random.value * 10;
+            GetComponent<NetworkView>().RPC("CreateCube", RPCMode.All, randomX, randomY);
+        }
+    }
+
+    /// <summary>
+    /// Spawns a cube at a random position.
+    /// </summary>
+    /// <param name="randomValueX">Random value for X.</param>
+    /// <param name="randomValueY">Random value for Y.</param>
+    [RPC]
+    void CreateCube(float randomValueX, float randomValueY)
+    {
+
+        if (myCube != true)
+        {
+            Debug.Log("myCube not set");
+            myCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        }
+        else if (myCube.GetComponent<Renderer>().enabled == false)
+        {
+            Debug.Log("myCube not rendered");
+            myCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        }
+        Instantiate(myCube, new Vector3(randomValueX, randomValueY, 0), Quaternion.identity);
+    }
 
     //--------------------------------------------------------
-    // starts the server
+    /// <summary>
+    /// Starts the server.
+    /// </summary>
     private void StartServer()
     {
         Network.InitializeServer(4, 25002, false);
         MasterServer.RegisterHost(registeredGameName, "Rosanna Tower Testing", "Testing Networking");
     }
 
-    // when the server is initialized/connected and ready to start game
+    /// <summary>
+    /// When the server is initialized/connected and ready to start game.
+    /// </summary>
     void OnServerInitialized()
     {
         Debug.Log("Server has been initialized!");
         connected = true;//from new
     }
 
-    // this method is fired when a new server hosts a game
+    /// <summary>
+    /// This method is fired when a new server hosts a game.
+    /// </summary>
+    /// <param name="masterServerEvent"></param>
     void OnMasterServerEvent(MasterServerEvent masterServerEvent)
     {
         if(masterServerEvent == MasterServerEvent.RegistrationSucceeded)
@@ -228,7 +310,10 @@ public class NetworkManager : MonoBehaviour {
 
     }
 
-    // refreshes the list of active hosts (the servers connected)
+    /// <summary>
+    /// Refreshes the list of active hosts (the servers connected)
+    /// </summary>
+    /// <returns>Returns a command.</returns>
     public IEnumerator RefreshHostList()
     {
         Debug.Log("Refreshing...");
@@ -250,7 +335,9 @@ public class NetworkManager : MonoBehaviour {
         }
     }
 
-    // this method is called when frame is generated
+    /// <summary>
+    /// This method is called when frame is generated.
+    /// </summary>
     public void OnGUI()
     {
 
@@ -262,8 +349,11 @@ public class NetworkManager : MonoBehaviour {
             chatOutputRect = new Rect(chatOutputPosition.x, chatOutputPosition.y, chatOutputSize.x, chatOutputSize.y);
             entireChatArea = new Rect(chatInputPosition.x, chatInputPosition.y, Mathf.Max(chatInputSize.x, chatOutputSize.x), chatInputSize.y + chatOutputSize.y);
 
-           
-           
+            if (GUI.Button(new Rect(25f, 100f, 150f, 30f), "Spawn Object"))
+            {
+                GetComponent<NetworkView>().RPC("AskCreateCube", RPCMode.All);
+            }
+
             if (connected)
             {
                 if (nameSet)
