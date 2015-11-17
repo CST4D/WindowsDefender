@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -164,16 +165,15 @@ public class GameController : MonoBehaviour
     void GetGameInitInfo()
     {
         string schemaName = "towerdefender:";
-
-        string serverIpAddr;
-        string username;
         string[] cmdLineArgs = System.Environment.GetCommandLineArgs();
         if (cmdLineArgs.Length > 1 && cmdLineArgs[1].StartsWith(schemaName))
         {
             string[] uriList = cmdLineArgs[1].Substring(schemaName.Length).Split('|');
-            serverIpAddr = uriList[0];
+            ip = uriList[0];
             username = uriList[1];
-            gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
+            matchId = uriList[2];
+            teamId = Convert.ToInt32(uriList[3]);
+            //gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
         }
     }
 
