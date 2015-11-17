@@ -18,8 +18,8 @@ public class GUI_Towers : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-	
-	}
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -67,6 +67,11 @@ public class GUI_Towers : MonoBehaviour {
 
             // Set the position for the button to slide to
             newButton.MoveLocation = newPosition;
+
+            // Assign the button to the game controller
+            newButton.GameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<BuildMode>();
+
+            newButton.Tower = towers[i];
         }   
     }
 }
