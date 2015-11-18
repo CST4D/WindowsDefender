@@ -143,27 +143,4 @@ public class TowerAI : Building {
 			Debug.Log("Field does not exist.");
 	}
     // End of Function
-
-    public string ToolTip()
-    {
-        string toolTip = "";
-        toolTip += name.Substring(0, name.Length - 5);
-        toolTip += "\nCost: " + cost;
-        toolTip += "\nDamage: " + towerDamage;
-        toolTip += "\nAttack Speed: " + attackSpd;
-        toolTip += "\nAttack Range: " + attackRange;
-        if (attacksGround && attacksAir)
-        {
-            toolTip += "\nAttacks Air & Ground Enemies";
-        }
-        else if (attacksGround && !attacksAir)
-        {
-            toolTip += "\nAttacks Ground Enemies";
-        }
-        else
-        {
-            toolTip += "\nAttacks Air Enemies";
-        }
-        return toolTip;
-    }
 }
