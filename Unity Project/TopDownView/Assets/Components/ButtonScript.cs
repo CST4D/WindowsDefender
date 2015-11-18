@@ -54,7 +54,7 @@ public class ButtonScript : MonoBehaviour {
     public void OnMouseEnter()
     {
         if(SourceObject.GetComponent<TowerAI>())
-            toolTipText = SourceObject.GetComponent<TowerAI>().ToolTip();
+            toolTipText = SourceObject.GetComponent<TowerAI>().toolTip();
     }
 
     /// <summary>

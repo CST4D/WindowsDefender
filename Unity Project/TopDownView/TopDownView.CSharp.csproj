@@ -68,10 +68,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\ButtonScript.cs" />
     <Compile Include="Assets\Components\BuildMode.cs" />
     <Compile Include="Assets\Components\Building.cs" />
+    <Compile Include="Assets\Components\ButtonScript.cs" />
     <Compile Include="Assets\Components\CameraAI.cs" />
+    <Compile Include="Assets\Components\GUI_Towers.cs" />
     <Compile Include="Assets\Components\GameController.cs" />
     <Compile Include="Assets\Components\Game_Timer.cs" />
     <Compile Include="Assets\Components\Player.cs" />
@@ -83,7 +84,6 @@
     <Compile Include="Assets\Enemies\EnemyAI.cs" />
     <Compile Include="Assets\Enemies\HijackerEnemyAI.cs" />
     <Compile Include="Assets\Enemies\WormVirusAI.cs" />
-    <Compile Include="Assets\GUI_Towers.cs" />
     <Compile Include="Assets\TMXLoader.cs" />
     <Compile Include="Assets\Towers\AVGTowerAI.cs" />
     <Compile Include="Assets\Towers\KasperskyTowerAI.cs" />
