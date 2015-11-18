@@ -1,0 +1,104 @@
+﻿@{
+    ViewBag.Title = "Matchmaking";
+}
+
+<h2>@ViewBag.Title</h2>
+
+<script>
+    var timer;
+    function search() {
+        timer = setTimeout(function () {
+            document.location.href = "/Matchmaking/Find";
+        }, 3000);
+    }
+    function cancel() {
+        clearTimeout(timer);
+    }
+</script>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-body" style="text-align: center">
+                <h1>Finding match...</h1>
+                <img src="~/Resources/searching.gif" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="cancel()">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+
+    <div class="col-xs-8">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <button class="btn-lg btn-success" type="button" data-toggle="modal" data-target="#myModal" onclick="search()">Search for Game >></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xs-4">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <h2>Game History</h2>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-xs-2">
+                        <span class="label label-success">WIN</span>
+                    </div>
+                    <div class="col-xs-10">
+                        11/12/2005 10:42pm
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-xs-2">
+                        <span class="label label-danger">LOSS</span>
+                    </div>
+                    <div class="col-xs-10">
+                        11/12/2005 10:42pm
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-xs-2">
+                        <span class="label label-success">WIN</span>
+                    </div>
+                    <div class="col-xs-10">
+                        11/12/2005 10:42pm
+                    </div>
+                </div>
+
+                <br />
+
+                <div class="row">
+                    <div class="col-xs-2">
+                        <span class="label label-danger">LOSS</span>
+                    </div>
+                    <div class="col-xs-10">
+                        11/12/2005 10:42pm
+                    </div>
+                </div>
+                    
+            </div>
+        </div>
+        
+    </div>
+
+</div>
