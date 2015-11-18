@@ -6,7 +6,7 @@ public class ButtonScript : MonoBehaviour {
     public float speed;
     public Vector3 MoveLocation { get; set; }
 
-    public Building Tower { get; set; }
+    public GameObject SourceObject { get; set; }
     public BuildMode GameController { get; set; }
     public Texture2D backgroundTexture;
     public bool Hide { get; set; }
@@ -42,7 +42,10 @@ public class ButtonScript : MonoBehaviour {
     /// </summary>
     public void OnClick()
     {
-        GameController.BuildTower(Tower);
+        if(SourceObject.GetComponent<Building>())
+            GameController.BuildTower(SourceObject.GetComponent<Building>());
+        if (SourceObject.GetComponent<EnemyAI>())
+            Debug.Log("Enemy Spawned");
     }
 
     /// <summary>
@@ -50,7 +53,8 @@ public class ButtonScript : MonoBehaviour {
     /// </summary>
     public void OnMouseEnter()
     {
-        toolTipText = Tower.GetComponent<TowerAI>().toolTip();
+        if(SourceObject.GetComponent<TowerAI>())
+            toolTipText = SourceObject.GetComponent<TowerAI>().ToolTip();
     }
 
     /// <summary>

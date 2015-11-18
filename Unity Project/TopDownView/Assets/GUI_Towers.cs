@@ -12,7 +12,7 @@ using System.Collections;
 /// </summary>
 public class GUI_Towers : MonoBehaviour {
 
-    public TowerAI[] towers;
+    public GameObject[] buttonObjects;
     public ButtonScript buttonTemplate;
     public GameObject panel;
 
@@ -50,7 +50,7 @@ public class GUI_Towers : MonoBehaviour {
             // Get the Panel's Rect Transformation
             Rect panelRect = panel.gameObject.GetComponent<RectTransform>().rect;
 
-            for (int i = 0; i < towers.Length; i++)
+            for (int i = 0; i < buttonObjects.Length; i++)
             {
                 Vector3 newPosition = panelPosition;
                 Vector3 spawnPosition = panelPosition;
@@ -62,10 +62,10 @@ public class GUI_Towers : MonoBehaviour {
                 ButtonScript newButton = (ButtonScript)Instantiate(buttonTemplate, spawnPosition, transform.rotation);
 
                 // Name of the object on Unity Editor
-                newButton.name = towers[i].name;
+                newButton.name = buttonObjects[i].name;
 
                 // Text of the object to display in the game
-                newButton.gameObject.GetComponentInChildren<UnityEngine.UI.Text>().text = towers[i].name;
+                newButton.gameObject.GetComponentInChildren<UnityEngine.UI.Text>().text = buttonObjects[i].name;
 
                 // Set the parent of the object to this object (GUI_Towers)
                 // If you don't then the object isn't part of the canvas / child of canvas
@@ -78,7 +78,7 @@ public class GUI_Towers : MonoBehaviour {
                 newButton.GameController = GameObject.FindGameObjectWithTag("GameController").GetComponent<BuildMode>();
 
                 // Assign the tower for the button that should be built
-                newButton.Tower = towers[i];
+                newButton.SourceObject = buttonObjects[i];
 
                 // Add button to array list
                 buttons.Add(newButton);
