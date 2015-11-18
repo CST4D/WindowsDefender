@@ -72,12 +72,20 @@
     <Reference Include="UnityEditor.iOS.Extensions.Xcode">
       <HintPath>Library\UnityAssemblies\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
     </Reference>
+    <Reference Include="JsonFx.Json">
+      <HintPath>Assets\Network\JsonFx.Json.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Adapters\MessagingNetworkAdapter.cs" />
+    <Compile Include="Assets\Adapters\MultiplayerMessagingAdapter.cs" />
+    <Compile Include="Assets\Adapters\NetworkMock.cs" />
+    <Compile Include="Assets\Adapters\TMXLoader.cs" />
     <Compile Include="Assets\Components\BaseHealth.cs" />
     <Compile Include="Assets\Components\BuildMode.cs" />
     <Compile Include="Assets\Components\Building.cs" />
     <Compile Include="Assets\Components\CameraAI.cs" />
+    <Compile Include="Assets\Components\EnemyMode.cs" />
     <Compile Include="Assets\Components\GameController.cs" />
     <Compile Include="Assets\Components\Game_Timer.cs" />
     <Compile Include="Assets\Components\Player.cs" />
@@ -85,16 +93,20 @@
     <Compile Include="Assets\Components\SpawnerAI.cs" />
     <Compile Include="Assets\Components\Tile.cs" />
     <Compile Include="Assets\Components\Waypoint.cs" />
-    <Compile Include="Assets\Enemies\EmailVirusAI.cs" />
-    <Compile Include="Assets\Enemies\EnemyAI.cs" />
-    <Compile Include="Assets\Enemies\HijackerEnemyAI.cs" />
-    <Compile Include="Assets\Enemies\WormVirusAI.cs" />
-    <Compile Include="Assets\TMXLoader.cs" />
-    <Compile Include="Assets\Towers\AVGTowerAI.cs" />
-    <Compile Include="Assets\Towers\KasperskyTowerAI.cs" />
-    <Compile Include="Assets\Towers\NortonTowerAI.cs" />
-    <Compile Include="Assets\Towers\TowerAI.cs" />
-    <Compile Include="Assets\Towers\projectileAI.cs" />
+    <Compile Include="Assets\Network\Instruction.cs" />
+    <Compile Include="Assets\Network\NetworkClient.cs" />
+    <Compile Include="Assets\Network\Serializer.cs" />
+    <Compile Include="Assets\Resources\Enemies\EmailVirusAI.cs" />
+    <Compile Include="Assets\Resources\Enemies\EnemyAI.cs" />
+    <Compile Include="Assets\Resources\Enemies\HijackerEnemyAI.cs" />
+    <Compile Include="Assets\Resources\Enemies\WormVirusAI.cs" />
+    <Compile Include="Assets\Resources\Towers\AVGTowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\AvastTowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\KasperskyTowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\McAfeeTowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\NortonTowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\TowerAI.cs" />
+    <Compile Include="Assets\Resources\Towers\projectileAI.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

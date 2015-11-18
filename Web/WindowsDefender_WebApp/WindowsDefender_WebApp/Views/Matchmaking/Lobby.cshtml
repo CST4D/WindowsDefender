@@ -3,8 +3,19 @@
     ViewBag.Title = "Game Lobby";
 }
 
-<h2>@ViewBag.Title</h2>
+@section Hero {
+    <div class="about-hero">
+        <div class="container valign">
+            <div class=" row">
+                <div class="col-md-12">
+                    <a href="/"><h1 class="massivetitle">WINDOWS TOWER DEFENDER</h1></a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
+<h2>@ViewBag.Title</h2>
 
 @section js {
     <script src="~/Scripts/jquery.signalR-2.2.0.min.js"></script>
@@ -199,6 +210,7 @@
                 </div>
             </div>
         </div>
+        <br /><br /><br />
     </div>
 
     <div class="col-xs-4">
@@ -220,5 +232,7 @@
         <button id="readytoggle" class="btn-lg btn-success" type="button">I'm Ready</button>
         <button id="leave" class="btn-lg btn-danger" type="button">Leave Lobby</button>
     </div>
+
+    
 
 </div>
