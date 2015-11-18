@@ -246,30 +246,23 @@ public class EnemyAI : MonoBehaviour
     {
         string toolTip = "";
         toolTip += name;
-        toolTip += 
+        toolTip += "\nCost: " + cost;
+        toolTip += "\nHealth: " + maxHealth;
+        toolTip += "\nArmour: " + armour;
+        toolTip += "\nResistance: " + resistance;
+        toolTip += "\nSpeed: " + movementSpeed;
+        toolTip += "\nBounty: " + reward;
+        if (!isVisible) {
+            toolTip += "\nInvisible";
+
+        }
+        if (!isGround) {
+            toolTip += "\nFlying";
+        }
+        if (duplicates) {
+            toolTip += "\nDuplicating";
+        }
+
         return toolTip;
     }
-
-    //public string toolTip()
-    //{
-    //    string toolTipContents = "";
-    //    toolTipContents += name.Substring(0, name.Length - 5);
-    //    toolTipContents += "\nCost: " + cost;
-    //    toolTipContents += "\nDamage: " + towerDamage;
-    //    toolTipContents += "\nAttack Speed: " + attackSpd;
-    //    toolTipContents += "\nAttack Range: " + attackRange;
-    //    if (attacksGround && attacksAir)
-    //    {
-    //        toolTipContents += "\nAttacks Air & Ground Enemies";
-    //    }
-    //    else if (attacksGround && !attacksAir)
-    //    {
-    //        toolTipContents += "\nAttacks Ground Enemies";
-    //    }
-    //    else
-    //    {
-    //        toolTipContents += "\nAttacks Air Enemies";
-    //    }
-    //    return toolTipContents;
-    //}
 }
