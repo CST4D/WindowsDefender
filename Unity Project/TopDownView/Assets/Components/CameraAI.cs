@@ -3,10 +3,19 @@ using System.Collections;
 
 public class CameraAI : MonoBehaviour {
 
+    private float mapWidth;
+    private float mapHeight;
+
 	// Use this for initialization
 	void Start () {
 	    
 	}
+
+    public void SetMapSize(float width, float height)
+    {
+        mapWidth = width;
+        mapHeight = height;
+    }
 
     Vector3 KeyboardNavigation(Vector3 position)
     {
@@ -29,15 +38,17 @@ public class CameraAI : MonoBehaviour {
     Vector3 MouseNavigation(Vector3 position)
     {
         Vector3 direction = position;
-        if (Input.mousePosition.y < 30)
+        if (Input.mousePosition.y < 30 && direction.y > -0.01f)
             direction.y -= 20;
-        if (Input.mousePosition.x < 30)
+        if (Input.mousePosition.x < 30 && direction.x > -0.01f)
             direction.x -= 20;
-        if (Input.mousePosition.y > (Screen.height - 30))
+        if (Input.mousePosition.y > (Screen.height - 30) && direction.y < mapHeight + 0.01f)
             direction.y += 20;
-        if (Input.mousePosition.x > (Screen.width - 30))
+        if (Input.mousePosition.x > (Screen.width - 30) && direction.x < mapWidth + 0.01f)
             direction.x += 20;
-        if (Input.GetAxis("Mouse ScrollWheel") > 0.01f || Input.GetAxis("Mouse ScrollWheel") < -0.01f)
+        if (Input.GetAxis("Mouse ScrollWheel") > 0.01f && direction.z < -0.5f)
+            direction.z += Input.GetAxis("Mouse ScrollWheel");
+        if (Input.GetAxis("Mouse ScrollWheel") < -0.01f)
             direction.z += Input.GetAxis("Mouse ScrollWheel");
         return direction;
     }

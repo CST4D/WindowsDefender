@@ -84,6 +84,7 @@ public class GameController : MonoBehaviour
         tmxl.load();
 
         GameObject.FindWithTag("MainCamera").transform.position += tmxl.TransformVector;
+        GameObject.FindWithTag("MainCamera").GetComponent<CameraAI>().SetMapSize(_mapWidth * 0.32f, _mapHeight * 0.32f);
 
         StartNetworking();
     }
