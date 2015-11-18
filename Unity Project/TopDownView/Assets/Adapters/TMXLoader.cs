@@ -74,9 +74,6 @@ public class TMXLoader {
             context.transform.Find("Tilemap").Find("Background").GetComponent<SpriteRenderer>().sprite = background;
             context.transform.Find("Tilemap").Find("Background").transform.position = new Vector2((background.rect.width/32)*0.32f/2-0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f);
         }
-        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
-        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
-        context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
 
         for (int i = 0; i < mapHeight * (rMode == ReflectMode.Vertical ? 2 : 1); i++)
         {
@@ -244,6 +241,7 @@ public class TMXLoader {
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
+            context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
         }
         
     }
@@ -278,6 +276,7 @@ public class TMXLoader {
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f + ((background.rect.height / 32) * 0.32f));
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(1, -1, 1);
+            context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
         }
        
     }
