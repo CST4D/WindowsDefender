@@ -9,6 +9,7 @@ public class ButtonScript : MonoBehaviour {
     public Building Tower { get; set; }
     public BuildMode GameController { get; set; }
     public Texture2D backgroundTexture;
+    public bool Hide { get; set; }
 
     private string toolTipText = null;
     private GUIStyle guiStyleFore;
@@ -31,7 +32,9 @@ public class ButtonScript : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
         if (Vector2.Distance(transform.position, MoveLocation) != 0)
-            transform.position = Vector2.MoveTowards(transform.position, MoveLocation, speed * Time.deltaTime); 
+            transform.position = Vector2.MoveTowards(transform.position, MoveLocation, speed * Time.deltaTime);
+        else if (Hide)
+            Destroy(gameObject);
 	}
 
     /// <summary>
@@ -42,16 +45,25 @@ public class ButtonScript : MonoBehaviour {
         GameController.BuildTower(Tower);
     }
 
+    /// <summary>
+    /// When mouse enters the button, get the tooltip text
+    /// </summary>
     public void OnMouseEnter()
     {
         toolTipText = Tower.GetComponent<TowerAI>().toolTip();
     }
 
+    /// <summary>
+    /// When mouse leaves the button, remove the tooltip text
+    /// </summary>
     public void OnMouseExit()
     {
         toolTipText = null;
     }
 
+    /// <summary>
+    /// Draws the tooltip onto the screen
+    /// </summary>
     public void OnGUI()
     {
         if(toolTipText != null)
