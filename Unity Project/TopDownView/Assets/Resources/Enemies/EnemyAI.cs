@@ -242,7 +242,7 @@ public class EnemyAI : MonoBehaviour
         return duplicateEnemies;
     }
 
-    public string VirusToolTip()
+    public string ToolTip()
     {
         string toolTip = "";
         toolTip += name;
