@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -19,37 +20,46 @@ namespace WDServer
     /// </summary>
     /// <remarks>Authors: Jeff, Rosanna, Jens. Comments added by Rosanna and Nadia.</remarks>
     /// <remarks>Update by: NA</remarks>
-    class Server
+    public class Server
     {
         /// <summary>
         /// Set this to false for Release builds so we aren't wasting cycles by printing to the console.
         /// </summary>
         public static bool DEBUG = true;
+        
         /// <summary>
         /// The Port that the server's computer is running on, that is open for communication.
         /// </summary>
-        private int _port = 25001;
+        private static int PORT = 25001;
+        
         /// <summary>
         /// The amount of seconds that the server waits before kicking the client out.
         /// </summary>
         public static int CLIENT_TIMEOUT = 15; // Seconds
+       
         /// <summary>
         /// An instance of the endpoint that listens for any IP address at Port 25001.
         /// </summary>
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 25001);
+        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, PORT);
+        
         /// <summary>
         /// UDP socket.
         /// </summary>
         UdpClient newsock;
 
         /// <summary>
+        /// If this is set to false, the server will stop listening and exit.
+        /// </summary>
+        public static bool RUNNING = true;
+
+        /// <summary>
         /// A list of the users that are currently connected to the server with IP addresses of the users being the key.
         /// </summary>
-        private ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
+        public ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
         /// <summary>
         /// A list of the matches that are currently in session.
         /// </summary>
-        private ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
+        public ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
 
         /// <summary>
         /// Keeps track of user timeouts (heartbeats)
@@ -87,7 +97,7 @@ namespace WDServer
 
                 newsock = new UdpClient(ipep);
               
-                Console.WriteLine("\n Server started using port " + _port + "\n\n");
+                Console.WriteLine("\n Server started using port " + PORT + "\n\n");
             }
             catch (SocketException se)
             {
@@ -104,7 +114,7 @@ namespace WDServer
         /// </summary>
         private void Listen()
         {
-            while (true)
+            while (RUNNING)
             {
                 try
                 {
@@ -170,7 +180,7 @@ namespace WDServer
         /// <param name="remoteEndPoint">The information such as IP, port and etc. of the client that just sent the 'Join' Instruction.</param>
         /// <param name="ipAddress">The ip address of the client that requested to join.</param>
         /// <param name="instruction">The Instruction that the client sent.</param>
-        private void OnJoin(IPEndPoint remoteEndPoint, string ipAddress, Instruction instruction)
+        public void OnJoin(IPEndPoint remoteEndPoint, string ipAddress, Instruction instruction)
         {
             User user = new User()
             {
@@ -268,7 +278,7 @@ namespace WDServer
         /// </summary>
         private void TimeoutCheckerThread()
         {
-            while (true)
+            while (RUNNING)
             {
                 foreach (KeyValuePair<string, User> user in _users)
                 {
