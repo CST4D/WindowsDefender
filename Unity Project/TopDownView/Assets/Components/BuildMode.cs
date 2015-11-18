@@ -28,8 +28,8 @@ public class BuildMode : MonoBehaviour {
         if (Input.GetKey(KeyCode.Escape))
         {
             buildMode = false;
-            Destroy(building.GetComponent<SpriteRenderer>());
-            //building = null;
+            Destroy(building.gameObject);
+
         }
         int money = int.Parse(resourceText.text);
         if (buildMode && building != null)
@@ -82,7 +82,7 @@ public class BuildMode : MonoBehaviour {
                     {
                         flashCount = 6;
                         buildMode = false;
-                        Destroy(building.GetComponent<SpriteRenderer>());
+                        Destroy(building.gameObject);
                         InvokeRepeating("flash", 0, 0.15f);
                     }
                 }
