@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     public UnityEngine.UI.Text gameStateText;
     public BuildMode buildMode;
     public EnemyMode enemyMode;
+    public GameObject chatScrollView;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -75,7 +76,7 @@ public class GameController : MonoBehaviour
         opponentHealthText.text = opponentHealth.ToString();
 
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this, teamId);
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("map2"), this, teamId);
         tmxl.loadMeta();
         _mapWidth = tmxl.realMapWidth;
         _mapHeight = tmxl.realMapHeight;    
@@ -91,9 +92,11 @@ public class GameController : MonoBehaviour
     {
         netAdapter = new MessagingNetworkAdapter(NetworkCli);
         NetworkCli.Initialize(ip, matchId, username, netAdapter);
-        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
+        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies, chatScrollView.GetComponent<Chat>());
         buildMode.Initialize(multiMessageAdapter);
         enemyMode.Initialize(multiMessageAdapter, (teamId == 1 ? 2 : 1), teamSpawners, enemies);
+
+        chatScrollView.GetComponent<Chat>().Initialize(multiMessageAdapter);
     }
 
     void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)
