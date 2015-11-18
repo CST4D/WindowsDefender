@@ -71,8 +71,7 @@ namespace WindowsDefender_WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ModelState.AddModelError("", "Invalid login attempt.");
-                return RedirectToAction("index", "home", model);
+                return View(model);
             }
 
             // This doesn't count login failures towards account lockout
@@ -89,7 +88,7 @@ namespace WindowsDefender_WebApp.Controllers
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
-                    return RedirectToAction("index", "home", model);
+                    return View(model);
             }
         }
 

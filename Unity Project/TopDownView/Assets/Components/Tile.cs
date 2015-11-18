@@ -11,7 +11,6 @@ public class Tile : MonoBehaviour {
     private bool _walkable;
     private UnityEngine.Color _colorState;
     public Sprite mapSprite = null;
-    private UnityEngine.Color transColor;
 
     public bool Buildable
     {
@@ -27,7 +26,7 @@ public class Tile : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        transColor = new UnityEngine.Color(0, 0, 0, 0);
+	
 	}
 	
 	// Update is called once per frame
@@ -37,29 +36,27 @@ public class Tile : MonoBehaviour {
             _currentSprite = mapSprite;
             GetComponent<SpriteRenderer>().sprite = _currentSprite;
             GetComponent<SpriteRenderer>().color = UnityEngine.Color.white;
-        } else
-        {
-            GetComponent<SpriteRenderer>().color = transColor;
         }
-        /*else if(_walkable && _currentSprite != SpriteBuildable)
+        else if(_walkable && _currentSprite != SpriteBuildable)
         {
-            //_currentSprite = SpriteBuildable;
-            //GetComponent<SpriteRenderer>().sprite = _currentSprite;
+            _currentSprite = SpriteBuildable;
+            GetComponent<SpriteRenderer>().sprite = _currentSprite;
         } else if (!_walkable && _currentSprite != SpriteUnbuildable)
         {
-            //_currentSprite = SpriteUnbuildable;
-            //GetComponent<SpriteRenderer>().sprite = _currentSprite;
+            _currentSprite = SpriteUnbuildable;
+            GetComponent<SpriteRenderer>().sprite = _currentSprite;
         }
 
         if (_buildable && _colorState != UnityEngine.Color.green)
         {
-            //_colorState = UnityEngine.Color.green;
-            //GetComponent<SpriteRenderer>().color = _colorState;
+            _colorState = UnityEngine.Color.green;
+            GetComponent<SpriteRenderer>().color = _colorState;
         }
         else if (!_buildable && _colorState != UnityEngine.Color.red)
         {
-            //_colorState = UnityEngine.Color.red;
-            //GetComponent<SpriteRenderer>().color = _colorState;
-        }*/
-    }
+            _colorState = UnityEngine.Color.red;
+            GetComponent<SpriteRenderer>().color = _colorState;
+        }
+
+	}
 }
