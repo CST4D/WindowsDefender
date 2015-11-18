@@ -241,4 +241,28 @@ public class EnemyAI : MonoBehaviour
 
         return duplicateEnemies;
     }
+
+    public string ToolTip()
+    {
+        string toolTip = "";
+        toolTip += name;
+        toolTip += "\nCost: " + cost;
+        toolTip += "\nHealth: " + maxHealth;
+        toolTip += "\nArmour: " + armour;
+        toolTip += "\nResistance: " + resistance;
+        toolTip += "\nSpeed: " + movementSpeed;
+        toolTip += "\nBounty: " + reward;
+        if (!isVisible) {
+            toolTip += "\nInvisible";
+
+        }
+        if (!isGround) {
+            toolTip += "\nFlying";
+        }
+        if (duplicates) {
+            toolTip += "\nDuplicating";
+        }
+
+        return toolTip;
+    }
 }
