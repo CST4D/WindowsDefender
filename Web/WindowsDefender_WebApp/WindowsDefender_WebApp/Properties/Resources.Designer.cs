@@ -73,16 +73,6 @@ namespace WindowsDefender_WebApp.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap call_to_action1 {
-            get {
-                object obj = ResourceManager.GetObject("call_to_action1", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap hero {
             get {
                 object obj = ResourceManager.GetObject("hero", resourceCulture);
