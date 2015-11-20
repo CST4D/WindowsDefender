@@ -1,30 +1,61 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 
+/// </summary>
 public class BuildMode : MonoBehaviour {
 
+    /// <summary>
+    /// The build mode
+    /// </summary>
     private bool buildMode;
 
+    /// <summary>
+    /// The resource text
+    /// </summary>
     public UnityEngine.UI.Text resourceText;
+    /// <summary>
+    /// The flash count
+    /// </summary>
     public int flashCount;
 
+    /// <summary>
+    /// The pre building
+    /// </summary>
     Building preBuilding;
+    /// <summary>
+    /// The building
+    /// </summary>
     Building building;
 
+    /// <summary>
+    /// The message adapter
+    /// </summary>
     MultiplayerMessagingAdapter messageAdapter;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    /// <summary>
+    /// Starts this instance.
+    /// </summary>
+    void Start () {
         buildMode = false;
 	}
 
+    /// <summary>
+    /// Initializes the specified MSG adapter.
+    /// </summary>
+    /// <param name="msgAdapter">The MSG adapter.</param>
     public void Initialize(MultiplayerMessagingAdapter msgAdapter)
     {
         messageAdapter = msgAdapter;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    /// <summary>
+    /// Updates this instance.
+    /// </summary>
+    void Update () {
         if (Input.GetKey(KeyCode.Escape))
         {
             buildMode = false;
@@ -94,6 +125,9 @@ public class BuildMode : MonoBehaviour {
         }
 	}
 
+    /// <summary>
+    /// Flashes this instance.
+    /// </summary>
     public void flash()
     {
         flashCount--;
@@ -111,7 +145,7 @@ public class BuildMode : MonoBehaviour {
     /// <summary>
     /// Build Tower Function which allows the player to build the specified tower
     /// </summary>
-    /// <param name="tower"></param>
+    /// <param name="tower">The tower.</param>
     public void BuildTower(Building tower)
     {
         preBuilding = tower;

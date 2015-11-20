@@ -4,35 +4,104 @@ using System.Collections.Generic;
 using System.Xml;
 using System;
 
+/// <summary>
+/// 
+/// </summary>
 public class TMXLoader {
+    /// <summary>
+    /// The t asset
+    /// </summary>
     private TextAsset tAsset;
+    /// <summary>
+    /// The map width
+    /// </summary>
     private int mapWidth, mapHeight;
+    /// <summary>
+    /// The real map width
+    /// </summary>
     public int realMapWidth, realMapHeight;
+    /// <summary>
+    /// The sprites
+    /// </summary>
     public Sprite[] sprites;
+    /// <summary>
+    /// The tiles
+    /// </summary>
     public Tile[,] tiles;
+    /// <summary>
+    /// The context
+    /// </summary>
     private GameController context;
+    /// <summary>
+    /// The document
+    /// </summary>
     private XmlDocument doc;
+    /// <summary>
+    /// The tilesize
+    /// </summary>
     private float tilesize;
 
+    /// <summary>
+    /// 
+    /// </summary>
     private enum ReflectMode { Horizontal, Vertical };
+    /// <summary>
+    /// The r mode
+    /// </summary>
     private ReflectMode rMode = ReflectMode.Horizontal;
 
+    /// <summary>
+    /// The map list
+    /// </summary>
     private XmlNodeList mapList;
+    /// <summary>
+    /// The map node
+    /// </summary>
     private XmlNode mapNode;
 
+    /// <summary>
+    /// The waypoint
+    /// </summary>
     private Vector2 waypoint;
+    /// <summary>
+    /// The spawners
+    /// </summary>
     private LinkedList<Vector2> spawners = new LinkedList<Vector2>();
+    /// <summary>
+    /// The team identifier
+    /// </summary>
     private int teamId;
+    /// <summary>
+    /// The transform vector
+    /// </summary>
     private Vector3 transformVector;
+    /// <summary>
+    /// Gets the transform vector.
+    /// </summary>
+    /// <value>
+    /// The transform vector.
+    /// </value>
     public Vector3 TransformVector { get { return transformVector; } }
+    /// <summary>
+    /// The background
+    /// </summary>
     private Sprite background = null;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TMXLoader"/> class.
+    /// </summary>
+    /// <param name="tAsset">The t asset.</param>
+    /// <param name="context">The context.</param>
+    /// <param name="teamId">The team identifier.</param>
     public TMXLoader(TextAsset tAsset, GameController context, int teamId)
     {
         this.tAsset = tAsset;
         this.context = context;
         this.teamId = teamId;
     }
+    /// <summary>
+    /// Loads the meta.
+    /// </summary>
     public void loadMeta()
     {
         doc = new XmlDocument();
@@ -86,6 +155,9 @@ public class TMXLoader {
             }
         }
     }
+    /// <summary>
+    /// Loads this instance.
+    /// </summary>
     public void load()
     {
         for (int y = 0; y < mapHeight; y++)
@@ -211,6 +283,9 @@ public class TMXLoader {
         else
             reflectMapVertical();
     }
+    /// <summary>
+    /// Reflects the map horizontal.
+    /// </summary>
     private void reflectMapHorizontal()
     {
         for (int y = 0; y < mapHeight; y++)
@@ -245,6 +320,9 @@ public class TMXLoader {
         }
         
     }
+    /// <summary>
+    /// Reflects the map vertical.
+    /// </summary>
     private void reflectMapVertical()
     {
         for (int y = 0; y < mapHeight; y++)
