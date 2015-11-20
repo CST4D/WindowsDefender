@@ -10,6 +10,8 @@ public class EnemyAI : MonoBehaviour
     public AudioClip hitSound;
 
     public int maxHealth;
+    public int cost;
+    public int reward;
     public int health;
     public int armour;
     public float movementSpeed;
@@ -224,5 +226,36 @@ public class EnemyAI : MonoBehaviour
         GameObject.Destroy(gameObject);
 
         return duplicateEnemies;
+    }
+
+    /// <summary>
+    /// Returns description of the Enemy
+    /// </summary>
+    /// <returns></returns>
+    public string ToolTip()
+    {
+        string toolTip = "";
+        toolTip += name;
+        toolTip += "\nCost: " + cost;
+        toolTip += "\nHealth: " + maxHealth;
+        toolTip += "\nArmour: " + armour;
+        toolTip += "\nResistance: " + resistance;
+        toolTip += "\nSpeed: " + movementSpeed;
+        toolTip += "\nBounty: " + reward;
+        if (!isVisible)
+        {
+            toolTip += "\nInvisible";
+
+        }
+        if (!isGround)
+        {
+            toolTip += "\nFlying";
+        }
+        if (duplicates)
+        {
+            toolTip += "\nDuplicating";
+        }
+
+        return toolTip;
     }
 }

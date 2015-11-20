@@ -145,7 +145,7 @@ public class TowerAI : Building {
     /// Created by Joel
     /// </summary>
     /// <returns></returns>
-    public string toolTip()
+    public string ToolTip()
     {
         string toolTipContents = "";
         toolTipContents += name.Substring(0, name.Length - 5);

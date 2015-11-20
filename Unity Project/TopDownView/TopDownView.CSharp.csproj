@@ -68,12 +68,13 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\BaseController.cs" />
     <Compile Include="Assets\Components\BaseHealth.cs" />
     <Compile Include="Assets\Components\BuildMode.cs" />
     <Compile Include="Assets\Components\Building.cs" />
     <Compile Include="Assets\Components\ButtonScript.cs" />
     <Compile Include="Assets\Components\CameraAI.cs" />
-    <Compile Include="Assets\Components\GUI_Towers.cs" />
+    <Compile Include="Assets\Components\GUI_PanelInterface.cs" />
     <Compile Include="Assets\Components\GameController.cs" />
     <Compile Include="Assets\Components\Game_Timer.cs" />
     <Compile Include="Assets\Components\Player.cs" />

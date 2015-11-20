@@ -10,19 +10,23 @@ using System.Collections;
 /// towers array.
 /// 
 /// </summary>
-public class GUI_Towers : MonoBehaviour {
+public class GUI_PanelInterface : MonoBehaviour {
 
-    public GameObject[] buttonObjects;
     public ButtonScript buttonTemplate;
     public GameObject panel;
+    public GameObject[] antiViruses;
+    public GameObject[] viruses;
 
     private ArrayList buttons;
     private bool showButtons;
+
+    private int buttonStatus; // 0 = None, 1 = AntiVirus, 2 = Virus
 
 	// Use this for initialization
 	void Start () {
         buttons = new ArrayList();
         showButtons = false;
+        buttonStatus = 0;
     }
 	
 	// Update is called once per frame
@@ -34,10 +38,18 @@ public class GUI_Towers : MonoBehaviour {
     /// Instantiates tower buttons based on the number of elements in the towers array.
     /// The tower buttons's text is based on the element's name.
     /// </summary>
-    public void onClick()
+    public void onClick(int status)
     {
+        if (status != 1 && status != 2)
+            return;
+
+        if (buttonStatus != status && showButtons)
+            removeButtons();
+
         if (!showButtons)
         {
+            buttonStatus = status;
+
             // Hard-coded value
             int offsetX = 80;
 
@@ -49,6 +61,15 @@ public class GUI_Towers : MonoBehaviour {
 
             // Get the Panel's Rect Transformation
             Rect panelRect = panel.gameObject.GetComponent<RectTransform>().rect;
+
+            GameObject[] buttonObjects;
+
+            switch (status)
+            {
+                case 1: buttonObjects = antiViruses; break;
+                case 2: buttonObjects = viruses; break;
+                default: buttonObjects = null; break;
+            }
 
             for (int i = 0; i < buttonObjects.Length; i++)
             {
@@ -85,18 +106,21 @@ public class GUI_Towers : MonoBehaviour {
             }
 
             showButtons = true;
-        } else
-        {
-            Vector3 moveLocation = ((ButtonScript)buttons[0]).MoveLocation;
-
-            foreach (ButtonScript btn in buttons)
-            {
-                btn.MoveLocation = moveLocation;
-                btn.Hide = true;
-            }
-            
-
-            showButtons = false;
         }
     }
+
+    private void removeButtons()
+    {
+        Vector3 moveLocation = ((ButtonScript)buttons[0]).MoveLocation;
+
+        foreach (ButtonScript btn in buttons)
+        {
+            btn.MoveLocation = moveLocation;
+            btn.Hide = true;
+        }
+
+
+        showButtons = false;
+    }
+
 }
