@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class MultiplayerMessagingAdapter {
     public enum MessageType
@@ -40,8 +41,9 @@ public class MultiplayerMessagingAdapter {
     private ArrayList[] teamSpawners;
     private ArrayList gcEnemies;
     private float lastTimeCommunication = Time.time;
+    private Chat chatInstance;
 
-    public MultiplayerMessagingAdapter(MessagingNetworkAdapter netAdapter, MonoBehaviour context, string username, int teamId, ArrayList[] teamSpawners, ArrayList enemies)
+    public MultiplayerMessagingAdapter(MessagingNetworkAdapter netAdapter, MonoBehaviour context, string username, int teamId, ArrayList[] teamSpawners, ArrayList enemies, Chat chat)
     {
         this.netAdapter = netAdapter;
         this.context = context;
@@ -49,6 +51,7 @@ public class MultiplayerMessagingAdapter {
         gcEnemies = enemies;
         this.username = username;
         this.teamId = teamId;
+        this.chatInstance = chat;
     }
 
     public void ReceiveAndUpdate()
@@ -263,11 +266,14 @@ public class MultiplayerMessagingAdapter {
 
     private void ReceiveChatMessage(string username, string content, int teamId)
     {
-        UpdateLastCommunication(username);
+        chatInstance.ReceiveChatMessage(username, content);
+        if (username != this.username)
+            UpdateLastCommunication(username);
     }
 
     public void SendChatMessage(string content)
     {
+        netAdapter.Send((int)MessageType.ChatMessage, username, content, teamId.ToString());
         UpdateLastCommunicationWithServer();
     }
 

@@ -74,9 +74,6 @@ public class TMXLoader {
             context.transform.Find("Tilemap").Find("Background").GetComponent<SpriteRenderer>().sprite = background;
             context.transform.Find("Tilemap").Find("Background").transform.position = new Vector2((background.rect.width/32)*0.32f/2-0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f);
         }
-        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
-        context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
-        context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
 
         for (int i = 0; i < mapHeight * (rMode == ReflectMode.Vertical ? 2 : 1); i++)
         {
@@ -91,8 +88,15 @@ public class TMXLoader {
     }
     public void load()
     {
-        
-        
+        for (int y = 0; y < mapHeight; y++)
+        {
+            for (int x = 0; x < mapWidth; x++)
+            {
+                tiles[mapHeight - y - 1, x].Walkable = true;
+                tiles[mapHeight - y - 1, x].Buildable = false;
+            }
+        }
+
         sprites = new Sprite[1];
         int spriteArraySize = 1;
 
@@ -135,6 +139,10 @@ public class TMXLoader {
                 {
                     walkable = true;
                 }
+                if (i2.Attributes["name"].InnerText.ToLower() == "nowalk")
+                {
+                    walkable = false;
+                }
                 foreach (XmlNode prop in i2.ChildNodes)
                 {
                     if (prop.Name == "properties")
@@ -159,10 +167,6 @@ public class TMXLoader {
                             tiles[mapHeight - y - 1, x].Walkable = walkable;
                             if (visible)
                                 tiles[mapHeight - y - 1, x].mapSprite = sprites[Convert.ToInt32(linesplit[(y * mapWidth) + x])];
-                        } else
-                        {
-                            tiles[mapHeight - y - 1, x].Walkable = true;
-                            tiles[mapHeight - y - 1, x].Buildable = false;
                         }
                     }
                 }
@@ -237,6 +241,7 @@ public class TMXLoader {
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(-1, 1, 1);
+            context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
         }
         
     }
@@ -271,6 +276,7 @@ public class TMXLoader {
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f + ((background.rect.height / 32) * 0.32f));
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.localScale = new Vector3(1, -1, 1);
+            context.transform.Find("Tilemap").Find("BackgroundReflect").GetComponent<SpriteRenderer>().sprite = background;
         }
        
     }

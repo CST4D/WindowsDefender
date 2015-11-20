@@ -148,6 +148,17 @@ public class NetworkClient : MonoBehaviour
     public void OnApplicationQuit()
     {
         running = false;
+        Instruction newInstruction = new Instruction()
+        {
+            Command = Instruction.Type.LEAVE,
+            Arg1 = "leaving aapp",
+            Arg2 = "",
+            Arg3 = "",
+            Arg4 = ""
+        };
+        // Send instruction
+        byte[] dataToSend = Serializer.Serialize(newInstruction);
+        socket.Send(dataToSend, dataToSend.Length);
         socket.Close();
         clientThread.Abort();
     }

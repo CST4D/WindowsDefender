@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class GameController : MonoBehaviour
     public UnityEngine.UI.Text gameStateText;
     public BuildMode buildMode;
     public EnemyMode enemyMode;
+    public GameObject chatScrollView;
 
     private ArrayList enemies;
     private ArrayList spawners;
@@ -74,7 +76,7 @@ public class GameController : MonoBehaviour
         opponentHealthText.text = opponentHealth.ToString();
 
 
-        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("mapmap"), this, teamId);
+        TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("map2"), this, teamId);
         tmxl.loadMeta();
         _mapWidth = tmxl.realMapWidth;
         _mapHeight = tmxl.realMapHeight;    
@@ -82,6 +84,7 @@ public class GameController : MonoBehaviour
         tmxl.load();
 
         GameObject.FindWithTag("MainCamera").transform.position += tmxl.TransformVector;
+        GameObject.FindWithTag("MainCamera").GetComponent<CameraAI>().SetMapSize(_mapWidth * 0.32f, _mapHeight * 0.32f);
 
         StartNetworking();
     }
@@ -90,9 +93,11 @@ public class GameController : MonoBehaviour
     {
         netAdapter = new MessagingNetworkAdapter(NetworkCli);
         NetworkCli.Initialize(ip, matchId, username, netAdapter);
-        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies);
+        multiMessageAdapter = new MultiplayerMessagingAdapter(netAdapter, this, username, teamId, teamSpawners, enemies, chatScrollView.GetComponent<Chat>());
         buildMode.Initialize(multiMessageAdapter);
         enemyMode.Initialize(multiMessageAdapter, (teamId == 1 ? 2 : 1), teamSpawners, enemies);
+
+        chatScrollView.GetComponent<Chat>().Initialize(multiMessageAdapter);
     }
 
     void UpdateStateText(MultiplayerMessagingAdapter.GameState gs)
@@ -164,16 +169,15 @@ public class GameController : MonoBehaviour
     void GetGameInitInfo()
     {
         string schemaName = "towerdefender:";
-
-        string serverIpAddr;
-        string username;
         string[] cmdLineArgs = System.Environment.GetCommandLineArgs();
         if (cmdLineArgs.Length > 1 && cmdLineArgs[1].StartsWith(schemaName))
         {
             string[] uriList = cmdLineArgs[1].Substring(schemaName.Length).Split('|');
-            serverIpAddr = uriList[0];
+            ip = uriList[0];
             username = uriList[1];
-            gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
+            matchId = uriList[2];
+            teamId = Convert.ToInt32(uriList[3]);
+            //gameInfoDebugText.text = "IP: " + serverIpAddr + "\nUser: " + username;
         }
     }
 
