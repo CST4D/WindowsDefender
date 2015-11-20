@@ -48,7 +48,9 @@
      <Compile Include="Assets\Components\BaseHealth.cs" />
      <Compile Include="Assets\Components\BuildMode.cs" />
      <Compile Include="Assets\Components\Building.cs" />
+     <Compile Include="Assets\Components\ButtonScript.cs" />
      <Compile Include="Assets\Components\CameraAI.cs" />
+     <Compile Include="Assets\Components\GUI_Towers.cs" />
      <Compile Include="Assets\Components\GameController.cs" />
      <Compile Include="Assets\Components\Game_Timer.cs" />
      <Compile Include="Assets\Components\Player.cs" />
@@ -63,6 +65,7 @@
      <Compile Include="Assets\TMXLoader.cs" />
      <Compile Include="Assets\Towers\AVGTowerAI.cs" />
      <Compile Include="Assets\Towers\KasperskyTowerAI.cs" />
+     <Compile Include="Assets\Towers\McAfeeTowerAI.cs" />
      <Compile Include="Assets\Towers\NortonTowerAI.cs" />
      <Compile Include="Assets\Towers\TowerAI.cs" />
      <Compile Include="Assets\Towers\projectileAI.cs" />

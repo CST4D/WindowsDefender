@@ -7,6 +7,7 @@ public class TowerAI : Building {
     public projectileAI projectileSource;
 
     public int towerDamage;
+    public int cost;
 
     public float attackSpd;
     public bool attacksGround;
@@ -139,5 +140,31 @@ public class TowerAI : Building {
 		else
 			Debug.Log("Field does not exist.");
 	}
-    // End of Function
+
+    /// <summary>
+    /// Created by Joel
+    /// </summary>
+    /// <returns></returns>
+    public string toolTip()
+    {
+        string toolTipContents = "";
+        toolTipContents += name.Substring(0, name.Length - 5);
+        toolTipContents += "\nCost: " + cost;
+        toolTipContents += "\nDamage: " + towerDamage;
+        toolTipContents += "\nAttack Speed: " + attackSpd;
+        toolTipContents += "\nAttack Range: " + attackRange;
+        if (attacksGround && attacksAir)
+        {
+            toolTipContents += "\nAttacks Air & Ground Enemies";
+        }
+        else if (attacksGround && !attacksAir)
+        {
+            toolTipContents += "\nAttacks Ground Enemies";
+        }
+        else
+        {
+            toolTipContents += "\nAttacks Air Enemies";
+        }
+        return toolTipContents;
+    }
 }
