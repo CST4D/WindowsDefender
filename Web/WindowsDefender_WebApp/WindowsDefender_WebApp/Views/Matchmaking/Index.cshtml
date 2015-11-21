@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<WindowsDefender_WebApp.Models.MatchHistoryDetail>
+
+@{
     ViewBag.Title = "Matchmaking";
 }
 
@@ -90,48 +92,44 @@
                 Game History
             </div>
             <div class="panel-body">
-                 <div class="row">
-                    <div class="col-xs-2">
-                        <span class="label label-success">WIN</span>
-                    </div>
-                    <div class="col-xs-10">
-                        11/12/2005 10:42pm
-                    </div>
-                </div>
 
-                <br />
+                 @foreach (var match in Model)
+                 {
+                    <div class="row">
+                        <div class="col-xs-2">
+                            <span class="label label-success">
+                                @if (match.WonGame)
+                                {
+                                    <text>WON</text>
+                                }
+                                else
+                                {
+                                    <text>LOSE</text>
+                                }
+                            </span>
+                        </div>
+                        <div class="col-xs-10">
+                            <b>Date:</b> @match.MatchHistory.DatePlayed
+                            <br />
+                            <b>Duration:</b>
+                            @{
+                                TimeSpan result = TimeSpan.FromSeconds(match.MatchHistory.TimeElapsed);
+                                string hours = result.ToString("hh");
+                                string minutes = result.ToString("mm");
+                            } 
+                            
+                            @if (hours == "0")
+                            {
+                                <text>@hours</text><text>h</text>
+                            }
+                            @minutes<text>m</text>
 
-                <div class="row">
-                    <div class="col-xs-2">
-                        <span class="label label-danger">LOSS</span>
+                            <hr />
+                        </div>
                     </div>
-                    <div class="col-xs-10">
-                        11/12/2005 10:42pm
-                    </div>
-                </div>
+                    <br />
+                 }
 
-                <br />
-
-                <div class="row">
-                    <div class="col-xs-2">
-                        <span class="label label-success">WIN</span>
-                    </div>
-                    <div class="col-xs-10">
-                        11/12/2005 10:42pm
-                    </div>
-                </div>
-
-                <br />
-
-                <div class="row">
-                    <div class="col-xs-2">
-                        <span class="label label-danger">LOSS</span>
-                    </div>
-                    <div class="col-xs-10">
-                        11/12/2005 10:42pm
-                    </div>
-                </div>
-                    
             </div>
         </div>
         

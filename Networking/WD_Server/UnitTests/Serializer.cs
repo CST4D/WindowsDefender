@@ -1,24 +1,17 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WDServer;
 
-namespace WDServer
+namespace WDClient
 {
     /// <summary>
     /// This class serializes Instructions that are passed between client and server.
     /// Functionality: Serialization and Deserialization of the Instructions.
-    /// Note: Different than the client's serializer class (it uses different implementation of the JSON.)
-    /// The Server uses .NET's implementation which is better and faster.
+    /// Note: Different than the server's serializer class (it uses different implementation of the JSON).
+    /// The client uses Unity's version of a JSON serialization class because it cannot run the new
+    /// one which is .NET 4.5 and Unity uses .NET 3.5.
     /// </summary>
-    /// <remarks>Authors: Jeff, Rosanna, Jens (Server team). Comments by Rosanna and Nadia.</remarks>
+    /// <remarks>Authors: Duy, Nadia, Joel (Client team). Comments by Rosanna and Nadia.</remarks>
     /// <remarks>Updated by: NA</remarks>
-    class Serializer
+    public class Serializer
     {
         /// <summary>
         /// Converts Instruction to byte[].
@@ -27,7 +20,9 @@ namespace WDServer
         /// <returns>A byte array of the Instruction.</returns>
         public static byte[] Serialize(Instruction obj)
         {
-            return Encoding.Default.GetBytes(JsonConvert.SerializeObject(obj));
+            return System.Text.Encoding.Default.GetBytes(
+                Pathfinding.Serialization.JsonFx.JsonWriter.Serialize(obj)
+            );
         }
 
         /// <summary>
@@ -37,8 +32,9 @@ namespace WDServer
         /// <returns>The Instruction to be serialized.</returns>
         public static Instruction DeSerialize(byte[] arr)
         {
-            return JsonConvert.DeserializeObject<Instruction>(Encoding.Default.GetString(arr));
+            return Pathfinding.Serialization.JsonFx.JsonReader.Deserialize<Instruction>(
+                System.Text.Encoding.Default.GetString(arr)
+            );
         }
     }
 }
-
