@@ -14,18 +14,11 @@ using WindowsDefenderWebService.Models;
 
 namespace WindowsDefenderWebService.Controllers
 {
-    /*
-    The WebApiConfig class may require additional changes to add a route for this controller. Merge these statements into the Register method of the WebApiConfig class as applicable. Note that OData URLs are case sensitive.
-
-    using System.Web.Http.OData.Builder;
-    using System.Web.Http.OData.Extensions;
-    using WindowsDefenderWebService.Models;
-    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<SpecialAbility>("SpecialAbilities");
-    builder.EntitySet<Tower>("Towers"); 
-    builder.EntitySet<Virus>("Viruses"); 
-    config.Routes.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
-    */
+    /// <summary>
+    /// OData controller for the special abilities table. Provides GET methods.
+    /// 
+    /// Authors: Wilson Carpenter, Gerald Becker
+    /// </summary>
     public class SpecialAbilitiesController : ODataController
     {
         private ApplicationDbContext db = new ApplicationDbContext();

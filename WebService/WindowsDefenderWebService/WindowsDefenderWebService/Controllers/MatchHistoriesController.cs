@@ -15,6 +15,7 @@ using WindowsDefenderWebService.Authorization;
 
 namespace WindowsDefenderWebService.Controllers {
     /// <summary>
+    /// OData controller for the match histories table
     /// 
     /// Authors: Gerald Becker, Wilson Carpenter
     /// </summary>

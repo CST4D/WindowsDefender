@@ -33,6 +33,11 @@ namespace WindowsDefenderWebService
             );
         }
 
+
+        /// <summary>
+        /// Add the all of the entities to the routing list.
+        /// </summary>
+        /// <param name="config">The HttpConfig class to add the routes to.</param>
         private static void AddODataRoutes(HttpConfiguration config) {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
 

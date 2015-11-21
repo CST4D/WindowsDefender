@@ -15,8 +15,9 @@ using WindowsDefenderWebService.Authorization;
 
 namespace WindowsDefenderWebService.Controllers {
     /// <summary>
+    /// OData controller for the match history details table. Provides GET and POST methods.
     /// 
-    /// Authors
+    /// Authors: Wilson Carpenter, Gerald Becker
     /// </summary>
     public class MatchHistoryDetailsController : ODataController {
         private ApplicationDbContext db = new ApplicationDbContext();

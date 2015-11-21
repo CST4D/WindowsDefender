@@ -14,17 +14,11 @@ using WindowsDefenderWebService.Models;
 
 namespace WindowsDefenderWebService.Controllers
 {
-    /*
-    The WebApiConfig class may require additional changes to add a route for this controller. Merge these statements into the Register method of the WebApiConfig class as applicable. Note that OData URLs are case sensitive.
-
-    using System.Web.Http.OData.Builder;
-    using System.Web.Http.OData.Extensions;
-    using WindowsDefenderWebService.Models;
-    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<Virus>("Virus");
-    builder.EntitySet<SpecialAbility>("SpecialAbilities"); 
-    config.Routes.MapODataServiceRoute("odata", "odata", builder.GetEdmModel());
-    */
+    /// <summary>
+    /// OData controller for the virus table. Provides GET methods.
+    /// 
+    /// Authors: Wilson Carpenter, Gerald Becker
+    /// </summary>
     public class VirusController : ODataController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
@@ -41,27 +35,6 @@ namespace WindowsDefenderWebService.Controllers
         public SingleResult<Virus> GetVirus([FromODataUri] int key)
         {
             return SingleResult.Create(db.Viruses.Where(virus => virus.VirusId == key));
-        }
-
-        // POST: odata/MatchHistoryDetails
-        public IHttpActionResult Post(Virus virus) {
-            if (!ModelState.IsValid) {
-                return BadRequest(ModelState);
-            }
-
-            db.Viruses.Add(virus);
-
-            try {
-                db.SaveChanges();
-            } catch (DbUpdateException) {
-                if (VirusExists(virus.VirusId)) {
-                    return Conflict();
-                } else {
-                    throw;
-                }
-            }
-
-            return Created(virus);
         }
 
         // GET: odata/Virus(5)/SpecialAbility
