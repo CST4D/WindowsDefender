@@ -5,18 +5,55 @@ using System.Threading;
 using WDClient;
 using System;
 
+/// <summary>
+/// 
+/// </summary>
 public class NetworkClient : MonoBehaviour
 {
+    /// <summary>
+    /// The client thread
+    /// </summary>
     private Thread clientThread = null;
+    /// <summary>
+    /// The socket
+    /// </summary>
     private UdpClient socket = null;
+    /// <summary>
+    /// The send lock
+    /// </summary>
     private object sendLock = new object();
+    /// <summary>
+    /// The running
+    /// </summary>
     bool running = true;
+    /// <summary>
+    /// The ip
+    /// </summary>
     private string ip = "127.0.0.1";
+    /// <summary>
+    /// The serve r_ port
+    /// </summary>
     private const int SERVER_PORT = 25001;
+    /// <summary>
+    /// The username
+    /// </summary>
     string username;
+    /// <summary>
+    /// The match identifier
+    /// </summary>
     string matchID;
+    /// <summary>
+    /// The net adapter
+    /// </summary>
     MessagingNetworkAdapter netAdapter;
 
+    /// <summary>
+    /// Initializes the specified ip.
+    /// </summary>
+    /// <param name="ip">The ip.</param>
+    /// <param name="matchID">The match identifier.</param>
+    /// <param name="username">The username.</param>
+    /// <param name="netAdapter">The net adapter.</param>
     public void Initialize(string ip, string matchID, string username, MessagingNetworkAdapter netAdapter)
     {
         this.matchID = matchID;
@@ -27,11 +64,17 @@ public class NetworkClient : MonoBehaviour
         clientThread.Start();
     }
 
+    /// <summary>
+    /// Starts this instance.
+    /// </summary>
     void Start()
     {
         
     }
 
+    /// <summary>
+    /// Starts the client.
+    /// </summary>
     private void StartClient()
     {
        
@@ -72,6 +115,10 @@ public class NetworkClient : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Sends the specified MSG.
+    /// </summary>
+    /// <param name="msg">The MSG.</param>
     public void Send(string msg)
     {
         SendInstruction(Instruction.Type.CMD, msg);
@@ -80,11 +127,11 @@ public class NetworkClient : MonoBehaviour
     /// <summary>
     /// Sends an instruction to the server
     /// </summary>
-    /// <param name="command"></param>
-    /// <param name="arg1"></param>
-    /// <param name="arg2"></param>
-    /// <param name="arg3"></param>
-    /// <param name="arg4"></param>
+    /// <param name="command">The command.</param>
+    /// <param name="arg1">The arg1.</param>
+    /// <param name="arg2">The arg2.</param>
+    /// <param name="arg3">The arg3.</param>
+    /// <param name="arg4">The arg4.</param>
     public void SendInstruction(Instruction.Type command, string arg1 = "", string arg2 = "", string arg3 = "", string arg4 = "")
     {
         lock(sendLock) {
@@ -113,6 +160,7 @@ public class NetworkClient : MonoBehaviour
     /// <summary>
     /// When a command is received from the server
     /// </summary>
+    /// <param name="instruction">The instruction.</param>
     private void ReceiveInstruction(Instruction instruction)
     {
         // If user was disconnected

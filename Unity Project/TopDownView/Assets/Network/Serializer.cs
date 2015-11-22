@@ -1,11 +1,14 @@
 ﻿namespace WDClient
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Serializer
     {
         /// <summary>
         /// Converts Instruction to byte[]
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The object.</param>
         /// <returns></returns>
         public static byte[] Serialize(Instruction obj)
         {
@@ -17,7 +20,7 @@
         /// <summary>
         /// Concerts byte[] to Instruction
         /// </summary>
-        /// <param name="arr"></param>
+        /// <param name="arr">The arr.</param>
         /// <returns></returns>
         public static Instruction DeSerialize(byte[] arr)
         {

@@ -2,22 +2,56 @@
 using System.Collections;
 using System.Collections.Generic;
 
+/// <summary>
+/// 
+/// </summary>
 public class EnemyMode : MonoBehaviour {
 
+    /// <summary>
+    /// The resource text
+    /// </summary>
     public UnityEngine.UI.Text resourceText;
+    /// <summary>
+    /// The flash count
+    /// </summary>
     public int flashCount;
 
+    /// <summary>
+    /// The message adapter
+    /// </summary>
     MultiplayerMessagingAdapter messageAdapter;
+    /// <summary>
+    /// The opposing team
+    /// </summary>
     int opposingTeam;
+    /// <summary>
+    /// The team spawners
+    /// </summary>
     ArrayList[] teamSpawners;
+    /// <summary>
+    /// The enemies
+    /// </summary>
     ArrayList enemies;
+    /// <summary>
+    /// The current enemy identifier
+    /// </summary>
     int currentEnemyId;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    /// <summary>
+    /// Starts this instance.
+    /// </summary>
+    void Start () {
         currentEnemyId = new System.Random().Next() % 1000000000;
 	}
 
+    /// <summary>
+    /// Initializes the specified MSG adapter.
+    /// </summary>
+    /// <param name="msgAdapter">The MSG adapter.</param>
+    /// <param name="opposingTeam">The opposing team.</param>
+    /// <param name="teamSpawners">The team spawners.</param>
+    /// <param name="enemies">The enemies.</param>
     public void Initialize(MultiplayerMessagingAdapter msgAdapter, int opposingTeam, ArrayList[] teamSpawners, ArrayList enemies)
     {
         messageAdapter = msgAdapter;
@@ -25,12 +59,18 @@ public class EnemyMode : MonoBehaviour {
         this.teamSpawners = teamSpawners;
         this.enemies = enemies;
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    /// <summary>
+    /// Updates this instance.
+    /// </summary>
+    void Update () {
         
 	}
 
+    /// <summary>
+    /// Flashes this instance.
+    /// </summary>
     public void flash()
     {
         flashCount--;
@@ -48,7 +88,7 @@ public class EnemyMode : MonoBehaviour {
     /// <summary>
     /// Build Tower Function which allows the player to build the specified tower
     /// </summary>
-    /// <param name="tower"></param>
+    /// <param name="enemy">The enemy.</param>
     public void SendEnemy(EnemyAI enemy)
     {
         int money = int.Parse(resourceText.text);
