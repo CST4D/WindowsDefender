@@ -40,7 +40,7 @@ public class EnemyAI : MonoBehaviour
 	private AudioSource aSource;
 	private SpriteRenderer renderer;
     private bool arrived = false;
-    public bool Arrived { get { return arrived; } }
+	public bool Arrived { get { return arrived; } }
 
     public EnemyAI()
     {
@@ -60,16 +60,16 @@ public class EnemyAI : MonoBehaviour
 
         numDuplicates = 0;
         duplicates = false;
-        hasDuplicated = false;
+		hasDuplicated = false;
 
     }
 
     // Use this for initialization
 	void Start () {
-		renderer = this.GetComponent<SpriteRenderer>();
 		revealingTower = null;
 		revealDist = 0;
-        aSource = GetComponent<AudioSource>();
+		aSource = GetComponent<AudioSource>();
+		renderer = this.GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -112,9 +112,9 @@ public class EnemyAI : MonoBehaviour
         checkIfRevealed();
 
         if (!isVisible)
-            GetComponent<SpriteRenderer>().enabled = false;
+			renderer.enabled = false;
         else
-            GetComponent<SpriteRenderer>().enabled = true;
+			renderer.enabled = true;
     }
 
     /// <summary>

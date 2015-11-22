@@ -47,7 +47,7 @@ public class TowerAI : Building {
     }
 
     void Update () {
-        ExecuteTowerAI();
+		ExecuteTowerAI();
     }
 
     /// <summary>
@@ -69,10 +69,26 @@ public class TowerAI : Building {
                 target = detectEnemies();
 
                 if (target != null)
-                    shootTarget(target.gameObject);
+				{
+					shootTarget(target.gameObject);
+					Transform trans = target.gameObject.transform;//target.gameObject.GetComponent<Transform>();
+					rotateTurrent(trans.position);
+				}
             }
         }
     }
+					       
+	protected void rotateTurrent(Vector3 lookAtPos)
+	{
+		GameObject turret = this.gameObject.transform.GetChild (0).gameObject;
+
+		Vector3 diff = this.gameObject.transform.position - lookAtPos ;
+		diff.Normalize ();
+
+		float zRotation = Mathf.Atan2 (diff.y, diff.x) * Mathf.Rad2Deg;
+		turret.transform.rotation = 
+			Quaternion.Euler(0f, 0f, zRotation - 90);
+	}
 
     /// <summary>
     /// Creates a projectile object that will fly towards the target
