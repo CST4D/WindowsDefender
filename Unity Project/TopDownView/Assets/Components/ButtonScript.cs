@@ -53,8 +53,10 @@ public class ButtonScript : MonoBehaviour {
     /// </summary>
     public void OnMouseEnter()
     {
-        if(SourceObject.GetComponent<TowerAI>())
-            toolTipText = SourceObject.GetComponent<TowerAI>().toolTip();
+        if (SourceObject.GetComponent<TowerAI>())
+            toolTipText = SourceObject.GetComponent<TowerAI>().ToolTip();
+        else if (SourceObject.GetComponent<EnemyAI>())
+            toolTipText = SourceObject.GetComponent<EnemyAI>().ToolTip();
     }
 
     /// <summary>
