@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="10">
+ <properties>
+  <property name="TeamReflectMode" value="horizontal"/>
+  <property name="background" value="map1"/>
+  <property name="wallsVisible" value="true"/>
+ </properties>
+ <tileset firstgid="1" name="tilesheet" tilewidth="32" tileheight="32" tilecount="2">
+  <image source="tilesheet.png" width="64" height="32"/>
+ </tileset>
+ <layer name="Walls" width="20" height="20">
+  <data encoding="csv">
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,
+2,0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,0,0,0,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,0,0,0,0,0,0,2,
+2,0,0,2,0,0,2,0,0,2,0,0,2,2,2,2,2,0,0,2,
+2,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,2,
+2,0,0,2,0,0,0,0,0,2,0,0,0,0,0,0,0,0,0,2,
+2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2
+</data>
+ </layer>
+ <objectgroup name="Entities">
+  <object id="7" name="Spawner" x="64" y="576">
+  </object>
+  <object id="8" name="Waypoint" x="448" y="64">
+  </object>
+ </objectgroup>
+</map>
