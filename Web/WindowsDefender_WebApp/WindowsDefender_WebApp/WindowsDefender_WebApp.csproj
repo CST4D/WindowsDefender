@@ -337,7 +337,7 @@
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
     <Content Include="Views\Home\Download.cshtml" />
-    <Content Include="Views\Home\Media.cshtml" />
+    <Content Include="Views\Home\Guide.cshtml" />
     <Content Include="Views\Matchmaking\Lobby.cshtml" />
     <Content Include="Views\Matchmaking\Index.cshtml" />
     <Content Include="Scripts\material.min.js.map" />

@@ -93,6 +93,10 @@
             </div>
             <div class="panel-body">
 
+                 @if ( ((List<WindowsDefender_WebApp.Models.MatchHistoryDetail>)Model).Count == 0 )
+                 {
+                     <text>No matches yet.</text>
+                 }
                  @foreach (var match in Model)
                  {
                     <div class="row">
