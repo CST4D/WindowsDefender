@@ -167,4 +167,9 @@ public class TowerAI : Building {
         }
         return toolTipContents;
     }
+
+    public void OnMouseDown()
+    {
+        Debug.Log("Tower was clicked!");
+    }
 }
