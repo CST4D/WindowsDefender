@@ -51,7 +51,8 @@ public class GUI_PanelInterface : MonoBehaviour {
             buttonStatus = status;
 
             // Hard-coded value
-            int offsetX = 80;
+            int offsetX = 270;
+            int offsetY = 0;
 
             // Get the Panel's Position
             Vector3 panelPosition = panel.transform.position;
@@ -78,6 +79,7 @@ public class GUI_PanelInterface : MonoBehaviour {
                 // We set the x position of the new button
                 newPosition.x += offsetX + buttonRect.width * i;
                 spawnPosition.x += offsetX + buttonRect.width * 0;
+                newPosition.y -= offsetY;
 
                 // Create the new button
                 ButtonScript newButton = (ButtonScript)Instantiate(buttonTemplate, spawnPosition, transform.rotation);
