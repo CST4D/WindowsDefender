@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -12,25 +13,62 @@ using WindowsDefender_WebApp;
 
 namespace WDServer
 {
-    class Server
-    { 
-        // Set this to false for Release builds so we aren't wasting cycles by printing to the console
+    /// <summary>
+    /// This class contains the component that is responsible for sending and receiving messages on the Server side.
+    /// Functionality: Initializes a server, then another thread is checking for timeouts among clients.
+    /// On the main thread, it runs in loop listening for any instructions from clients.  
+    /// </summary>
+    /// <remarks>Authors: Jeff, Rosanna, Jens. Comments added by Rosanna and Nadia.</remarks>
+    /// <remarks>Update by: NA</remarks>
+    public class Server
+    {
+        /// <summary>
+        /// Set this to false for Release builds so we aren't wasting cycles by printing to the console.
+        /// </summary>
         public static bool DEBUG = true;
-
-        private int _port = 25001;
+        
+        /// <summary>
+        /// The Port that the server's computer is running on, that is open for communication.
+        /// </summary>
+        private static int PORT = 25001;
+        
+        /// <summary>
+        /// The amount of seconds that the server waits before kicking the client out.
+        /// </summary>
         public static int CLIENT_TIMEOUT = 15; // Seconds
-
-        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, 25001);
+       
+        /// <summary>
+        /// An instance of the endpoint that listens for any IP address at Port 25001.
+        /// </summary>
+        IPEndPoint ipep = new IPEndPoint(IPAddress.Any, PORT);
+        
+        /// <summary>
+        /// UDP socket.
+        /// </summary>
         UdpClient newsock;
 
-        private ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>(); // Keys are IP address' of users
-        private ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
+        /// <summary>
+        /// If this is set to false, the server will stop listening and exit.
+        /// </summary>
+        public static bool RUNNING = true;
 
-        // Keeps track of user timeouts (heartbeats)
+        /// <summary>
+        /// A list of the users that are currently connected to the server with IP addresses of the users being the key.
+        /// </summary>
+        public ConcurrentDictionary<string, User> _users = new ConcurrentDictionary<string, User>();
+        /// <summary>
+        /// A list of the matches that are currently in session.
+        /// </summary>
+        public ConcurrentDictionary<string, Match> _matches = new ConcurrentDictionary<string, Match>();
+
+        /// <summary>
+        /// Keeps track of user timeouts (heartbeats)
+        /// </summary>
         private Thread _checkForTimeouts;
 
         /// <summary>
-        /// Entry point.
+        /// Entry point. It creates a new thread that will be checking for timeouts.
+        /// Listens on the main thread, for any instructions from the client.
         /// </summary>
         public Server()
         {
@@ -59,7 +97,7 @@ namespace WDServer
 
                 newsock = new UdpClient(ipep);
               
-                Console.WriteLine("\n Server started using port " + _port + "\n\n");
+                Console.WriteLine("\n Server started using port " + PORT + "\n\n");
             }
             catch (SocketException se)
             {
@@ -76,21 +114,17 @@ namespace WDServer
         /// </summary>
         private void Listen()
         {
-            while (true)
+            while (RUNNING)
             {
                 try
                 {
                     IPEndPoint sender = new IPEndPoint(IPAddress.Any, 0);
-
+                    
                     // Block and wait for incoming data
                     byte[] received = new byte[512];
                     received = newsock.Receive(ref sender);
 
-                    if (DEBUG)
-                        Console.WriteLine("Data recieved");
-
                     // Data received, remove trailing nulls
-
                     int i = received.Length - 1;
                     while (received[i] == 0)
                         --i;
@@ -99,19 +133,6 @@ namespace WDServer
 
                     // Get ip address of sender
                     string ipAddress = sender.Address.ToString();
-
-                    // Send back test data
-                    if (DEBUG)
-                    {
-                        Instruction echo = new Instruction()
-                        {
-                            Command = Instruction.Type.CMD,
-                            Arg1 = "DEBUG: SIR, I HAVE I RECEIVED YOUR DATA. - Server",
-                            Arg2 = "TEST"
-                        };
-                        byte[] echobytes = Serializer.Serialize(echo);
-                        newsock.Send(echobytes, echobytes.Length, sender);
-                    }
 
                     // Deserialize received instruction
                     Instruction instruction = Serializer.DeSerialize(data);
@@ -148,7 +169,7 @@ namespace WDServer
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.StackTrace);
+                    Console.WriteLine("EXCEPTION: " + ex.Message);
                 }
             }
         }
@@ -156,10 +177,10 @@ namespace WDServer
         /// <summary>
         /// When the JOIN command is received by a user.
         /// </summary>
-        /// <param name="remoteEndPoint"></param>
-        /// <param name="ipAddress"></param>
-        /// <param name="instruction"></param>
-        private void OnJoin(IPEndPoint remoteEndPoint, string ipAddress, Instruction instruction)
+        /// <param name="remoteEndPoint">The information such as IP, port and etc. of the client that just sent the 'Join' Instruction.</param>
+        /// <param name="ipAddress">The ip address of the client that requested to join.</param>
+        /// <param name="instruction">The Instruction that the client sent.</param>
+        public void OnJoin(IPEndPoint remoteEndPoint, string ipAddress, Instruction instruction)
         {
             User user = new User()
             {
@@ -177,7 +198,8 @@ namespace WDServer
 
             // Find the user's match and add him/her to it
             AddToMatch(user);
-
+            
+            // Send JOINED command to client as connection confirmation
             Instruction i = new Instruction() { Command = Instruction.Type.JOINED };
             byte[] data = Serializer.Serialize(i);
             newsock.Send(data, data.Length, user.EndPoint);
@@ -187,8 +209,8 @@ namespace WDServer
         /// When a command instruction is received it is simply
         /// echoed to everyone in the same match as the user.
         /// </summary>
-        /// <param name="ipAddress"></param>
-        /// <param name="instruction"></param>
+        /// <param name="ipAddress">The IP address of the client that just sent the Instruction.</param>
+        /// <param name="instruction">The Instruction sent by the client.</param>
         private void OnCommand(string ipAddress, Instruction instruction, byte[] data)
         {
             User user;
@@ -205,16 +227,19 @@ namespace WDServer
         /// Adds a user to his/her Match.
         /// If it doesn't exist yet then it will be created.
         /// </summary>
-        /// <param name="user"></param>
+        /// <param name="user">The user (that was just created), to be added to the match.</param>
         private void AddToMatch(User user)
         {
             Match match;
+
+            // Try and find match
             if (_matches.TryGetValue(user.MatchId, out match))
             {
                 match.AddUser(user);
                 if (DEBUG)
                     Console.WriteLine("DEBUG: Added " + user.Username + " to match");
             }
+            // Match not found, create it
             else
             {
                 match = new Match()
@@ -229,10 +254,11 @@ namespace WDServer
         }
 
         /// <summary>
-        /// Sends to all users in a match.
+        /// Sends data to all users in a match. The data is from one client and it needs
+        /// to find the match that that one client belongs to, but will broadcast to all client in the match. 
         /// </summary>
-        /// <param name="user"></param>
-        /// <param name="instruction"></param>
+        /// <param name="user">The user that sent the data.</param>
+        /// <param name="instruction">The data that is sent from one client.</param>
         private void SendToMatch(User user, byte[] data)
         {
             // Find match
@@ -245,17 +271,6 @@ namespace WDServer
                 newsock.Send(data, data.Length, u.EndPoint);
         }
 
-        /// <summary>
-        /// Sends to all users in a match except the current user.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <param name="instruction"></param>
-        private void SendToMatchExcept(User user, byte[] data)
-        {
-            // TODO
-            // Find match
-            // Send instruction to everyone in match except current user
-        }
 
         /// <summary>
         /// If we haven't received messages from users for awhile,
@@ -264,7 +279,7 @@ namespace WDServer
         /// </summary>
         private void TimeoutCheckerThread()
         {
-            while (true)
+            while (RUNNING)
             {
                 foreach (KeyValuePair<string, User> user in _users)
                 {
@@ -282,7 +297,7 @@ namespace WDServer
         /// <summary>
         /// Resets a user's timeout (heartbeat counter).
         /// </summary>
-        /// <param name="ipAddress"></param>
+        /// <param name="ipAddress">The user's IP Address.</param>
         private void ResetUserTimeout(string ipAddress)
         {
             User user;
@@ -291,9 +306,9 @@ namespace WDServer
         }
 
         /// <summary>
-        /// Disconnects a user based on their ip address.
+        /// Disconnects a user based on their IP address.
         /// </summary>
-        /// <param name="ipaddress"></param>
+        /// <param name="ipaddress">The IP address of the client that is disconnecting.</param>
         private void OnDisconnect(string ipAddress)
         {
             // Get user
