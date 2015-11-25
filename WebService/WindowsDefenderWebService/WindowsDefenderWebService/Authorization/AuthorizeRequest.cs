@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Web;
 using System.Web.Http;
@@ -14,7 +16,7 @@ namespace WindowsDefenderWebService.Authorization {
     /// </summary>
     public class AuthorizeRequest : AuthorizeAttribute {
         private const string USERNAME = "compcst";
-        private const string PASSWORD = "Magicismagenta99";
+        private const string PASSWORD = "Magenta99";
 
         /// <summary>
         /// The access level required for the operation.
@@ -37,7 +39,7 @@ namespace WindowsDefenderWebService.Authorization {
             if (login[0] == USERNAME && login[1] == PASSWORD) {
                 return true;
             }
-
+            
             return false;
         }
 

@@ -18,7 +18,7 @@ namespace WindowsDefenderWebService.Models
         /// Primary Key.
         /// </summary>
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.None)]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int HistoryId { get; set; }
 
         /// <summary>
