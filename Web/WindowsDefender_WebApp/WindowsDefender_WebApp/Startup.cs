@@ -9,6 +9,7 @@ namespace WindowsDefender_WebApp
         public void Configuration(IAppBuilder app)
         {
             ConfigureAuth(app);
+            app.MapSignalR();
         }
     }
 }

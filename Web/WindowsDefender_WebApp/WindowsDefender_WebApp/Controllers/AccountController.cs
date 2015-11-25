@@ -58,7 +58,8 @@ namespace WindowsDefender_WebApp.Controllers
         public ActionResult Login(string returnUrl)
         {
             ViewBag.ReturnUrl = returnUrl;
-            return View();
+            return RedirectToAction("index", "home");
+            //return View();
         }
 
         //
@@ -70,7 +71,8 @@ namespace WindowsDefender_WebApp.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return RedirectToAction("index", "home", model);
             }
 
             // This doesn't count login failures towards account lockout
@@ -87,7 +89,7 @@ namespace WindowsDefender_WebApp.Controllers
                 case SignInStatus.Failure:
                 default:
                     ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                    return RedirectToAction("index", "home", model);
             }
         }
 
@@ -151,7 +153,7 @@ namespace WindowsDefender_WebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+                var user = new ApplicationUser { UserName = model.Username, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

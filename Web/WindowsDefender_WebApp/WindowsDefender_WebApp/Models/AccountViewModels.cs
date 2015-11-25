@@ -49,8 +49,7 @@ namespace WindowsDefender_WebApp.Models
     public class LoginViewModel
     {
         [Required]
-        [Display(Name = "Email")]
-        [EmailAddress]
+        [Display(Name = "Username")]
         public string Email { get; set; }
 
         [Required]
@@ -64,6 +63,11 @@ namespace WindowsDefender_WebApp.Models
 
     public class RegisterViewModel
     {
+        [Required]
+        [StringLength(20, ErrorMessage = "Username must be between 6-20 characters long.", MinimumLength = 6)]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
+
         [Required]
         [EmailAddress]
         [Display(Name = "Email")]
