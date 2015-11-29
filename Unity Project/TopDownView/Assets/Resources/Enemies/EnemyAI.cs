@@ -97,14 +97,17 @@ public class EnemyAI : MonoBehaviour
 
 				diff = new Vector2(first.x - transform.position.x, first.y - transform.position.y);
 
-				if(diff.y < 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
-					animator.Play("down");//animator.SetInteger("dir", 0);	// DOWN
-				else if(diff.x > 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
-					animator.Play("right");//animator.SetInteger("dir", 1);	// RIGHT
-				else if(diff.y > 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
-					animator.Play("up");//animator.SetInteger("dir", 2);	// UP
-				else if(diff.x < 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
-					animator.Play("left");//animator.SetInteger("dir", 3);	// LEFT	
+				if(animator == null)
+					animator = this.GetComponent<Animator> ();
+				else
+					if(diff.y < 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
+						animator.Play("down");//animator.SetInteger("dir", 0);	// DOWN
+					else if(diff.x > 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
+						animator.Play("right");//animator.SetInteger("dir", 1);	// RIGHT
+					else if(diff.y > 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
+						animator.Play("up");//animator.SetInteger("dir", 2);	// UP
+					else if(diff.x < 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
+						animator.Play("left");//animator.SetInteger("dir", 3);	// LEFT	
 
                 float dist = Vector2.Distance(transform.position, first);
 
@@ -125,6 +128,8 @@ public class EnemyAI : MonoBehaviour
 
         checkIfRevealed();
 
+		if(renderer == null)
+			renderer = this.GetComponent<SpriteRenderer>();
         if (!isVisible)
 			renderer.enabled = false;
         else
