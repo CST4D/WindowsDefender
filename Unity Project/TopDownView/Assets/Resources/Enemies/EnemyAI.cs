@@ -20,6 +20,7 @@ public class EnemyAI : MonoBehaviour
     public float movementSpeed;
     public double resistance;
     public Waypoint targetWaypoint;
+	public Vector2 diff;
 
     public int drainDamage;
     public float drainSpd;
@@ -41,6 +42,7 @@ public class EnemyAI : MonoBehaviour
 	private SpriteRenderer renderer;
     private bool arrived = false;
 	public bool Arrived { get { return arrived; } }
+	private Animator animator;
 
     public EnemyAI()
     {
@@ -70,6 +72,7 @@ public class EnemyAI : MonoBehaviour
 		revealDist = 0;
 		aSource = GetComponent<AudioSource>();
 		renderer = this.GetComponent<SpriteRenderer>();
+		animator = this.GetComponent<Animator> ();
     }
 
     // Update is called once per frame
@@ -92,6 +95,20 @@ public class EnemyAI : MonoBehaviour
             {
                 Vector2 first = movementPoints.First.Value;
 
+				diff = new Vector2(first.x - transform.position.x, first.y - transform.position.y);
+
+				if(animator == null)
+					animator = this.GetComponent<Animator> ();
+				else
+					if(diff.y < 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
+						animator.Play("down");//animator.SetInteger("dir", 0);	// DOWN
+					else if(diff.x > 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
+						animator.Play("right");//animator.SetInteger("dir", 1);	// RIGHT
+					else if(diff.y > 0 && Mathf.Abs (diff.y) > Mathf.Abs(diff.x))
+						animator.Play("up");//animator.SetInteger("dir", 2);	// UP
+					else if(diff.x < 0 && Mathf.Abs (diff.y) < Mathf.Abs(diff.x))
+						animator.Play("left");//animator.SetInteger("dir", 3);	// LEFT	
+
                 float dist = Vector2.Distance(transform.position, first);
 
                 if (dist <= 0.1)
@@ -111,6 +128,8 @@ public class EnemyAI : MonoBehaviour
 
         checkIfRevealed();
 
+		if(renderer == null)
+			renderer = this.GetComponent<SpriteRenderer>();
         if (!isVisible)
 			renderer.enabled = false;
         else

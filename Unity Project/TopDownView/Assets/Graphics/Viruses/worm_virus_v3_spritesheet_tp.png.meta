@@ -1,33 +1,33 @@
 fileFormatVersion: 2
-guid: 57fe5da233b590b46bbad3b9f82e32c5
-timeCreated: 1448756570
+guid: d0b898663728a7a42b674ba134c74904
+timeCreated: 1448756610
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
-    21300000: email_virus_spritesheet_tp_0
-    21300002: email_virus_spritesheet_tp_1
-    21300004: email_virus_spritesheet_tp_2
-    21300006: email_virus_spritesheet_tp_3
-    21300008: email_virus_spritesheet_tp_4
-    21300010: email_virus_spritesheet_tp_5
-    21300012: email_virus_spritesheet_tp_6
-    21300014: email_virus_spritesheet_tp_7
-    21300016: email_virus_spritesheet_tp_8
-    21300018: email_virus_spritesheet_tp_9
-    21300020: email_virus_spritesheet_tp_10
-    21300022: email_virus_spritesheet_tp_11
-    21300024: email_virus_spritesheet_tp_12
-    21300026: email_virus_spritesheet_tp_13
-    21300028: email_virus_spritesheet_tp_14
-    21300030: email_virus_spritesheet_tp_15
-    21300032: email_virus_spritesheet_tp_16
-    21300034: email_virus_spritesheet_tp_17
-    21300036: email_virus_spritesheet_tp_18
-    21300038: email_virus_spritesheet_tp_19
-    21300040: email_virus_spritesheet_tp_20
-    21300042: email_virus_spritesheet_tp_21
-    21300044: email_virus_spritesheet_tp_22
-    21300046: email_virus_spritesheet_tp_23
+    21300000: worm_virus_v3_spritesheet_tp_0
+    21300002: worm_virus_v3_spritesheet_tp_1
+    21300004: worm_virus_v3_spritesheet_tp_2
+    21300006: worm_virus_v3_spritesheet_tp_3
+    21300008: worm_virus_v3_spritesheet_tp_4
+    21300010: worm_virus_v3_spritesheet_tp_5
+    21300012: worm_virus_v3_spritesheet_tp_6
+    21300014: worm_virus_v3_spritesheet_tp_7
+    21300016: worm_virus_v3_spritesheet_tp_8
+    21300018: worm_virus_v3_spritesheet_tp_9
+    21300020: worm_virus_v3_spritesheet_tp_10
+    21300022: worm_virus_v3_spritesheet_tp_11
+    21300024: worm_virus_v3_spritesheet_tp_12
+    21300026: worm_virus_v3_spritesheet_tp_13
+    21300028: worm_virus_v3_spritesheet_tp_14
+    21300030: worm_virus_v3_spritesheet_tp_15
+    21300032: worm_virus_v3_spritesheet_tp_16
+    21300034: worm_virus_v3_spritesheet_tp_17
+    21300036: worm_virus_v3_spritesheet_tp_18
+    21300038: worm_virus_v3_spritesheet_tp_19
+    21300040: worm_virus_v3_spritesheet_tp_20
+    21300042: worm_virus_v3_spritesheet_tp_21
+    21300044: worm_virus_v3_spritesheet_tp_22
+    21300046: worm_virus_v3_spritesheet_tp_23
   serializedVersion: 2
   mipmaps:
     mipMapMode: 0
@@ -74,7 +74,7 @@ TextureImporter:
   buildTargetSettings: []
   spriteSheet:
     sprites:
-    - name: email_virus_spritesheet_tp_0
+    - name: worm_virus_v3_spritesheet_tp_0
       rect:
         serializedVersion: 2
         x: 0
@@ -84,7 +84,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_1
+    - name: worm_virus_v3_spritesheet_tp_1
       rect:
         serializedVersion: 2
         x: 32
@@ -94,7 +94,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_2
+    - name: worm_virus_v3_spritesheet_tp_2
       rect:
         serializedVersion: 2
         x: 64
@@ -104,7 +104,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_3
+    - name: worm_virus_v3_spritesheet_tp_3
       rect:
         serializedVersion: 2
         x: 96
@@ -114,7 +114,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_4
+    - name: worm_virus_v3_spritesheet_tp_4
       rect:
         serializedVersion: 2
         x: 128
@@ -124,7 +124,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_5
+    - name: worm_virus_v3_spritesheet_tp_5
       rect:
         serializedVersion: 2
         x: 160
@@ -134,7 +134,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_6
+    - name: worm_virus_v3_spritesheet_tp_6
       rect:
         serializedVersion: 2
         x: 0
@@ -144,7 +144,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_7
+    - name: worm_virus_v3_spritesheet_tp_7
       rect:
         serializedVersion: 2
         x: 32
@@ -154,7 +154,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_8
+    - name: worm_virus_v3_spritesheet_tp_8
       rect:
         serializedVersion: 2
         x: 64
@@ -164,7 +164,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_9
+    - name: worm_virus_v3_spritesheet_tp_9
       rect:
         serializedVersion: 2
         x: 96
@@ -174,7 +174,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_10
+    - name: worm_virus_v3_spritesheet_tp_10
       rect:
         serializedVersion: 2
         x: 128
@@ -184,7 +184,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_11
+    - name: worm_virus_v3_spritesheet_tp_11
       rect:
         serializedVersion: 2
         x: 160
@@ -194,7 +194,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_12
+    - name: worm_virus_v3_spritesheet_tp_12
       rect:
         serializedVersion: 2
         x: 0
@@ -204,7 +204,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_13
+    - name: worm_virus_v3_spritesheet_tp_13
       rect:
         serializedVersion: 2
         x: 32
@@ -214,7 +214,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_14
+    - name: worm_virus_v3_spritesheet_tp_14
       rect:
         serializedVersion: 2
         x: 64
@@ -224,7 +224,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_15
+    - name: worm_virus_v3_spritesheet_tp_15
       rect:
         serializedVersion: 2
         x: 96
@@ -234,7 +234,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_16
+    - name: worm_virus_v3_spritesheet_tp_16
       rect:
         serializedVersion: 2
         x: 128
@@ -244,7 +244,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_17
+    - name: worm_virus_v3_spritesheet_tp_17
       rect:
         serializedVersion: 2
         x: 160
@@ -254,7 +254,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_18
+    - name: worm_virus_v3_spritesheet_tp_18
       rect:
         serializedVersion: 2
         x: 0
@@ -264,7 +264,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_19
+    - name: worm_virus_v3_spritesheet_tp_19
       rect:
         serializedVersion: 2
         x: 32
@@ -274,7 +274,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_20
+    - name: worm_virus_v3_spritesheet_tp_20
       rect:
         serializedVersion: 2
         x: 64
@@ -284,7 +284,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_21
+    - name: worm_virus_v3_spritesheet_tp_21
       rect:
         serializedVersion: 2
         x: 96
@@ -294,7 +294,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_22
+    - name: worm_virus_v3_spritesheet_tp_22
       rect:
         serializedVersion: 2
         x: 128
@@ -304,7 +304,7 @@ TextureImporter:
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
-    - name: email_virus_spritesheet_tp_23
+    - name: worm_virus_v3_spritesheet_tp_23
       rect:
         serializedVersion: 2
         x: 160
