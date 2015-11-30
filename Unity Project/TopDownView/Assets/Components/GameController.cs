@@ -41,6 +41,10 @@ public class GameController : MonoBehaviour
     /// </summary>
     public UnityEngine.UI.Text resourceText;
     /// <summary>
+    /// The state text
+    /// </summary>
+    public UnityEngine.UI.Text stateText;
+    /// <summary>
     /// The health text
     /// </summary>
     public UnityEngine.UI.Text healthText;
@@ -182,6 +186,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         Application.runInBackground = true;
+        Time.timeScale = 1;
 
         GetGameInitInfo();
         enemies = new ArrayList();
@@ -195,9 +200,10 @@ public class GameController : MonoBehaviour
         rounds.notParsed = true;
         resourceText.text = money.ToString();
         healthText.text = health.ToString();
+        stateText.text = "";
         opponentHealth = health;
         opponentHealthText.text = opponentHealth.ToString();
-
+        
 
         TMXLoader tmxl = new TMXLoader(Resources.Load<TextAsset>("map2"), this, teamId);
         tmxl.loadMeta();
@@ -244,10 +250,13 @@ public class GameController : MonoBehaviour
                 gameStateText.text = "Peer left game, game over.";
                 break;
             case MultiplayerMessagingAdapter.GameState.TeamLoss:
-                gameStateText.text = "Game Loss";
+                //gameStateText.text = "Game Loss";
+                stateText.text = "You Lose!";
+                Time.timeScale = 0;
                 break;
             case MultiplayerMessagingAdapter.GameState.TeamWin:
-                gameStateText.text = "Game Win";
+                stateText.text = "You Win!";
+                Time.timeScale = 0;
                 break;
             default:
                 break;
@@ -333,13 +342,32 @@ public class GameController : MonoBehaviour
             {
                 if (temp.targetWaypoint == _point)
                 {
-                    health -= healthDamageAmount;
-                    healthText.text = health.ToString();
-                    multiMessageAdapter.SendHealthUpdate(health);
+                    if (health - healthDamageAmount <= 0)
+                    {
+                        health = 0;
+                        healthText.text = health.ToString();
+                        multiMessageAdapter.SendHealthUpdate(health);
+                    }
+                    else
+                    {
+                        health -= healthDamageAmount;
+                        healthText.text = health.ToString();
+                        multiMessageAdapter.SendHealthUpdate(health);
+                    }
+                    
                 } else
                 {
-                    opponentHealth -= healthDamageAmount;
-                    opponentHealthText.text = opponentHealth.ToString();
+                    if (opponentHealth - healthDamageAmount <= 0)
+                    {
+                        opponentHealth = 0;
+                        opponentHealthText.text = opponentHealth.ToString();
+                    }
+                    else
+                    {
+                        opponentHealth -= healthDamageAmount;
+                        opponentHealthText.text = opponentHealth.ToString();
+                    }
+                    
                 }
                 GameObject.Destroy(temp.gameObject);
                 enemies.Remove(temp);
