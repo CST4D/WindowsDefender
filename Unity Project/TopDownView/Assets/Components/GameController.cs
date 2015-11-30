@@ -128,7 +128,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// The ip
     /// </summary>
-    private string ip = "127.0.0.1";
+    private string ip = "compcst.cloudapp.net";
     /// <summary>
     /// The match identifier
     /// </summary>
@@ -238,6 +238,8 @@ public class GameController : MonoBehaviour
                 gameStateText.text = "Waiting For Players...";
                 break;
             case MultiplayerMessagingAdapter.GameState.GameInProgress:
+                buildMode.ReadyToBuild = true;
+                enemyMode.ReadyToSend = true;
                 gameStateText.text = "Game In Progress!";
                 break;
             case MultiplayerMessagingAdapter.GameState.PlayerDisconnect:
