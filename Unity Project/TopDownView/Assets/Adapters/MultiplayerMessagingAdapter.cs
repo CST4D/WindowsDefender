@@ -274,6 +274,7 @@ public class MultiplayerMessagingAdapter {
         if (username == this.username)
             return;
         peers[username] = new Peer(teamId, username);
+        ReceiveChatMessage(username, " has joined on team " + teamId, teamId);
         if (peers.Count == 3)
         {
             currGameState = GameState.GameInProgress;
@@ -502,7 +503,8 @@ public class MultiplayerMessagingAdapter {
         if (peers.ContainsKey(username))
             return;
         peers[username] = new Peer(teamId, username);
-        if (peers.Count == 1)
+        ReceiveChatMessage(username, " is playing on team " + teamId, teamId);
+        if (peers.Count == 3)
         {
             currGameState = GameState.GameInProgress;
         }
