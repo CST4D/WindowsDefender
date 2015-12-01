@@ -6,7 +6,8 @@ using System.Collections.Generic;
 /// 
 /// </summary>
 public class EnemyMode : MonoBehaviour {
-
+    
+    public bool ReadyToSend { get; set; }
     /// <summary>
     /// The resource text
     /// </summary>
@@ -42,6 +43,7 @@ public class EnemyMode : MonoBehaviour {
     /// Starts this instance.
     /// </summary>
     void Start () {
+        ReadyToSend = false;
         currentEnemyId = new System.Random().Next() % 1000000000;
 	}
 
@@ -91,6 +93,8 @@ public class EnemyMode : MonoBehaviour {
     /// <param name="enemy">The enemy.</param>
     public void SendEnemy(EnemyAI enemy)
     {
+        if (!ReadyToSend)
+            return;
         int money = int.Parse(resourceText.text);
         if (!((money - enemy.cost) >= 0))
         {

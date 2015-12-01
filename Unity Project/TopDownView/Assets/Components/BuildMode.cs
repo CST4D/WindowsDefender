@@ -6,6 +6,7 @@ using System.Collections;
 /// </summary>
 public class BuildMode : MonoBehaviour {
 
+    public bool ReadyToBuild { get; set; }
     /// <summary>
     /// The build mode
     /// </summary>
@@ -39,6 +40,7 @@ public class BuildMode : MonoBehaviour {
     /// Starts this instance.
     /// </summary>
     void Start () {
+        ReadyToBuild = false;
         buildMode = false;
 	}
 
@@ -56,6 +58,7 @@ public class BuildMode : MonoBehaviour {
     /// Updates this instance.
     /// </summary>
     void Update () {
+        
         if (Input.GetKey(KeyCode.Escape))
         {
             buildMode = false;
@@ -148,6 +151,8 @@ public class BuildMode : MonoBehaviour {
     /// <param name="tower">The tower.</param>
     public void BuildTower(Building tower)
     {
+        if (!ReadyToBuild)
+            return;
         preBuilding = tower;
         if (!buildMode)
         {

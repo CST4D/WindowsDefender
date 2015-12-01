@@ -154,6 +154,7 @@ public class TMXLoader {
                 tiles[i, j].transform.parent = context.transform.Find("Tilemap").transform;
             }
         }
+        transformVector = new Vector3(realMapWidth / 2 * 0.32f, realMapHeight / 2 * 0.32f, -1.0f);
     }
     /// <summary>
     /// Loads this instance.
@@ -311,7 +312,7 @@ public class TMXLoader {
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
-        transformVector = new Vector3(((teamId == 2 ? realMapWidth : 0) * 0.32f), realMapHeight / 2 * 0.32f, 0);
+        
         if (background != null)
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f + ((background.rect.width / 32) * 0.32f), (background.rect.height / 32) * 0.32f / 2 - 0.16f);
@@ -349,7 +350,6 @@ public class TMXLoader {
             enemySpawner.transform.parent = context.transform.Find("Spawners").transform;
             context.addSpawnerToSpawnerList(enemySpawner, 2);
         }
-        transformVector = new Vector3(realMapWidth / 2 * 0.32f, ((teamId == 2 ? realMapHeight : 0) * 0.32f), 0);
         if (background != null)
         {
             context.transform.Find("Tilemap").Find("BackgroundReflect").transform.position = new Vector2((background.rect.width / 32) * 0.32f / 2 - 0.16f, (background.rect.height / 32) * 0.32f / 2 - 0.16f + ((background.rect.height / 32) * 0.32f));
