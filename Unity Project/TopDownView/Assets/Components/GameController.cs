@@ -123,7 +123,7 @@ public class GameController : MonoBehaviour
     /// The _map width
     /// </summary>
     private int _mapWidth, _mapHeight;
-
+    private float gameEndTime = 0;
 
     /// <summary>
     /// The username
@@ -132,7 +132,7 @@ public class GameController : MonoBehaviour
     /// <summary>
     /// The ip
     /// </summary>
-    private string ip = "compcst.cloudapp.net";
+    private string ip = "127.0.0.1";
     /// <summary>
     /// The match identifier
     /// </summary>
@@ -252,13 +252,20 @@ public class GameController : MonoBehaviour
                 gameStateText.text = "Peer left game, game over.";
                 break;
             case MultiplayerMessagingAdapter.GameState.TeamLoss:
-                //gameStateText.text = "Game Loss";
+                gameStateText.text = "";
                 stateText.text = "You Lose!";
-                Time.timeScale = 0;
+                if (gameEndTime == 0)
+                    gameEndTime = Time.time;
+                buildMode.ReadyToBuild = false;
+                enemyMode.ReadyToSend = false;
                 break;
             case MultiplayerMessagingAdapter.GameState.TeamWin:
+                gameStateText.text = "";
                 stateText.text = "You Win!";
-                Time.timeScale = 0;
+                if (gameEndTime == 0)
+                    gameEndTime = Time.time;
+                buildMode.ReadyToBuild = false;
+                enemyMode.ReadyToSend = false;
                 break;
             default:
                 break;
@@ -305,6 +312,14 @@ public class GameController : MonoBehaviour
                 }
             }
             */
+        }
+        if (gameEndTime != 0)
+        {
+            float time = Time.time;
+            if (Time.time - gameEndTime > 5.0f)
+            {
+                Application.Quit();
+            }
         }
     }
 
