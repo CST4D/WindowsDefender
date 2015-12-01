@@ -217,6 +217,9 @@
   <ItemGroup>
     <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\Mugshots\andrew.jpg" />
+    <Content Include="Content\Mugshots\becky.jpg" />
+    <Content Include="Content\Mugshots\calvin.jpg" />
     <Content Include="Content\Mugshots\darnell.jpg" />
     <Content Include="Content\Mugshots\dima.jpg" />
     <Content Include="Content\Mugshots\duy.jpg" />
@@ -225,9 +228,12 @@
     <Content Include="Content\Mugshots\jeff.jpg" />
     <Content Include="Content\Mugshots\jens.jpg" />
     <Content Include="Content\Mugshots\joel.jpg" />
+    <Content Include="Content\Mugshots\kevin.jpg" />
     <Content Include="Content\Mugshots\leon.jpg" />
     <Content Include="Content\Mugshots\luka.jpg" />
     <Content Include="Content\Mugshots\nadia.jpg" />
+    <Content Include="Content\Mugshots\noimage.jpg" />
+    <Content Include="Content\Mugshots\rosanna.jpg" />
     <Content Include="Content\Mugshots\vincent.jpg" />
     <Content Include="Content\Mugshots\wilson.jpg" />
     <Content Include="Content\setup.exe" />
@@ -277,7 +283,10 @@
     <Content Include="Resources\hexabump.png" />
     <Content Include="Resources\icon.png" />
     <Content Include="Resources\searching.gif" />
+    <None Include="Properties\PublishProfiles\sdf.pubxml" />
+    <None Include="Properties\PublishProfiles\sdg.pubxml" />
     <None Include="Properties\PublishProfiles\sefsd.pubxml" />
+    <None Include="Properties\PublishProfiles\tedssf.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Resources\admin.png" />
     <Content Include="Resources\hero2.jpg" />
